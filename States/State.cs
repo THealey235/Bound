@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
+using Bound.States.Popups;
 
 namespace Bound.States
 {
@@ -15,11 +16,15 @@ namespace Bound.States
 
         protected ContentManager _content;
 
+        public List<State> Popups;
+
         public State(Game1 game, ContentManager content)
         {
             _game = game;
 
             _content = content;
+
+            Popups = new List<State>();
         }
 
         public abstract void LoadContent();

@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Bound.States;
+using SharpDX.DirectWrite;
 
 namespace Bound.Controls
 {
@@ -81,25 +83,35 @@ namespace Bound.Controls
 
             _font = font;
 
+
             PenColour = Color.Black;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            var colour = Color.White;
+            var colour = Color.Gray;
 
-            if (_isHovering)
-                colour = Color.Gray;
+            if (!_isHovering)
+            {
+                colour = Color.White;
+            }
 
             if (!string.IsNullOrEmpty(Text))
             {
-                var x = (Position.X) + ((Rectangle.Width - (_font.MeasureString(Text).X * _scale)) / 2);
-                var y = (Position.Y) + ((Rectangle.Height - (_font.MeasureString(Text).Y * _scale)) / 2);
+                var x = (Position.X) + ((Rectangle.Width - (_font.MeasureString(Text).X)) / 2) + (5 * Game1.ResScale);
+                var y = (Position.Y) + ((Rectangle.Height - (_font.MeasureString(Text).Y)) / 2);
 
-                spriteBatch.DrawString(_font, Text, new Vector2(x, y), PenColour, 0f, Vector2.Zero, _scale, SpriteEffects.None, Layer + 0.01f);
+                spriteBatch.DrawString(_font, Text, new Vector2(x, y), PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
             }
 
             spriteBatch.Draw(_texture, Position, null, colour, 0f, Vector2.Zero, _scale, SpriteEffects.None, Layer);
+        }
+
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, bool isBehindPopup)
+        {
+            
+
+            Draw(gameTime, spriteBatch);
         }
 
         public override void Update(GameTime gameTime)
@@ -121,6 +133,7 @@ namespace Bound.Controls
                 }
             }
         }
+
 
         #endregion
     }

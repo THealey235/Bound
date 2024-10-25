@@ -1,0 +1,16 @@
+> Popup window:
+	> Background is blurred with black tint (apply Color.Gray to background elements)
+
+> Elements:
+	> Tick boxes?
+	> Sliders?
+	> Text Input?
+
+> Settings:
+	> Resolution
+	> Frame Rate?
+	> Volume (master, music, sound fx, player actions?)
+	> Controls
+	> Particle quality
+	> Zoom
+	> Mouse Colour

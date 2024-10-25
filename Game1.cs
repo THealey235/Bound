@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 
 namespace Bound
 {
@@ -31,6 +32,14 @@ namespace Bound
 
         #endregion
 
+        #region Textures
+
+        public Texture2D Button;
+        public List<SpriteFont> Fonts;
+        public Texture2D BaseBackground;
+
+        #endregion
+
         #region Main Methods
 
         public Game1()
@@ -47,6 +56,8 @@ namespace Bound
             _graphics.HardwareModeSwitch = false;
             _graphics.ApplyChanges();
 
+            IsMouseVisible = true;
+
             Random = new Random();
 
             base.Initialize();
@@ -55,6 +66,16 @@ namespace Bound
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            Button = Content.Load<Texture2D>("Controls/Button");
+            Fonts = new List<SpriteFont>()
+            {
+                Content.Load<SpriteFont>("Fonts/JX-720"),
+                Content.Load<SpriteFont>("Fonts/JX-1080"),
+                Content.Load<SpriteFont>("Fonts/JX-1440"),
+                Content.Load<SpriteFont>("Fonts/JX-2160"),
+            };
+            BaseBackground = Content.Load<Texture2D>("Backgrounds/BaseBackground");
 
             _currentState = new MainMenu(this, Content);
             _currentState.LoadContent();
@@ -129,6 +150,18 @@ namespace Bound
 
                 _nextState = new MainMenu(this, Content);
             }
+        }
+
+        public SpriteFont SetSpriteFont()
+        {
+            if (ResScale < 1f)
+                return Fonts[0];
+            else if (ResScale == 1f)
+                return Fonts[1];
+            else if (ResScale == 2f)
+                return Fonts[3];
+            else
+                return Fonts[2];
         }
 
         #endregion
