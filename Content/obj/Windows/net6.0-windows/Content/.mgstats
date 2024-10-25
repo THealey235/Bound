@@ -1,0 +1,3 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"C:/dev/NEA/Bound/Content/Controls/Button.png","C:/dev/NEA/Bound/Content/bin/Windows/Content/Controls/Button.xnb","TextureProcessor","Texture2DContent",279,15085,0.0730919
+"C:/dev/NEA/Bound/Content/Fonts/BaseFont.spritefont","C:/dev/NEA/Bound/Content/bin/Windows/Content/Fonts/BaseFont.xnb","FontDescriptionProcessor","SpriteFontContent",2068,21535,0.0581088
