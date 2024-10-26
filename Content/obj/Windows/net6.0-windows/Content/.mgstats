@@ -1,5 +1,6 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
 "C:/dev/NEA/Bound/Content/Backgrounds/BaseBackground.png","C:/dev/NEA/Bound/Content/bin/Windows/Content/Backgrounds/BaseBackground.xnb","TextureProcessor","Texture2DContent",95,485,0.0733165
+"C:/dev/NEA/Bound/Content/Backgrounds/Bordered.png","C:/dev/NEA/Bound/Content/bin/Windows/Content/Backgrounds/Bordered.xnb","TextureProcessor","Texture2DContent",180,6485,0.0723112
 "C:/dev/NEA/Bound/Content/Controls/Button.png","C:/dev/NEA/Bound/Content/bin/Windows/Content/Controls/Button.xnb","TextureProcessor","Texture2DContent",279,15085,0.0730919
 "C:/dev/NEA/Bound/Content/Fonts/JX-1080.spritefont","C:/dev/NEA/Bound/Content/bin/Windows/Content/Fonts/JX-1080.xnb","FontDescriptionProcessor","SpriteFontContent",2086,70687,0.1245037
 "C:/dev/NEA/Bound/Content/Fonts/JX-1440.spritefont","C:/dev/NEA/Bound/Content/bin/Windows/Content/Fonts/JX-1440.xnb","FontDescriptionProcessor","SpriteFontContent",2086,136223,0.1280753

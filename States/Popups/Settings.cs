@@ -14,6 +14,7 @@ namespace Bound.States.Popups
     public class Settings : State
     {
         private List<Component> _components;
+        private List<Component> _confirmBox;
 
         public State Parent;
 
@@ -29,12 +30,14 @@ namespace Bound.States.Popups
         {
             var eigthWidth = Game1.ScreenWidth / 8;
             var eigthHeight = Game1.ScreenHeight / 8;
+            var texture = _game.BaseBackground;
 
             _components = new List<Component>()
             {
-                new PopupWindow
+                new BorderedBox
                 (
-                    _game.BaseBackground,
+                    texture,
+                    _game.GraphicsDevice,
                     Color.SaddleBrown,
                     new Vector2 (eigthWidth, eigthHeight),
                     0.6f,
@@ -42,6 +45,19 @@ namespace Bound.States.Popups
                     (int) (eigthHeight * 6)
                 )
             };
+
+            //_confirmBox = new List<Component>()
+            //{
+            //    new BorderedBox
+            //    (
+            //        texture,
+            //        _game.GraphicsDevice,
+            //        Color.SaddleBrown,
+            //        new Vector2((eigthHeight * 4) - (texture.Width / 2), (eigthHeight * 4) - (texture.Height / 2)),
+            //        0.7f,
+
+            //    ),
+            //};
         }
 
         public override void Update(GameTime gameTime)
@@ -53,9 +69,17 @@ namespace Bound.States.Popups
             _currentKeys = Keyboard.GetState();
 
             if (_currentKeys.IsKeyDown(Keys.Escape) && _previousKeys.IsKeyUp(Keys.Escape))
+            {
+                ExitSettings();
                 Parent.Popups.Remove(this);
-
+            }
         }
+
+        private void ExitSettings()
+        {
+            
+        }
+
         public override void PostUpdate(GameTime gameTime)
         {
             

@@ -98,7 +98,7 @@ namespace Bound.Controls
 
             if (!string.IsNullOrEmpty(Text))
             {
-                var x = (Position.X) + ((Rectangle.Width - (_font.MeasureString(Text).X)) / 2) + (5 * Game1.ResScale);
+                var x = (Position.X) + ((Rectangle.Width - (_font.MeasureString(Text).X)) / 2) + (5);
                 var y = (Position.Y) + ((Rectangle.Height - (_font.MeasureString(Text).Y)) / 2);
 
                 spriteBatch.DrawString(_font, Text, new Vector2(x, y), PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);

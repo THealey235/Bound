@@ -5,6 +5,7 @@
   <Config />
   <SourceFiles>
     <File>C:/dev/NEA/Bound/Content/Backgrounds/BaseBackground.png</File>
+    <File>C:/dev/NEA/Bound/Content/Backgrounds/Bordered.png</File>
     <File>C:/dev/NEA/Bound/Content/Controls/Button.png</File>
     <File>C:/dev/NEA/Bound/Content/Fonts/JX-1080.spritefont</File>
     <File>C:/dev/NEA/Bound/Content/Fonts/JX-1440.spritefont</File>
@@ -12,6 +13,7 @@
     <File>C:/dev/NEA/Bound/Content/Fonts/JX-720.spritefont</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

@@ -113,10 +113,6 @@ namespace Bound.States
             foreach (var component in _components)
                 component.Draw(gameTime, spriteBatch);
 
-            //blur out previous things if there is a popup
-            if (Popups.Count > 0)
-                _game.GraphicsDevice.Clear(new Color(128, 128, 128, 128));
-
             foreach (var state in Popups)
                 state.Draw(gameTime, spriteBatch);
 

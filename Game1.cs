@@ -51,16 +51,22 @@ namespace Bound
 
         protected override void Initialize()
         {
-            _graphics.PreferredBackBufferHeight = _defaultHeight;
-            _graphics.PreferredBackBufferWidth = _defaultWidth;
             _graphics.HardwareModeSwitch = false;
+            _graphics.GraphicsProfile = GraphicsProfile.HiDef;
+
+            _graphics.ApplyChanges();
+
+            base.Initialize();
+
+            ScreenHeight = _graphics.PreferredBackBufferHeight = _defaultHeight;
+            ScreenWidth = _graphics.PreferredBackBufferWidth = _defaultWidth;
             _graphics.ApplyChanges();
 
             IsMouseVisible = true;
 
-            Random = new Random();
+            ResScale = ScreenHeight / _defaultHeight;
 
-            base.Initialize();
+            Random = new Random();
         }
 
         protected override void LoadContent()
