@@ -110,7 +110,7 @@ namespace Bound
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.MidnightBlue);
 
             _spriteBatch.Begin(SpriteSortMode.FrontToBack);
 
