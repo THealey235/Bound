@@ -31,7 +31,7 @@ namespace Bound.Controls
         {
             get
             {
-                return new Vector2(Width / _texture.Width, Height / _texture.Height); 
+                return new Vector2((float)Width / (float)_texture.Width, (float)Height / (float)_texture.Height); 
             }
         }
 
@@ -40,6 +40,14 @@ namespace Bound.Controls
         public bool IsBordered;
         public Color BorderColor;
         public Vector2 Position;
+
+        public Texture2D Texture
+        {
+            get
+            {
+                return _texture;
+            }
+        }
 
         public BorderedBox(Texture2D texture, GraphicsDevice graphicsDevice, Color color, Vector2 position, float layer, int width, int height)
         {
@@ -55,7 +63,6 @@ namespace Bound.Controls
             IsBordered = true;
 
             BorderColor = new Color(0, 0, 0, 255);
-            //Memory Leak: Aware
             SetRectangleTexture(_graphicsDevice, _texture);
 
         }
@@ -91,7 +98,7 @@ namespace Bound.Controls
 
         #region Other Methods
 
-        private void SetRectangleTexture(GraphicsDevice graphics, Texture2D texture)
+        public void SetRectangleTexture(GraphicsDevice graphics, Texture2D texture)
         {
 
             var colours = new List<Color>();

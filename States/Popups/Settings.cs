@@ -44,6 +44,15 @@ namespace Bound.States.Popups
                     bbHeight
                 );
 
+            int resBoxIndex = Game1.ScreenHeight switch
+                {
+                    720 => 0,
+                    1080 => 1,
+                    2560 => 2,
+                    2160 => 3,
+                    _ => -1
+                };
+
             _components = new List<Component>()
             {
                 background,
@@ -63,6 +72,18 @@ namespace Bound.States.Popups
                     TextureScale = 1.5f,
                     xOffset = (int)(2 * Game1.ResScale),
                 },
+                new MultiChoiceBox(texture, _game.ArrowLeft, _game.Font, resBoxIndex)
+                {
+                    Text = "Resolution",
+                    Choices = new List<string>()
+                    {
+                        "1280x720",
+                        "1920x1080",
+                        "2560x1440",
+                        "3840x2160"
+                    },
+                    Layer = 0.8f,
+                },
             };
 
             Button comp;
@@ -75,6 +96,12 @@ namespace Bound.States.Popups
 
             comp = _components[2] as Button;
             comp.CustomPosition = new Vector2(((bbWidth - buttonWidth) / 2) + (buttonWidth + (5 * comp.Scale)), bbHeight - (buttonHeight + (15 * comp.Scale)));
+
+            for (int i = 3; i < 4; i++)
+            {
+                var mmcb = _components[i] as MultiChoiceBox;
+                mmcb.LoadContent(_game, background, i - 3);
+            }
 
         }
 

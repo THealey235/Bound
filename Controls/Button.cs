@@ -25,8 +25,6 @@ namespace Bound.Controls
 
         private Texture2D _texture;
 
-        
-
         public float Scale
         {
             get
@@ -40,6 +38,8 @@ namespace Bound.Controls
         #region Properties
 
         public EventHandler Click;
+
+        public SpriteEffects Effect;
 
         public bool Clicked { get; private set; }
 
@@ -98,6 +98,8 @@ namespace Bound.Controls
             PenColour = Color.Black;
 
             xOffset = 5;
+
+            Effect = SpriteEffects.None;
         }
 
         public Button (Texture2D texture, SpriteFont font, BorderedBox parent) 
@@ -127,16 +129,10 @@ namespace Bound.Controls
             if (Parent != null)
             {
                 Position = new Vector2(Parent.Position.X + CustomPosition.X, Parent.Position.Y + CustomPosition.Y);
-                spriteBatch.Draw(_texture, Position, null, colour, 0f, Vector2.Zero, Scale, SpriteEffects.None, Layer);
+                spriteBatch.Draw(_texture, Position, null, colour, 0f, Vector2.Zero, Scale, Effect, Layer);
             }
             else
-                spriteBatch.Draw(_texture, Position, null, colour, 0f, Vector2.Zero, Scale, SpriteEffects.None, Layer);
-        }
-
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, bool isBehindPopup)
-        {
-            if(Parent == null)
-                Draw(gameTime, spriteBatch);
+                spriteBatch.Draw(_texture, Position, null, colour, 0f, Vector2.Zero, Scale, Effect, Layer);
         }
 
         public override void Update(GameTime gameTime)

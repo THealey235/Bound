@@ -38,6 +38,7 @@ namespace Bound
         public List<SpriteFont> Fonts;
         public Texture2D BaseBackground;
         public Texture2D RedX;
+        public Texture2D ArrowLeft;
 
         public SpriteFont Font
         {
@@ -99,6 +100,7 @@ namespace Bound
             };
             BaseBackground = Content.Load<Texture2D>("Backgrounds/BaseBackground");
             RedX = Content.Load<Texture2D>("Controls/RedX");
+            ArrowLeft = Content.Load<Texture2D>("Controls/ArrowLeft");
 
             _currentState = new MainMenu(this, Content);
             _currentState.LoadContent();
