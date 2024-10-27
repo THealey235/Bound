@@ -18,9 +18,8 @@ namespace Bound.Controls
         private float _layer;
         private Texture2D _border;
         private GraphicsDevice _graphicsDevice;
-        private int _width;
-        private int _height;
-        private Vector2 _position;
+        private List<Texture2D> _borderTextures;
+
         private int _barWidth
         {
             get
@@ -28,44 +27,60 @@ namespace Bound.Controls
                 return (int)(3 * Game1.ResScale);
             }
         }
-
-        public bool IsBordered;
-        
-
-
         private Vector2 _scale
         {
             get
             {
-                return new Vector2(_width / _texture.Width, _height / _texture.Height); 
+                return new Vector2(Width / _texture.Width, Height / _texture.Height); 
             }
         }
-            
+
+        public int Width;
+        public int Height;
+        public bool IsBordered;
+        public Color BorderColor;
+        public Vector2 Position;
 
         public BorderedBox(Texture2D texture, GraphicsDevice graphicsDevice, Color color, Vector2 position, float layer, int width, int height)
         {
             _texture = texture;
             _colour = color;
-            _position = position;
+            Position = position;
             _layer = layer;
-            _width = width;
-            _height = height;
+            Width = width;
+            Height = height;
 
             _graphicsDevice = graphicsDevice;
 
             IsBordered = true;
-            
+
+            BorderColor = new Color(0, 0, 0, 255);
+            //Memory Leak: Aware
+            SetRectangleTexture(_graphicsDevice, _texture);
+
+        }
+
+        public BorderedBox(Texture2D texture, GraphicsDevice graphicsDevice, Color color, Vector2 position, float layer, int width, int height, Color borderColor)
+            : this(texture, graphicsDevice, color, position, layer, width, height)
+        {
+            BorderColor = borderColor;
+            SetRectangleTexture(_graphicsDevice, _texture);
+        }
+
+        public BorderedBox(Texture2D texture, GraphicsDevice graphicsDevice, Color color, Vector2 position, float layer, int width, int height, List<Texture2D> _borders)
+            : this(texture, graphicsDevice, color, position, layer, width, height)
+        {
+            _borderTextures = _borders;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             //Base background
-            spriteBatch.Draw(_texture, _position, null, _colour, 0f, Vector2.Zero, _scale, SpriteEffects.None, _layer);
+            spriteBatch.Draw(_texture, Position, null, _colour, 0f, Vector2.Zero, _scale, SpriteEffects.None, _layer);
 
             if (IsBordered)
             {
-                SetRectangleTexture(_graphicsDevice, _texture);
-                spriteBatch.Draw(_border, _position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, _layer + 0.01f);
+                spriteBatch.Draw(_border, Position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, _layer + 0.01f);
             }
         }
 
@@ -80,19 +95,17 @@ namespace Bound.Controls
         {
 
             var colours = new List<Color>();
-            
 
-
-            for (int y = 0; y < _height; y++)
+            for (int y = 0; y < Height; y++)
             {
-                for (int x = 0; x < _width; x++)
+                for (int x = 0; x < Width; x++)
                 {
                     if (x < _barWidth || //left side
                        y < _barWidth || //top side
-                       x > _width - (_barWidth + 1) ||  //right side
-                       y > _height - (_barWidth + 1)) //bottom side
+                       x > Width - (_barWidth + 1) ||  //right side
+                       y > Height - (_barWidth + 1)) //bottom side
                     {
-                        colours.Add(new Color(255, 255, 255, 255));
+                        colours.Add(BorderColor);
                     }
                     else
                     {
@@ -102,7 +115,7 @@ namespace Bound.Controls
                 }
             }
 
-            _border = new Texture2D(graphics, _width, _height);
+            _border = new Texture2D(graphics, Width, Height);
             _border.SetData<Color>(colours.ToArray());
         }
 

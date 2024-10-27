@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/dev/NEA/Bound/Content/Backgrounds/BaseBackground.png</SourceFile>
-  <SourceTime>2024-10-25T18:19:49.3148192+01:00</SourceTime>
-  <DestFile>C:/dev/NEA/Bound/Content/bin/Windows/Backgrounds/BaseBackground.xnb</DestFile>
-  <DestTime>2024-10-27T10:42:17.7025063+00:00</DestTime>
+  <SourceFile>C:/dev/NEA/Bound/Content/Controls/RedX.png</SourceFile>
+  <SourceTime>2024-10-27T10:41:28.1590351+00:00</SourceTime>
+  <DestFile>C:/dev/NEA/Bound/Content/bin/Windows/Content/Controls/RedX.xnb</DestFile>
+  <DestTime>2024-10-27T10:42:24.9746007+00:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2022-07-26T12:44:56+01:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

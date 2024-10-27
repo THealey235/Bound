@@ -25,11 +25,13 @@ namespace Bound.Controls
 
         private Texture2D _texture;
 
-        private float _scale
+        
+
+        public float Scale
         {
             get
             {
-                return 2f * Game1.ResScale;
+                return TextureScale * Game1.ResScale;
             }
         }
 
@@ -42,6 +44,14 @@ namespace Bound.Controls
         public bool Clicked { get; private set; }
 
         public float Layer { get; set; }
+
+        public float TextureScale;
+
+        public Vector2 CustomPosition;
+
+        public BorderedBox Parent;
+
+        public int xOffset;
 
         public Vector2 Origin
         {
@@ -67,7 +77,7 @@ namespace Bound.Controls
         {
             get
             {
-                return new Rectangle((int)Position.X, (int)Position.Y, (int)(_texture.Width * _scale), (int)(_texture.Height * _scale));
+                return new Rectangle((int)Position.X, (int)Position.Y, (int)(_texture.Width * Scale), (int)(_texture.Height * Scale));
             }
         }
 
@@ -83,8 +93,18 @@ namespace Bound.Controls
 
             _font = font;
 
+            TextureScale = 1f;
 
             PenColour = Color.Black;
+
+            xOffset = 5;
+        }
+
+        public Button (Texture2D texture, SpriteFont font, BorderedBox parent) 
+            : this(texture, font)
+        {
+            Parent = parent;
+            
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -98,20 +118,25 @@ namespace Bound.Controls
 
             if (!string.IsNullOrEmpty(Text))
             {
-                var x = (Position.X) + ((Rectangle.Width - (_font.MeasureString(Text).X)) / 2) + (5);
+                var x = (Position.X) + ((Rectangle.Width - (_font.MeasureString(Text).X)) / 2) + (xOffset);
                 var y = (Position.Y) + ((Rectangle.Height - (_font.MeasureString(Text).Y)) / 2);
 
                 spriteBatch.DrawString(_font, Text, new Vector2(x, y), PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
             }
 
-            spriteBatch.Draw(_texture, Position, null, colour, 0f, Vector2.Zero, _scale, SpriteEffects.None, Layer);
+            if (Parent != null)
+            {
+                Position = new Vector2(Parent.Position.X + CustomPosition.X, Parent.Position.Y + CustomPosition.Y);
+                spriteBatch.Draw(_texture, Position, null, colour, 0f, Vector2.Zero, Scale, SpriteEffects.None, Layer);
+            }
+            else
+                spriteBatch.Draw(_texture, Position, null, colour, 0f, Vector2.Zero, Scale, SpriteEffects.None, Layer);
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, bool isBehindPopup)
         {
-            
-
-            Draw(gameTime, spriteBatch);
+            if(Parent == null)
+                Draw(gameTime, spriteBatch);
         }
 
         public override void Update(GameTime gameTime)

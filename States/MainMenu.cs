@@ -35,7 +35,7 @@ namespace Bound.States
             colour = Color.White;
 
             var buttonTexture = _game.Button;
-            var font = _game.SetSpriteFont();          
+            var font = _game.Font;          
 
             var leftOffset = 30 + buttonTexture.Width / 2;
             var topOffset = Game1.ScreenHeight / 2 - buttonTexture.Height;
@@ -51,6 +51,7 @@ namespace Bound.States
                     Position = new Vector2(leftOffset , topOffset),
                     Click = new EventHandler(Button_LoadGame_Clicked),
                     Layer = layer,
+                    TextureScale = 2f,
                 },
                 new Button(buttonTexture, font)
                 {
@@ -58,12 +59,15 @@ namespace Bound.States
                     Position = new Vector2(leftOffset , topOffset + (spacing)),
                     Click = new EventHandler(Button_NewGame_Clicked),
                     Layer = layer,
+                    TextureScale = 2f,
+
                 },
                 new Button(buttonTexture, font)
                 {
                     Text = "Settings",
                     Position = new Vector2(leftOffset , topOffset + (spacing * 2)),
                     Click = new EventHandler(Button_Settings_Clicked),
+                    TextureScale = 2f,
                     Layer = layer,
                 },
                 new Button(buttonTexture, font)
@@ -71,6 +75,7 @@ namespace Bound.States
                     Text = "Training",
                     Position = new Vector2(leftOffset , topOffset + (spacing * 3)),
                     Click = new EventHandler(Button_Training_Clicked),
+                    TextureScale = 2f,
                     Layer = layer,
                 },
                 new Button(buttonTexture, font)
@@ -78,6 +83,7 @@ namespace Bound.States
                     Text = "Quit",
                     Position = new Vector2(leftOffset , topOffset + (spacing * 4)),
                     Click = new EventHandler(Button_Quit_Clicked),
+                    TextureScale = 2f,
                     Layer = layer,
                 },
             };

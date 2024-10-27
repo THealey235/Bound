@@ -37,6 +37,22 @@ namespace Bound
         public Texture2D Button;
         public List<SpriteFont> Fonts;
         public Texture2D BaseBackground;
+        public Texture2D RedX;
+
+        public SpriteFont Font
+        {
+            get
+            {
+                if (ResScale < 1f)
+                    return Fonts[0];
+                else if (ResScale == 1f)
+                    return Fonts[1];
+                else if (ResScale == 2f)
+                    return Fonts[3];
+                else
+                    return Fonts[2];
+            }
+        }
 
         #endregion
 
@@ -82,6 +98,7 @@ namespace Bound
                 Content.Load<SpriteFont>("Fonts/JX-2160"),
             };
             BaseBackground = Content.Load<Texture2D>("Backgrounds/BaseBackground");
+            RedX = Content.Load<Texture2D>("Controls/RedX");
 
             _currentState = new MainMenu(this, Content);
             _currentState.LoadContent();
@@ -94,11 +111,12 @@ namespace Bound
         {
             if (_nextState != null)
             {
-                var _previousState = _currentState;
                 _currentState = _nextState;
                 _nextState = null;
 
                 _currentState.LoadContent();
+                foreach (var state in _currentState.Popups)
+                    state.LoadContent();
             }
 
             ChangeFullscreenMode();
@@ -154,20 +172,11 @@ namespace Bound
 
                 ResScale = ScreenHeight / _defaultHeight;
 
-                _nextState = new MainMenu(this, Content);
+                _nextState = new MainMenu(this, Content)
+                {
+                    Popups = _currentState.Popups
+                };
             }
-        }
-
-        public SpriteFont SetSpriteFont()
-        {
-            if (ResScale < 1f)
-                return Fonts[0];
-            else if (ResScale == 1f)
-                return Fonts[1];
-            else if (ResScale == 2f)
-                return Fonts[3];
-            else
-                return Fonts[2];
         }
 
         #endregion
