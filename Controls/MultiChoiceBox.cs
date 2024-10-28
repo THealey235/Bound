@@ -100,6 +100,7 @@ namespace Bound.Controls
             var fullScale = textureScale * Game1.ResScale;
             var arrowLength = (_texture.Width * 2 * fullScale);
             var gap = 10f * Game1.ResScale;
+            //Dont ask me why it needs this, idc anymore: who even uses 720p monitors anyway?
             if (Game1.ScreenHeight == 720)
                 gap -= 3;
 
