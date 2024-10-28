@@ -6,9 +6,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Bound.States
 {
     public class MainMenu : State
@@ -19,15 +16,17 @@ namespace Bound.States
 
         private State _nextPopup;
 
+        private GraphicsDeviceManager _graphics;
+
         public Color colour;
 
         #endregion
 
         #region State Methods
 
-        public MainMenu(Game1 game, ContentManager content) : base(game, content)
+        public MainMenu(Game1 game, ContentManager content, GraphicsDeviceManager graphics) : base(game, content)
         {
-            
+            _graphics = graphics;
         }
 
         public override void LoadContent()
@@ -140,7 +139,7 @@ namespace Bound.States
 
         private void Button_Settings_Clicked(object sender, EventArgs e)
         {
-            Popups.Add(new Settings(_game, _content, this));
+            Popups.Add(new Settings(_game, _content, this, _graphics));
             Popups[^1].LoadContent();
         }
 

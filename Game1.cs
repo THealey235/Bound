@@ -44,14 +44,14 @@ namespace Bound
         {
             get
             {
-                if (ResScale < 1f)
-                    return Fonts[0];
-                else if (ResScale == 1f)
-                    return Fonts[1];
-                else if (ResScale == 2f)
-                    return Fonts[3];
-                else
-                    return Fonts[2];
+                return Game1.ScreenHeight switch
+                {
+                    720 => Fonts[0],
+                    1080 => Fonts[1],
+                    1440 => Fonts[2],
+                    2160 => Fonts[3],
+                    _ => throw new Exception("Not a valid resolution"),
+                };
             }
         }
 
@@ -102,11 +102,20 @@ namespace Bound
             RedX = Content.Load<Texture2D>("Controls/RedX");
             ArrowLeft = Content.Load<Texture2D>("Controls/ArrowLeft");
 
-            _currentState = new MainMenu(this, Content);
+            _currentState = new MainMenu(this, Content, _graphics);
             _currentState.LoadContent();
 
             _nextState = null;
 
+        }
+
+        public void ReloadTextures()
+        {
+            
+            Button = Content.Load<Texture2D>("Controls/Button");
+            BaseBackground = Content.Load<Texture2D>("Backgrounds/BaseBackground");
+            RedX = Content.Load<Texture2D>("Controls/RedX");
+            ArrowLeft = Content.Load<Texture2D>("Controls/ArrowLeft");
         }
 
         protected override void Update(GameTime gameTime)
@@ -117,8 +126,8 @@ namespace Bound
                 _nextState = null;
 
                 _currentState.LoadContent();
-                foreach (var state in _currentState.Popups)
-                    state.LoadContent();
+
+                
             }
 
             ChangeFullscreenMode();
@@ -172,13 +181,18 @@ namespace Bound
 
                 _graphics.ApplyChanges();
 
-                ResScale = ScreenHeight / _defaultHeight;
-
-                _nextState = new MainMenu(this, Content)
-                {
-                    Popups = _currentState.Popups
-                };
+                ResetState();
             }
+        }
+
+        public void ResetState()
+        {
+            ResScale = (float)ScreenHeight / (float)_defaultHeight;
+
+            _currentState.LoadContent();
+
+            foreach (var state in _currentState.Popups)
+                state.LoadContent();
         }
 
         #endregion

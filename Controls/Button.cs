@@ -97,7 +97,7 @@ namespace Bound.Controls
 
             PenColour = Color.Black;
 
-            xOffset = 5;
+            xOffset = 3;
 
             Effect = SpriteEffects.None;
         }
@@ -154,7 +154,6 @@ namespace Bound.Controls
                 }
             }
         }
-
 
         #endregion
     }

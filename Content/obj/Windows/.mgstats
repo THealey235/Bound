@@ -1,10 +1,10 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
-"C:/dev/NEA/Bound/Content/Backgrounds/BaseBackground.png","C:/dev/NEA/Bound/Content/bin/Windows/Backgrounds/BaseBackground.xnb","TextureProcessor","Texture2DContent",95,485,0.0751485
-"C:/dev/NEA/Bound/Content/Backgrounds/Bordered.png","C:/dev/NEA/Bound/Content/bin/Windows/Backgrounds/Bordered.xnb","TextureProcessor","Texture2DContent",180,6485,0.0020952
-"C:/dev/NEA/Bound/Content/Controls/ArrowLeft.png","C:/dev/NEA/Bound/Content/bin/Windows/Controls/ArrowLeft.xnb","TextureProcessor","Texture2DContent",372,10085,0.0020607
-"C:/dev/NEA/Bound/Content/Controls/Button.png","C:/dev/NEA/Bound/Content/bin/Windows/Controls/Button.xnb","TextureProcessor","Texture2DContent",279,15085,0.0021249
-"C:/dev/NEA/Bound/Content/Controls/RedX.png","C:/dev/NEA/Bound/Content/bin/Windows/Controls/RedX.xnb","TextureProcessor","Texture2DContent",438,10085,0.002279
-"C:/dev/NEA/Bound/Content/Fonts/JX-1080.spritefont","C:/dev/NEA/Bound/Content/bin/Windows/Fonts/JX-1080.xnb","FontDescriptionProcessor","SpriteFontContent",2086,70687,0.0622862
-"C:/dev/NEA/Bound/Content/Fonts/JX-1440.spritefont","C:/dev/NEA/Bound/Content/bin/Windows/Fonts/JX-1440.xnb","FontDescriptionProcessor","SpriteFontContent",2086,136223,0.0131346
-"C:/dev/NEA/Bound/Content/Fonts/JX-2160.spritefont","C:/dev/NEA/Bound/Content/bin/Windows/Fonts/JX-2160.xnb","FontDescriptionProcessor","SpriteFontContent",2084,136223,0.0104575
-"C:/dev/NEA/Bound/Content/Fonts/JX-720.spritefont","C:/dev/NEA/Bound/Content/bin/Windows/Fonts/JX-720.xnb","FontDescriptionProcessor","SpriteFontContent",2068,21535,0.0091069
+"C:/dev/NEA/Bound/Content/Backgrounds/BaseBackground.png","C:/dev/NEA/Bound/Content/bin/Windows/Backgrounds/BaseBackground.xnb","TextureProcessor","Texture2DContent",95,485,0.0756918
+"C:/dev/NEA/Bound/Content/Backgrounds/Bordered.png","C:/dev/NEA/Bound/Content/bin/Windows/Backgrounds/Bordered.xnb","TextureProcessor","Texture2DContent",180,6485,0.0020414
+"C:/dev/NEA/Bound/Content/Controls/ArrowLeft.png","C:/dev/NEA/Bound/Content/bin/Windows/Controls/ArrowLeft.xnb","TextureProcessor","Texture2DContent",372,10085,0.0021668
+"C:/dev/NEA/Bound/Content/Controls/Button.png","C:/dev/NEA/Bound/Content/bin/Windows/Controls/Button.xnb","TextureProcessor","Texture2DContent",279,15085,0.0019655
+"C:/dev/NEA/Bound/Content/Controls/RedX.png","C:/dev/NEA/Bound/Content/bin/Windows/Controls/RedX.xnb","TextureProcessor","Texture2DContent",438,10085,0.0022164
+"C:/dev/NEA/Bound/Content/Fonts/JX-1080.spritefont","C:/dev/NEA/Bound/Content/bin/Windows/Fonts/JX-1080.xnb","FontDescriptionProcessor","SpriteFontContent",2086,70687,0.0577348
+"C:/dev/NEA/Bound/Content/Fonts/JX-1440.spritefont","C:/dev/NEA/Bound/Content/bin/Windows/Fonts/JX-1440.xnb","FontDescriptionProcessor","SpriteFontContent",2084,70687,0.0108416
+"C:/dev/NEA/Bound/Content/Fonts/JX-2160.spritefont","C:/dev/NEA/Bound/Content/bin/Windows/Fonts/JX-2160.xnb","FontDescriptionProcessor","SpriteFontContent",2084,136223,0.0110494
+"C:/dev/NEA/Bound/Content/Fonts/JX-720.spritefont","C:/dev/NEA/Bound/Content/bin/Windows/Fonts/JX-720.xnb","FontDescriptionProcessor","SpriteFontContent",2084,37919,0.008183

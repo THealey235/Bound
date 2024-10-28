@@ -1,14 +1,9 @@
 ﻿using Bound.States;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SharpDX.Direct3D9;
-using SharpDX.MediaFoundation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bound.Controls
 {
@@ -19,7 +14,6 @@ namespace Bound.Controls
         private BorderedBox _box;
         private SpriteFont _font;
         private List<Component> _components;
-        private int _curIndex;
         private float _centerOfArrows; //the x co-ordinate of the center
 
         private Vector2 _textPosition;
@@ -34,6 +28,9 @@ namespace Bound.Controls
         public int FullWidth;
         public int FullHeight;
         public Color PenColour;
+        public int CurIndex;
+        public EventHandler OnApply;
+
 
         public float Scale
         {
@@ -47,7 +44,7 @@ namespace Bound.Controls
         {
             get
             {
-                return new Vector2(_centerOfArrows - (_font.MeasureString(Choices[_curIndex]).X / 2), Position.Y + 5);
+                return new Vector2(_centerOfArrows - (_font.MeasureString(Choices[CurIndex]).X / 2), Position.Y + 5);
             }
         }
 
@@ -65,7 +62,7 @@ namespace Bound.Controls
             TextureScale = 1f;
             PenColour = Color.Black;
 
-            _curIndex = index;
+            CurIndex = index;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -80,7 +77,7 @@ namespace Bound.Controls
 
             var x = (_leftArrowPosition.X + _texture.Width * (_components[1] as Button).Scale);
 
-            spriteBatch.DrawString(_font, Choices[_curIndex], _choicePosition, PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
+            spriteBatch.DrawString(_font, Choices[CurIndex], _choicePosition, PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
 
         }
 
@@ -92,17 +89,21 @@ namespace Bound.Controls
 
         public void LoadContent(Game1 _game, BorderedBox background, int i)
         {
-            //TODO: refeactor BorderdBox constructor so i may rewrite this method
+            //TODO: rewrite BorderdBox constructor so i may rewrite this method
             //Note: this code is some hot garbage
 
             var longestString = Choices.Aggregate(0, (a, c) => (int)((a > _font.MeasureString(c).X) ? a : _font.MeasureString(c).X));
 
             _components = new List<Component>();
-            var textureScale = 0.75f;
+            var textureScale = 0.6f;
 
-            var arrowLength = (_texture.Width * 2 * textureScale * Game1.ResScale);
+            var fullScale = textureScale * Game1.ResScale;
+            var arrowLength = (_texture.Width * 2 * fullScale);
+            var gap = 10f * Game1.ResScale;
+            if (Game1.ScreenHeight == 720)
+                gap -= 3;
 
-            FullWidth = (int)((_font.MeasureString(Text).X + (10)) + (arrowLength * 2) + longestString + (10 * 3));
+            FullWidth = (int)((_font.MeasureString(Text).X + (gap)) + (arrowLength * 2) + longestString + (gap));
             FullHeight = (int)((_font.MeasureString(Text).Y + (10)));
             Position = new Vector2((background.Position.X + (background.Width / 2)) - (FullWidth / 2), (background.Position.Y + (background.Height / 6) - (FullHeight / 2)) + (FullHeight + (10 * Scale)) * i);
 
@@ -121,8 +122,8 @@ namespace Bound.Controls
 
             _textPosition = new Vector2((Position.X) + (10), (Position.Y) + (5));
 
-            _leftArrowPosition = new Vector2(_textPosition.X + _font.MeasureString(Text).X + 10, (Position.Y) + (5));
-            _rightArrowPosition = new Vector2(_leftArrowPosition.X + arrowLength + 10 + longestString + 10, (Position.Y) + (5));
+            _leftArrowPosition = new Vector2(_textPosition.X + _font.MeasureString(Text).X + gap, (Position.Y) + ((FullHeight - _texture.Height * fullScale) / 2f));
+            _rightArrowPosition = new Vector2(_leftArrowPosition.X + arrowLength + gap + longestString + gap, (Position.Y) + ((FullHeight - _texture.Height * fullScale) / 2f));
 
             _components.Add(
                 new Button(_texture, _font)
@@ -152,15 +153,15 @@ namespace Bound.Controls
 
         private void LeftArrow_Clicked(object sender, EventArgs e)
         {
-            _curIndex --;
-            if (_curIndex < 0)
-                _curIndex = Choices.Count - 1;
+            CurIndex --;
+            if (CurIndex < 0)
+                CurIndex = Choices.Count - 1;
         }
         private void RightArrow_Clicked(object sender, EventArgs e)
         {
-            _curIndex++;
-            if (_curIndex > Choices.Count - 1)
-                _curIndex = 0;
+            CurIndex++;
+            if (CurIndex > Choices.Count - 1)
+                CurIndex = 0;
         }
     }
 }

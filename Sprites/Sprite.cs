@@ -3,8 +3,6 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Bound.Models;
 using Bound.Managers;
 
@@ -262,7 +260,7 @@ namespace Bound.Sprites
             return sprite;
         }
 
-#endregion
+        #endregion
     }
 }
 
