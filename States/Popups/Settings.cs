@@ -12,14 +12,13 @@ namespace Bound.States.Popups
     public class Settings : State
     {
         private List<Component> _components;
-        private List<MultiChoiceBox> _multiBoxes;
+        private List<MultiChoice> _multiBoxes;
 
         private KeyboardState _currentKeys;
         private KeyboardState _previousKeys;
         private GraphicsDeviceManager _graphics;
 
         public State Parent;
-        public Dictionary<string, string> SettingsStates;
 
         public Settings(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content)
         {
@@ -50,10 +49,11 @@ namespace Bound.States.Popups
             int resBoxIndex = Game1.ScreenHeight switch
                 {
                     720 => 0,
-                    1080 => 1,
-                    1440 => 2,
-                    2160 => 3,
-                    _ => -1
+                    900 => 1,
+                    1080 => 2,
+                    1440 => 3,
+                    2160 => 4,
+                    _ => 2
                 };
 
             _components = new List<Component>()
@@ -78,7 +78,7 @@ namespace Bound.States.Popups
                 
             };
 
-            _multiBoxes = new List<MultiChoiceBox>()
+            _multiBoxes = new List<MultiChoice>()
             {
                 new MultiChoiceBox(texture, _game.ArrowLeft, font, resBoxIndex)
                 {
@@ -86,13 +86,36 @@ namespace Bound.States.Popups
                     Choices = new List<string>()
                     {
                         "1280x720",
+                        "1600x900",
                         "1920x1080",
                         "2560x1440",
                         "3840x2160"
                     },
                     Layer = 0.8f,
-                    OnApply = new EventHandler(Resolution_Apply)
+                    OnApply = new EventHandler(Resolution_Apply),
+                    Order = 0
                 },
+                new MultiChoiceBox(texture,_game.ArrowLeft, font, resBoxIndex)
+                {
+                    Text = "Fullscreen",
+                    Choices = new List<string>()
+                    {
+                        "Yes",
+                        "No"
+                    },
+                    Layer = 0.8f,
+                    OnApply = new EventHandler(Fullscreen_Apply),
+                    CurIndex = _graphics.IsFullScreen ? 0 : 1,
+                    Order = 1
+                },
+                new ScrollBox(font, "MVolume")
+                {
+                    Text = "Master Volume",
+                    Layer = 0.8f,
+                    OnApply = new EventHandler(MasterVolume_Apply),
+                    Order = 2,
+                }
+
             };
 
             Button comp;
@@ -108,11 +131,12 @@ namespace Bound.States.Popups
 
             for(int i = 0; i < _multiBoxes.Count; i++ )
             {
-                var mmcb = _multiBoxes[i];
-                mmcb.LoadContent(_game, background, i);
+                _multiBoxes[i].LoadContent(_game, background);
             }
 
-        }
+            }
+
+        
 
         public override void Update(GameTime gameTime)
         {
@@ -161,11 +185,24 @@ namespace Bound.States.Popups
         }
         private void Resolution_Apply(object sender, EventArgs e)
         {
-            var box = _multiBoxes[0];
+            var box = _multiBoxes[0] as MultiChoiceBox;
             var resolution = box.Choices[box.CurIndex].Split('x').Select(x => int.Parse(x)).ToList();
 
             Game1.ScreenWidth = _graphics.PreferredBackBufferWidth = resolution[0];
             Game1.ScreenHeight = _graphics.PreferredBackBufferHeight = resolution[1];
+        }
+
+        private void Fullscreen_Apply(object sender, EventArgs e)
+        {
+            var box = _multiBoxes[1] as MultiChoiceBox;
+            var isFullscreen = (box.Choices[box.CurIndex] == "Yes") ? true : false;
+
+            _graphics.IsFullScreen = isFullscreen;
+        }
+
+        private void MasterVolume_Apply(object sender, EventArgs e)
+        {
+
         }
 
         #endregion

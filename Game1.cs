@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 
 namespace Bound
 {
@@ -19,8 +20,9 @@ namespace Bound
 
         public static int ScreenHeight = 1080;
         public static int ScreenWidth = 1920;
-
         public static float ResScale = 1f;
+        public static Dictionary<string, string> SettingsStates;
+
 
         private State _currentState;
         private State _nextState;
@@ -47,10 +49,11 @@ namespace Bound
                 return Game1.ScreenHeight switch
                 {
                     720 => Fonts[0],
-                    1080 => Fonts[1],
-                    1440 => Fonts[2],
-                    2160 => Fonts[3],
-                    _ => throw new Exception("Not a valid resolution"),
+                    900 => Fonts[1],
+                    1080 => Fonts[2],
+                    1440 => Fonts[3],
+                    2160 => Fonts[4],
+                    _ => Fonts[2],
                 };
             }
         }
@@ -84,6 +87,11 @@ namespace Bound
             ResScale = ScreenHeight / _defaultHeight;
 
             Random = new Random();
+
+            Game1.SettingsStates = new Dictionary<string, string>
+            {
+                {"MVolume", "50" }
+            };
         }
 
         protected override void LoadContent()
@@ -94,6 +102,7 @@ namespace Bound
             Fonts = new List<SpriteFont>()
             {
                 Content.Load<SpriteFont>("Fonts/JX-720"),
+                Content.Load<SpriteFont>("Fonts/JX-900"),
                 Content.Load<SpriteFont>("Fonts/JX-1080"),
                 Content.Load<SpriteFont>("Fonts/JX-1440"),
                 Content.Load<SpriteFont>("Fonts/JX-2160"),

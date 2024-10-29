@@ -7,8 +7,6 @@
 	> Text Input?
 
 > Settings:
-	> Resolution
-	> Frame Rate?
 	> Volume (master, music, sound fx, player actions?)
 	> Controls
 	> Particle quality

@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Bound.Controls
 {
-    public class MultiChoiceBox : Component
+    public class MultiChoiceBox : MultiChoice
     {
         private Texture2D _texture;
         private Color _color;
@@ -29,8 +29,7 @@ namespace Bound.Controls
         public int FullHeight;
         public Color PenColour;
         public int CurIndex;
-        public EventHandler OnApply;
-
+        public int Order;
 
         public float Scale
         {
@@ -53,7 +52,6 @@ namespace Bound.Controls
             _texture = arrow;
             _font = font;
 
-
             Choices = new List<string>()
             {
                 "Null"
@@ -64,6 +62,9 @@ namespace Bound.Controls
 
             CurIndex = index;
         }
+
+        
+
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
@@ -87,7 +88,7 @@ namespace Bound.Controls
                 component.Update(gameTime);
         }
 
-        public void LoadContent(Game1 _game, BorderedBox background, int i)
+        public override void LoadContent(Game1 _game, BorderedBox background)
         {
             //TODO: rewrite BorderdBox constructor so i may rewrite this method
             //Note: this code is some hot garbage
@@ -106,7 +107,7 @@ namespace Bound.Controls
 
             FullWidth = (int)((_font.MeasureString(Text).X + (gap)) + (arrowLength * 2) + longestString + (gap));
             FullHeight = (int)((_font.MeasureString(Text).Y + (10)));
-            Position = new Vector2((background.Position.X + (background.Width / 2)) - (FullWidth / 2), (background.Position.Y + (background.Height / 6) - (FullHeight / 2)) + (FullHeight + (10 * Scale)) * i);
+            Position = new Vector2((background.Position.X + (background.Width / 2)) - (FullWidth / 2), (background.Position.Y + (background.Height / 6) - (FullHeight / 2)) + (FullHeight + (10 * Scale)) * Order);
 
             _box = new BorderedBox
                 (

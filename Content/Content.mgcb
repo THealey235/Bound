@@ -101,3 +101,10 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/JX-720.spritefont
 
+#begin Fonts/JX-900.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/JX-900.spritefont
+
