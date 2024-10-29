@@ -60,7 +60,7 @@ namespace Bound
 
         #endregion
 
-        #region Main Methods
+        #region Constructor/Inherited
 
         public Game1()
         {
@@ -90,7 +90,7 @@ namespace Bound
 
             Game1.SettingsStates = new Dictionary<string, string>
             {
-                {"MVolume", "50" }
+                {"MasterVolume", "50" }
             };
         }
 
@@ -184,8 +184,8 @@ namespace Bound
                 }
                 else
                 {
-                    ScreenHeight = _graphics.PreferredBackBufferHeight = _defaultHeight;
-                    ScreenWidth = _graphics.PreferredBackBufferWidth = _defaultWidth;
+                    ScreenHeight = _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                    ScreenWidth = _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
                 }
 
                 _graphics.ApplyChanges();

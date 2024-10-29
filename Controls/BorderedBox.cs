@@ -13,6 +13,7 @@ namespace Bound.Controls
         private Texture2D _border;
         private GraphicsDevice _graphicsDevice;
         private List<Texture2D> _borderTextures;
+        private int _width;
 
         private int _barWidth
         {
@@ -29,7 +30,20 @@ namespace Bound.Controls
             }
         }
 
-        public int Width;
+        public int Width
+        {
+            get
+            {
+                return _width;
+            }
+            set
+            {
+                _width = value;
+                _border.Dispose();
+                SetRectangleTexture(_graphicsDevice, _texture);
+            }
+        }
+
         public int Height;
         public bool IsBordered;
         public Color BorderColor;
@@ -49,7 +63,7 @@ namespace Bound.Controls
             _colour = color;
             Position = position;
             _layer = layer;
-            Width = width;
+            _width = width;
             Height = height;
 
             _graphicsDevice = graphicsDevice;
@@ -87,7 +101,10 @@ namespace Bound.Controls
 
         public override void Update(GameTime gameTime)
         {
-            
+            if (_width != Width)
+            {
+
+            }
         }
 
         #region Other Methods

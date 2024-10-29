@@ -10,7 +10,6 @@ namespace Bound.Controls
     public class MultiChoiceBox : MultiChoice
     {
         private Texture2D _texture;
-        private Color _color;
         private BorderedBox _box;
         private SpriteFont _font;
         private List<Component> _components;
@@ -62,8 +61,6 @@ namespace Bound.Controls
 
             CurIndex = index;
         }
-
-        
 
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)

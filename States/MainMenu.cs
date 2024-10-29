@@ -14,8 +14,6 @@ namespace Bound.States
 
         private List<Component> _components;
 
-        private State _nextPopup;
-
         private GraphicsDeviceManager _graphics;
 
         public Color colour;
@@ -90,12 +88,6 @@ namespace Bound.States
 
         public override void Update(GameTime gameTime)
         {
-            if (_nextPopup != null)
-            {
-                _nextPopup.LoadContent();
-                Popups.Append(_nextPopup);
-            }
-
             if (Popups.Count == 0)
             {
                 foreach (var component in _components)

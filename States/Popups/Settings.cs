@@ -11,6 +11,8 @@ namespace Bound.States.Popups
 {
     public class Settings : State
     {
+        #region Properties and Fields
+
         private List<Component> _components;
         private List<MultiChoice> _multiBoxes;
 
@@ -20,6 +22,9 @@ namespace Bound.States.Popups
 
         public State Parent;
 
+        #endregion
+
+        #region Constructor / Inherited
         public Settings(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content)
         {
             Parent = parent;
@@ -35,6 +40,16 @@ namespace Bound.States.Popups
             var bbHeight = (int)(eigthHeight * 4);
             var font  = _game.Font;
 
+            int resBoxIndex = Game1.ScreenHeight switch
+                {
+                    720 => 0,
+                    900 => 1,
+                    1080 => 2,
+                    1440 => 3,
+                    2160 => 4,
+                    _ => 2
+                };
+
             var background = new BorderedBox
                 (
                     texture,
@@ -46,15 +61,6 @@ namespace Bound.States.Popups
                     bbHeight
                 );
 
-            int resBoxIndex = Game1.ScreenHeight switch
-                {
-                    720 => 0,
-                    900 => 1,
-                    1080 => 2,
-                    1440 => 3,
-                    2160 => 4,
-                    _ => 2
-                };
 
             _components = new List<Component>()
             {
@@ -108,7 +114,7 @@ namespace Bound.States.Popups
                     CurIndex = _graphics.IsFullScreen ? 0 : 1,
                     Order = 1
                 },
-                new ScrollBox(font, "MVolume")
+                new ScrollBox(font, "MasterVolume", 100f, "%")
                 {
                     Text = "Master Volume",
                     Layer = 0.8f,
@@ -134,7 +140,7 @@ namespace Bound.States.Popups
                 _multiBoxes[i].LoadContent(_game, background);
             }
 
-            }
+        }
 
         
 
@@ -163,6 +169,8 @@ namespace Bound.States.Popups
             foreach (var box in _multiBoxes)
                 box.Draw(gameTime, spriteBatch);
         }
+
+        #endregion
 
         #region Other Methods
         private void Button_Discard_Clicked(object sender, EventArgs e)
@@ -198,11 +206,18 @@ namespace Bound.States.Popups
             var isFullscreen = (box.Choices[box.CurIndex] == "Yes") ? true : false;
 
             _graphics.IsFullScreen = isFullscreen;
+
+            if (isFullscreen)
+            {
+                Game1.ScreenWidth = _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                Game1.ScreenHeight = _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            }
         }
 
         private void MasterVolume_Apply(object sender, EventArgs e)
         {
-
+            var box = _multiBoxes[2] as ScrollBox;
+            Game1.SettingsStates["MasterVolume"] = box.CurValue.Substring(0, box.CurValue.Length - 1);
         }
 
         #endregion
