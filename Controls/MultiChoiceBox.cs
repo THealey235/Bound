@@ -29,6 +29,8 @@ namespace Bound.Controls
         public Color PenColour;
         public int CurIndex;
         public int Order;
+        public int yOffset;
+        public string Type;
 
         public float Scale
         {
@@ -85,12 +87,12 @@ namespace Bound.Controls
                 component.Update(gameTime);
         }
 
-        public override void LoadContent(Game1 _game, BorderedBox background)
+        public override void LoadContent(Game1 _game, BorderedBox background, float allignment)
         {
             //TODO: rewrite BorderdBox constructor so i may rewrite this method
             //Note: this code is some hot garbage
 
-            var longestString = Choices.Aggregate(0, (a, c) => (int)((a > _font.MeasureString(c).X) ? a : _font.MeasureString(c).X));
+            var longestChoice = Choices.Aggregate(0, (a, c) => (int)((a > _font.MeasureString(c).X) ? a : _font.MeasureString(c).X));
 
             _components = new List<Component>();
             var textureScale = 0.6f;
@@ -102,9 +104,17 @@ namespace Bound.Controls
             if (Game1.ScreenHeight == 720)
                 gap -= 3;
 
-            FullWidth = (int)((_font.MeasureString(Text).X + (gap)) + (arrowLength * 2) + longestString + (gap));
+            var longestName = 0;
+            if (Type == "Video")
+                longestName = (int)_font.MeasureString("Resolution").X; //"Resolution" is the longest name in the video section
+
+            FullWidth = (int)((longestName + (gap)) + (arrowLength * 2) + longestChoice + (gap));
             FullHeight = (int)((_font.MeasureString(Text).Y + (10)));
-            Position = new Vector2((background.Position.X + (background.Width / 2)) - (FullWidth / 2), (background.Position.Y + (background.Height / 6) - (FullHeight / 2)) + (FullHeight + (10 * Scale)) * Order);
+            Position = new Vector2
+            (
+                background.Position.X + (allignment),
+                (background.Position.Y + (background.Height / 6) - (FullHeight / 2)) + (FullHeight + (10 * Scale) ) * Order + (yOffset * Scale)
+            );
 
             _box = new BorderedBox
                 (
@@ -122,7 +132,7 @@ namespace Bound.Controls
             _textPosition = new Vector2((Position.X) + (10), (Position.Y) + (5));
 
             _leftArrowPosition = new Vector2(_textPosition.X + _font.MeasureString(Text).X + gap, (Position.Y) + ((FullHeight - _texture.Height * fullScale) / 2f));
-            _rightArrowPosition = new Vector2(_leftArrowPosition.X + arrowLength + gap + longestString + gap, (Position.Y) + ((FullHeight - _texture.Height * fullScale) / 2f));
+            _rightArrowPosition = new Vector2(_leftArrowPosition.X + arrowLength + gap + longestChoice + gap, (Position.Y) + ((FullHeight - _texture.Height * fullScale) / 2f));
 
             _components.Add(
                 new Button(_texture, _font)

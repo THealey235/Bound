@@ -20,7 +20,7 @@ namespace Bound.States
 
         #endregion
 
-        #region State Methods
+        #region Inherited Methods
 
         public MainMenu(Game1 game, ContentManager content, GraphicsDeviceManager graphics) : base(game, content)
         {

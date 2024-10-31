@@ -1,13 +1,15 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace Bound.Models
 {
     public class Input
     {
-        public Keys Up;
-        public Keys Down;
-        public Keys Left;
-        public Keys Right;
+        public Dictionary<string, Keys> Keys;
 
+        public Input(Dictionary<string, Keys> keys)
+        {
+            Keys = keys;
+        }
     }
 }

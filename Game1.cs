@@ -1,4 +1,5 @@
-﻿using Bound.States;
+﻿using Bound.Models;
+using Bound.States;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -16,11 +17,11 @@ namespace Bound
         private SpriteBatch _spriteBatch;
 
         private int _defaultHeight = 1080;
-        private int _defaultWidth = 1920;
 
-        public static int ScreenHeight = 1080;
-        public static int ScreenWidth = 1920;
-        public static float ResScale = 1f;
+        public static int ScreenHeight;
+        public static int ScreenWidth;
+        public static float ResScale;
+        public Input PlayerKeys;
         public static Dictionary<string, string> SettingsStates;
 
 
@@ -78,20 +79,39 @@ namespace Bound
 
             base.Initialize();
 
-            ScreenHeight = _graphics.PreferredBackBufferHeight = _defaultHeight;
-            ScreenWidth = _graphics.PreferredBackBufferWidth = _defaultWidth;
+            ScreenHeight = _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            ScreenWidth = _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            _graphics.IsFullScreen = true;
             _graphics.ApplyChanges();
 
             IsMouseVisible = true;
 
-            ResScale = ScreenHeight / _defaultHeight;
+            ResScale = (float)ScreenHeight / (float)_defaultHeight;
 
             Random = new Random();
 
             Game1.SettingsStates = new Dictionary<string, string>
             {
-                {"MasterVolume", "50" }
+                {"Resolution",(ScreenWidth.ToString() + "x" + ScreenHeight.ToString())},
+                {"Fullscreen", "Yes" },
+                {"MasterVolume", "50" },
+                {"MusicVolume", "50" },
+                {"EnemyVolume", "50" },
+                {"PlayerVolume", "50" },
             };
+
+            PlayerKeys = new Input
+            (
+                new Dictionary<string, Keys>()
+                {
+                    {"Up", Keys.W },
+                    {"Down", Keys.S },
+                    {"Left", Keys.A },
+                    {"Right", Keys.D },
+                }
+            );
+
+            ResetState();
         }
 
         protected override void LoadContent()
@@ -176,22 +196,27 @@ namespace Bound
 
             if (_currentKeys.IsKeyDown(Keys.F11) && _previousKeys.IsKeyUp(Keys.F11))
             {
-                _graphics.ToggleFullScreen();
-                if (_graphics.IsFullScreen)
-                {
-                    ScreenHeight = _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                    ScreenWidth = _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-                }
-                else
-                {
-                    ScreenHeight = _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                    ScreenWidth = _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-                }
-
-                _graphics.ApplyChanges();
-
-                ResetState();
+                ToggleFullScreen();
             }
+        }
+
+        private void ToggleFullScreen()
+        {
+            _graphics.ToggleFullScreen();
+            if (_graphics.IsFullScreen)
+            {
+                ScreenHeight = _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                ScreenWidth = _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            }
+            else
+            {
+                ScreenHeight = _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                ScreenWidth = _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            }
+
+            _graphics.ApplyChanges();
+
+            ResetState();
         }
 
         public void ResetState()

@@ -47,7 +47,7 @@ namespace Bound.Controls
 
         public float TextureScale;
 
-        public Vector2 CustomPosition;
+        public Vector2 RelativePosition; //Position relative to the parent
 
         public BorderedBox Parent;
 
@@ -128,7 +128,7 @@ namespace Bound.Controls
 
             if (Parent != null)
             {
-                Position = new Vector2(Parent.Position.X + CustomPosition.X, Parent.Position.Y + CustomPosition.Y);
+                Position = new Vector2(Parent.Position.X + RelativePosition.X, Parent.Position.Y + RelativePosition.Y);
                 spriteBatch.Draw(_texture, Position, null, colour, 0f, Vector2.Zero, Scale, Effect, Layer);
             }
             else

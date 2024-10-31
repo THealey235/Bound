@@ -11,8 +11,8 @@ namespace Bound.Controls
         private Color _colour;
         private float _layer;
         private Texture2D _border;
+        public List<Texture2D> _borderTextures;
         private GraphicsDevice _graphicsDevice;
-        private List<Texture2D> _borderTextures;
         private int _width;
 
         private int _barWidth
@@ -101,10 +101,7 @@ namespace Bound.Controls
 
         public override void Update(GameTime gameTime)
         {
-            if (_width != Width)
-            {
 
-            }
         }
 
         #region Other Methods
@@ -137,7 +134,7 @@ namespace Bound.Controls
             _border.SetData<Color>(colours.ToArray());
         }
 
-        //public void SavingForARainyDay(GraphicsDevice graphics, Texture2D texture)
+        //public void Tmp(GraphicsDevice graphics, Texture2D texture)
         //{
         //    var height = (int)(_texture.Height * _scale.Y);
         //    var width = (int)(_texture.Width * _scale.X);

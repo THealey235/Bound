@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Bound.Controls
 {
@@ -38,7 +39,9 @@ namespace Bound.Controls
         public Color PenColour;
         public string CurValue;
         public int Order;
+        public int yOffset;
 
+        //"curosor" refers to the black box which sets the current value. NOT the mouse curosr
         private Rectangle _cursorRectangle
         {
             get
@@ -97,16 +100,14 @@ namespace Bound.Controls
             Name = name;
             TextureScale = 1f;
             PenColour = Color.Black;
+
             _symbol = symbol;
 
             CurValue = Game1.SettingsStates[name] + symbol;
-
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            
-
             foreach (var component in _components)
                 component.Draw(gameTime, spriteBatch);
 
@@ -115,6 +116,7 @@ namespace Bound.Controls
                 spriteBatch.DrawString(_font, Text, _textPosition, PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
             }
 
+            //Alligns value to the right side of the control
             var valuePos = new Vector2(_valuePosition.X - _font.MeasureString(CurValue).X, _valuePosition.Y);
 
             spriteBatch.DrawString(_font, CurValue, valuePos, PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
@@ -130,6 +132,7 @@ namespace Bound.Controls
 
             var mouseRectangle = new Rectangle(_currentMouse.X, _currentMouse.Y, 1, 1);
 
+            //if it has just been clicked on or left click is still pressed
             if ((mouseRectangle.Intersects(_cursorRectangle) &&
                 _currentMouse.LeftButton == ButtonState.Pressed && 
                 _previousMouse.LeftButton == ButtonState.Released) ||
@@ -145,7 +148,8 @@ namespace Bound.Controls
         }
 
 
-        public override void LoadContent(Game1 _game, BorderedBox background)
+        //Sets the position and values of all children.
+        public override void LoadContent(Game1 _game, BorderedBox background, float allignment)
         {
             var gap = 10f * Game1.ResScale;
             if (Game1.ScreenHeight == 720)
@@ -153,19 +157,34 @@ namespace Bound.Controls
 
             TextureScale = 1f;
 
-            _barLength = (int)(400 * Scale);
+            _barLength = (int)(300 * Scale);
 
+            var toAdd = (Game1.ScreenHeight == 720) ? 10 : 1.5f * Game1.ResScale; //I dislike 720p
+
+            int longestName = 0;
+            if (true)
+                longestName = Game1.SettingsStates.Keys
+                    .Aggregate(
+                        0,
+                        (a, c) => (a >= _font.MeasureString(c).X) ? a : (int)_font.MeasureString(c).X) + (int)_font.MeasureString(" ").X;
+                        //" " accounts for that the Keys don't have a space 
 
 
             FullHeight = (int)((_font.MeasureString(Text).Y + (10)));
-            FullWidth = (int)(_font.MeasureString(Text).X + gap + _barLength + 2 * gap + _font.MeasureString("100%").X + (Game1.ResScale));
 
-            Position = new Vector2((background.Position.X + (background.Width / 2)) - (FullWidth / 2), (background.Position.Y + (background.Height / 6) - (FullHeight / 2)) + (FullHeight + (10 * Scale)) * Order);
+            FullWidth = (int)(longestName + gap + _barLength + 2 * gap + _font.MeasureString("100%").X + toAdd);
+
+            Position = new Vector2
+            (
+                (background.Position.X + (allignment * Scale)),
+                (background.Position.Y + (background.Height / 6) - (FullHeight / 2)) + (FullHeight + (10 * Scale)) * Order + (yOffset * Scale)
+            );
+            
             _textPosition = new Vector2(Position.X + 10, Position.Y + ((FullHeight - _font.MeasureString(Text).Y) / 2) );
             _valuePosition = new Vector2(Position.X + FullWidth - Game1.ResScale, Position.Y + (FullHeight- _font.MeasureString(CurValue).Y) / 2) ;
 
             _barHeight = (int)(FullHeight / 2);
-            _barPos = new Vector2(10 + Position.X + _font.MeasureString(Text).X + gap, Position.Y + (FullHeight  / 4) + (2 * Game1.ResScale));
+            _barPos = new Vector2(10 + Position.X + longestName + gap, Position.Y + (FullHeight  / 4) + (2 * Game1.ResScale));
 
             _cursorWidth = (int)(15f * Game1.ResScale);
             _greenBar = new BorderedBox
@@ -226,6 +245,7 @@ namespace Bound.Controls
         {
             var x = MathHelper.Clamp(_currentMouse.X, _barPos.X, _barPos.X + _barLength);
             x = ((float)(x - _barPos.X) / (float)_barLength) * 100;
+            x = (x > 99f) ? 100f : x; 
             CurValue = ((int)x).ToString() +  _symbol ;
             _greenBar.Width = GreenBarLength;
             _cursor.Position = CursorPositon;

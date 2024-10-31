@@ -2,12 +2,9 @@
 	> Background is blurred with black tint (apply Color.Gray to background elements)
 
 > Elements:
-	> Tick boxes?
-	> Sliders?
 	> Text Input?
 
 > Settings:
-	> Volume (master, music, sound fx, player actions?)
 	> Controls
 	> Particle quality
 	> Zoom

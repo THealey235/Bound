@@ -16,6 +16,6 @@ namespace Bound.Controls
 
         public abstract void Update(GameTime gameTime);
 
-        public abstract void LoadContent(Game1 game, BorderedBox background);
+        public abstract void LoadContent(Game1 game, BorderedBox background, float allignment);
     }
 }
