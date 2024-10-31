@@ -172,6 +172,7 @@ namespace Bound.States.Popups
                      {
                          Layer = 0.8f,
                          Order = acc,
+                         OnApply = new EventHandler(Key_Apply)
                      }
                 ); 
                 acc++;
@@ -180,6 +181,7 @@ namespace Bound.States.Popups
             LoadNestedContent(bbWidth, bbHeight, background, allignments);
 
         }
+
 
         private void LoadNestedContent(int bbWidth, int bbHeight, BorderedBox background, float[] allignments)
         {
@@ -200,7 +202,6 @@ namespace Bound.States.Popups
             foreach (var key in _keyInputs)
                 key.LoadContent(_game, background, allignments[1]);
         }
-
 
         public override void Update(GameTime gameTime)
         {
@@ -253,6 +254,9 @@ namespace Bound.States.Popups
             foreach (var box in _multiBoxes)
                 box.OnApply?.Invoke(box, EventArgs.Empty);
 
+            foreach (var keyBox in _keyInputs)
+                keyBox.OnApply?.Invoke(keyBox, EventArgs.Empty);
+
             _graphics.ApplyChanges();
         }
         private void Resolution_Apply(object sender, EventArgs e)
@@ -282,6 +286,12 @@ namespace Bound.States.Popups
         {
             var box = sender as ScrollBox;
             Game1.SettingsStates[box.Name] = box.CurValue.Substring(0, box.CurValue.Length - 1);
+        }
+
+        private void Key_Apply(object sender, EventArgs e)
+        {
+            var ki= sender as KeyInput;
+            _game.PlayerKeys.Keys[ki.Keys.Key] = ki.Key;
         }
 
         #endregion

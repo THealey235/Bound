@@ -13,7 +13,6 @@ namespace Bound.Controls
         private List<Component> _components;
         private BorderedBox _borderedBox;
         private SpriteFont _font;
-        private KeyValuePair<string, Keys> _keys;
         private int _longestInput;
         private Vector2 _textPosition;
         private KeyboardState _previousKey;
@@ -21,6 +20,7 @@ namespace Bound.Controls
         private MouseState _previousMouse;
         private MouseState _currentMouse;
 
+        public KeyValuePair<string, string> Keys;
         public Color PenColour;
         public int FullWidth;
         public int FullHeight;
@@ -29,17 +29,15 @@ namespace Bound.Controls
         public Vector2 Position;
         public int Order;
         public bool IsClicked;
-        public Keys NewKey = Keys.None;
-        public string NewMouse;
+        public string NewKey;
 
-        public Keys Key
+        public string Key
         {
             get
             {
-                if (NewKey != Keys.None)
+                if (NewKey != null)
                     return NewKey;
-                if (NewMouse != null)
-                return _keys.Value;
+                return Keys.Value;
             }
         }
 
@@ -51,14 +49,14 @@ namespace Bound.Controls
             }
         }
 
-        public KeyInput(SpriteFont font, KeyValuePair<string, Keys> key, int longestInput)
+        public KeyInput(SpriteFont font, KeyValuePair<string, string> key, int longestInput)
         { 
             _font = font;
             _components = new List<Component>();
 
             PenColour = Color.Black;
 
-            _keys = key;
+            Keys = key;
 
             TextureScale = 1f;
             
@@ -71,9 +69,9 @@ namespace Bound.Controls
             foreach (var comp in _components)
                 comp.Draw(gameTime, spriteBatch);
 
-            if (!string.IsNullOrEmpty(_keys.Key))
+            if (!string.IsNullOrEmpty(Keys.Key))
             {
-                spriteBatch.DrawString(_font, _keys.Key, _textPosition, PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
+                spriteBatch.DrawString(_font, Keys.Key, _textPosition, PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
             }
         }
 
@@ -114,7 +112,7 @@ namespace Bound.Controls
                 _borderedBox,
                 new Button(game.Button, _font, _borderedBox)
                 {
-                    Text = Key.ToString(),
+                    Text = Key,
                     Click = new EventHandler(Clicked),
                     Layer = Layer + 0.1f,
                     RelativePosition = new Vector2(10 + _longestInput, (FullHeight - boxHeight) / 2),
@@ -133,28 +131,34 @@ namespace Bound.Controls
 
             _previousKey = _currentKey;
             _currentKey = Keyboard.GetState();
+
             foreach(var component in _components) 
                 component.Update(gameTime);
 
 
             if (IsClicked)
             {
-                if(_previousKey.GetPressedKeys()[0] == Keys.None &&
-                    _currentKey.GetPressedKeys()[0] != Keys.None)
+                (_components[1] as Button).IsHovering = true;
+
+                if (_previousKey.GetPressedKeys().Length == 0 &&
+                    _currentKey.GetPressedKeys().Length > 0)
                 {
-                     NewKey = _currentKey.GetPressedKeys()[0];
+                    ChangeKey(_currentKey.GetPressedKeys()[0].ToString());
                 }
-                else if (_previousMouse.LeftButton == ButtonState.Released && 
-                    _previousMouse.RightButton == ButtonState.Released && 
-                    _previousMouse.MiddleButton == ButtonState.Released)                    
+                else if (_previousMouse.LeftButton == ButtonState.Released &&
+                    _previousMouse.RightButton == ButtonState.Released &&
+                    _previousMouse.MiddleButton == ButtonState.Released)
                 {
                     if (_currentMouse.LeftButton == ButtonState.Pressed)
-                        NewMouse = "Left";
+                        ChangeKey("M1");
                     else if (_currentMouse.RightButton == ButtonState.Pressed)
-                        NewMouse = "Right";
+                        ChangeKey("M2");
                     else if (_currentMouse.MiddleButton == ButtonState.Pressed)
-                        NewMouse = "Middle";
-
+                        ChangeKey("M3");
+                    else if (_currentMouse.XButton1 == ButtonState.Pressed)
+                        ChangeKey("M4");
+                    else if (_currentMouse.XButton2 == ButtonState.Pressed)
+                        ChangeKey("M5");
                 }
             }
         }
@@ -164,5 +168,11 @@ namespace Bound.Controls
             IsClicked = true;
         }
         
+        private void ChangeKey(string value)
+        {
+            NewKey = value;
+            IsClicked = false;
+            (_components[1] as Button).Text = value;
+        }
     }
 }

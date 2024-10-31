@@ -53,6 +53,18 @@ namespace Bound.Controls
 
         public int xOffset;
 
+        public bool IsHovering
+        {
+            get
+            {
+                return _isHovering;
+            }
+            set
+            {
+                _isHovering = value;
+            }
+        }
+
         public Vector2 Origin
         {
             get

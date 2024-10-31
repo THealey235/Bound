@@ -102,12 +102,12 @@ namespace Bound
 
             PlayerKeys = new Input
             (
-                new Dictionary<string, Keys>()
+                new Dictionary<string, string>()
                 {
-                    {"Up", Keys.W },
-                    {"Down", Keys.S },
-                    {"Left", Keys.A },
-                    {"Right", Keys.D },
+                    {"Up", "W" },
+                    {"Down", "S" },
+                    {"Left", "A" },
+                    {"Right", "D" },
                 }
             );
 
