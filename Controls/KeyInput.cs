@@ -140,10 +140,13 @@ namespace Bound.Controls
             {
                 (_components[1] as Button).IsHovering = true;
 
-                if (_previousKey.GetPressedKeys().Length == 0 &&
+                if (_previousKey.GetPressedKeys().Length == 1 &&
                     _currentKey.GetPressedKeys().Length > 0)
                 {
-                    ChangeKey(_currentKey.GetPressedKeys()[0].ToString());
+                    if (_currentKey.GetPressedKeys()[0].ToString() != "Pause")
+                        ChangeKey(_currentKey.GetPressedKeys()[0].ToString());
+                    if (_currentKey.GetPressedKeys().Length > 1)
+                        ChangeKey(_currentKey.GetPressedKeys()[1].ToString());
                 }
                 else if (_previousMouse.LeftButton == ButtonState.Released &&
                     _previousMouse.RightButton == ButtonState.Released &&

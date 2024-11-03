@@ -91,7 +91,7 @@ namespace Bound.Controls
         #endregion
 
         #region Constructor/Inherited Methods
-        public ScrollBox(SpriteFont font, string name, float max, string symbol)
+        public ScrollBox(SpriteFont font, string name, float max, string symbol, Game1 game)
         {
             _font = font;
             _components = new List<Component>();
@@ -103,7 +103,7 @@ namespace Bound.Controls
 
             _symbol = symbol;
 
-            CurValue = Game1.SettingsStates[name] + symbol;
+            CurValue = game.Settings.Settings.General[name] + symbol;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -161,13 +161,11 @@ namespace Bound.Controls
 
             var toAdd = (Game1.ScreenHeight == 720) ? 10 : 1.5f * Game1.ResScale; //I dislike 720p
 
-            int longestName = 0;
-            if (true)
-                longestName = Game1.SettingsStates.Keys
-                    .Aggregate(
-                        0,
-                        (a, c) => (a >= _font.MeasureString(c).X) ? a : (int)_font.MeasureString(c).X) + (int)_font.MeasureString(" ").X;
-                        //" " accounts for that the Keys don't have a space 
+            var longestName = _game.Settings.Settings.General.Keys
+                .Aggregate(
+                    0,
+                    (a, c) => (a >= _font.MeasureString(c).X) ? a : (int)_font.MeasureString(c).X) + (int)_font.MeasureString(" ").X;
+                    //" " accounts for that the Keys don't have a space 
 
 
             FullHeight = (int)((_font.MeasureString(Text).Y + (10)));

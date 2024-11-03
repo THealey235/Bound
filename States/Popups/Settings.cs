@@ -1,4 +1,5 @@
 ﻿using Bound.Controls;
+using Bound.Managers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -43,16 +44,17 @@ namespace Bound.States.Popups
 
             var volumeOffset = 50;
 
-            int resBoxIndex = Game1.ScreenHeight switch
+            //LMAO SETTINGS.SETTINGS.SETTINGS WTF IS THIS
+            var generalSettings = _game.Settings.Settings.General;
+
+            int resBoxIndex = int.Parse(generalSettings["Resolution"].Split("x")[1]) switch
             {
                 720 => 0,
                 900 => 1,
                 1080 => 2,
                 1440 => 3,
-                2160 => 4,
-                _ => 2
+                _ => 4
             };
-
 
             var background = new BorderedBox
                 (
@@ -67,7 +69,7 @@ namespace Bound.States.Popups
 
 
             //0 : left allignemt, 1: right allignment
-            var allignments = new float[2] {15f, (bbWidth / 4) * 3};
+            var allignments = new float[2] {15f, (eigthHeight / 2) + eigthHeight * 6};
 
 
             _components = new List<Component>()
@@ -79,7 +81,6 @@ namespace Bound.States.Popups
                     Click = new EventHandler(Button_Discard_Clicked),
                     Layer = 0.8f,
                     TextureScale = 1.5f,
-                    xOffset = 2
                 },
                 new Button(_game.Button, font, background)
                 {
@@ -87,8 +88,14 @@ namespace Bound.States.Popups
                     Click = new EventHandler(Button_Apply_Clicked),
                     Layer = 0.8f,
                     TextureScale = 1.5f,
-                    xOffset = (int)(2 * Game1.ResScale),
                 },
+                new Button(_game.Button, font, background)
+                {
+                    Text = "Reset",
+                    Click = new EventHandler(Button_Reset_Clicked),
+                    Layer = 0.8f,
+                    TextureScale = 1.5f,
+                }
 
             };
 
@@ -110,7 +117,7 @@ namespace Bound.States.Popups
                     Order = 0,
                     Type = "Video",
                 },
-                new MultiChoiceBox(texture,_game.ArrowLeft, font, resBoxIndex)
+                new MultiChoiceBox(texture,_game.ArrowLeft, font, _game.Settings.Settings.General["Fullscreen"] == "Yes" ? 0 : 1)
                 {
                     Text = "Fullscreen",
                     Choices = new List<string>()
@@ -120,11 +127,23 @@ namespace Bound.States.Popups
                     },
                     Layer = 0.8f,
                     OnApply = new EventHandler(Fullscreen_Apply),
-                    CurIndex = _graphics.IsFullScreen ? 0 : 1,
                     Order = 1,
                     Type = "Video"
                 },
-                new ScrollBox(font, "MasterVolume", 100f, "%")
+                //new MultiChoiceBox(texture, _game.ArrowLeft, font, _game.Settings.Settings.General["DefaultMouse"] == "Yes" ? 0 : 1)
+                //{
+                //    Text = "Custom Cursor",
+                //    Choices = new List<string>()
+                //    {
+                //        "Yes",
+                //        "No"
+                //    },
+                //    Layer = 0.8f,
+                //    OnApply = new EventHandler(CustomCursor_Apply),
+                //    Order = 2,
+                //    Type = "Video"
+                //},
+                new ScrollBox(font, "MasterVolume", 100f, "%", _game)
                 {
                     Text = "Master Volume",
                     Layer = 0.8f,
@@ -132,7 +151,7 @@ namespace Bound.States.Popups
                     Order = 2,
                     yOffset = volumeOffset,
                 },
-                new ScrollBox(font, "MusicVolume", 100f, "%")
+                new ScrollBox(font, "MusicVolume", 100f, "%", _game)
                 {
                     Text = "Music Volume",
                     Layer = 0.8f,
@@ -140,7 +159,7 @@ namespace Bound.States.Popups
                     Order = 3,
                     yOffset = volumeOffset,
                 },
-                new ScrollBox(font, "EnemyVolume", 100f, "%")
+                new ScrollBox(font, "EnemyVolume", 100f, "%", _game)
                 {
                     Text = "Enemy Volume",
                     Layer = 0.8f,
@@ -148,7 +167,7 @@ namespace Bound.States.Popups
                     Order = 4,
                     yOffset = volumeOffset,
                 },
-                new ScrollBox(font, "PlayerVolume", 100f, "%")
+                new ScrollBox(font, "PlayerVolume", 100f, "%", _game)
                 {
                     Text = "Player Volume",
                     Layer = 0.8f,
@@ -161,10 +180,10 @@ namespace Bound.States.Popups
 
             _keyInputs = new List<KeyInput>();
 
-            var longestInput = (int)(_game.PlayerKeys.Keys.Keys.Aggregate(0f, (a, c) => (a >= font.MeasureString(c).X) ? a : font.MeasureString(c).X));
+            var longestInput = (int)(_game.Settings.Settings.InputValues.Keys.Aggregate(0f, (a, c) => (a >= font.MeasureString(c).X) ? a : font.MeasureString(c).X));
 
             int acc = 0;
-            foreach (var kvp in _game.PlayerKeys.Keys)
+            foreach (var kvp in _game.Settings.Settings.InputValues)
             {
                 _keyInputs.Add
                 (
@@ -189,10 +208,16 @@ namespace Bound.States.Popups
             float buttonHeight = _game.Button.Height * comp.Scale;
             float buttonWidth = _game.Button.Width * comp.Scale;
             //possibly spaghetti code
-            comp.RelativePosition = new Vector2(((bbWidth - buttonWidth) / 2) - (buttonWidth + (5 * comp.Scale)), bbHeight - (buttonHeight + (15 * comp.Scale)));
-
             comp = _components[2] as Button;
-            comp.RelativePosition = new Vector2(((bbWidth - buttonWidth) / 2) + (buttonWidth + (5 * comp.Scale)), bbHeight - (buttonHeight + (15 * comp.Scale)));
+
+            var thirdTotalSpace = (float)(((bbWidth - buttonWidth) / 2) + (buttonWidth * 1.5f + (10 * comp.Scale))) / 3f;
+
+            for (int i = 1; i < _components.Count; i++)
+            {
+                comp = _components[i] as Button;
+                comp.RelativePosition = new Vector2(((bbWidth - buttonWidth) / 2) - (buttonWidth * 1.5f + (10 * comp.Scale)), bbHeight - (buttonHeight + (15 * comp.Scale)));
+                comp.xOffset = (int)(thirdTotalSpace * (i - 1));
+            }
 
             for (int i = 0; i < _multiBoxes.Count; i++)
             {
@@ -248,6 +273,14 @@ namespace Bound.States.Popups
 
             _game.ResetState();
         }
+        private void Button_Reset_Clicked(object sender, EventArgs e)
+        {
+            _game.Settings.Init();
+
+            this.LoadContent();
+
+            Button_Apply_Clicked(sender, e);
+        }
 
         private void ApplyChanges()
         {
@@ -258,6 +291,8 @@ namespace Bound.States.Popups
                 keyBox.OnApply?.Invoke(keyBox, EventArgs.Empty);
 
             _graphics.ApplyChanges();
+
+            SettingsManager.Save(_game.Settings);
         }
         private void Resolution_Apply(object sender, EventArgs e)
         {
@@ -266,11 +301,14 @@ namespace Bound.States.Popups
 
             Game1.ScreenWidth = _graphics.PreferredBackBufferWidth = resolution[0];
             Game1.ScreenHeight = _graphics.PreferredBackBufferHeight = resolution[1];
+            _game.Settings.UpdateResolution(resolution[0], resolution[1]);
         }
 
         private void Fullscreen_Apply(object sender, EventArgs e)
         {
             var box = sender as MultiChoiceBox;
+
+            _game.Settings.Settings.General["Fullscreen"] = box.Choices[box.CurIndex];
             var isFullscreen = (box.Choices[box.CurIndex] == "Yes") ? true : false;
 
             _graphics.IsFullScreen = isFullscreen;
@@ -279,19 +317,28 @@ namespace Bound.States.Popups
             {
                 Game1.ScreenWidth = _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
                 Game1.ScreenHeight = _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                _game.Settings.UpdateResolution(Game1.ScreenWidth, Game1.ScreenHeight);
             }
         }
 
         private void Volume_Apply(object sender, EventArgs e)
         {
             var box = sender as ScrollBox;
-            Game1.SettingsStates[box.Name] = box.CurValue.Substring(0, box.CurValue.Length - 1);
+            _game.Settings.Settings.General[box.Name] = box.CurValue.Substring(0, box.CurValue.Length - 1);
         }
 
         private void Key_Apply(object sender, EventArgs e)
         {
-            var ki= sender as KeyInput;
-            _game.PlayerKeys.Keys[ki.Keys.Key] = ki.Key;
+            var ki = sender as KeyInput;
+            _game.Settings.Settings.InputValues[ki.Keys.Key] = ki.Key;
+        }
+
+        private void CustomCursor_Apply(object sender, EventArgs e)
+        {
+            var box = sender as MultiChoiceBox;
+            _game.UseDefaultMouse = (box.CurIndex == 1) ? true : false;
+            _game.IsMouseVisible = (box.CurIndex == 1) ? true : false;
+            _game.Settings.Settings.General["DefaultMouse"] = (box.CurIndex == 1) ? "Yes" : "No";
         }
 
         #endregion

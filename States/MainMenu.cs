@@ -69,16 +69,8 @@ namespace Bound.States
                 },
                 new Button(buttonTexture, font)
                 {
-                    Text = "Training",
-                    Position = new Vector2(leftOffset , topOffset + (spacing * 3)),
-                    Click = new EventHandler(Button_Training_Clicked),
-                    TextureScale = 2f,
-                    Layer = layer,
-                },
-                new Button(buttonTexture, font)
-                {
                     Text = "Quit",
-                    Position = new Vector2(leftOffset , topOffset + (spacing * 4)),
+                    Position = new Vector2(leftOffset , topOffset + (spacing * 3)),
                     Click = new EventHandler(Button_Quit_Clicked),
                     TextureScale = 2f,
                     Layer = layer,
@@ -133,11 +125,6 @@ namespace Bound.States
         {
             Popups.Add(new Settings(_game, _content, this, _graphics));
             Popups[^1].LoadContent();
-        }
-
-        private void Button_Training_Clicked(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         private void Button_Quit_Clicked(object sender, EventArgs e)

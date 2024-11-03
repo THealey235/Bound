@@ -109,8 +109,6 @@ namespace Bound.Controls
 
             PenColour = Color.Black;
 
-            xOffset = 3;
-
             Effect = SpriteEffects.None;
         }
 
@@ -130,21 +128,21 @@ namespace Bound.Controls
                 colour = Color.White;
             }
 
-            if (!string.IsNullOrEmpty(Text))
-            {
-                var x = (Position.X) + ((Rectangle.Width - (_font.MeasureString(Text).X)) / 2) + (xOffset);
-                var y = (Position.Y) + ((Rectangle.Height - (_font.MeasureString(Text).Y)) / 2);
-
-                spriteBatch.DrawString(_font, Text, new Vector2(x, y), PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
-            }
-
             if (Parent != null)
             {
-                Position = new Vector2(Parent.Position.X + RelativePosition.X, Parent.Position.Y + RelativePosition.Y);
+                Position = new Vector2(Parent.Position.X + RelativePosition.X + xOffset, Parent.Position.Y + RelativePosition.Y); ;
                 spriteBatch.Draw(_texture, Position, null, colour, 0f, Vector2.Zero, Scale, Effect, Layer);
             }
             else
                 spriteBatch.Draw(_texture, Position, null, colour, 0f, Vector2.Zero, Scale, Effect, Layer);
+
+            if (!string.IsNullOrEmpty(Text))
+            {
+                var x = (Position.X) + ((Rectangle.Width - (_font.MeasureString(Text).X)) / 2);
+                var y = (Position.Y) + ((Rectangle.Height - (_font.MeasureString(Text).Y)) / 2);
+
+                spriteBatch.DrawString(_font, Text, new Vector2(x, y), PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
+            }
         }
 
         public override void Update(GameTime gameTime)

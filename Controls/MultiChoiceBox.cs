@@ -106,7 +106,7 @@ namespace Bound.Controls
 
             var longestName = 0;
             if (Type == "Video")
-                longestName = (int)_font.MeasureString("Resolution").X; //"Resolution" is the longest name in the video section
+                longestName = (int)_font.MeasureString(Text).X; //"Resolution" is the longest name in the video section
 
             FullWidth = (int)((longestName + (gap)) + (arrowLength * 2) + longestChoice + (gap));
             FullHeight = (int)((_font.MeasureString(Text).Y + (10)));

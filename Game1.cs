@@ -1,4 +1,5 @@
-﻿using Bound.Models;
+﻿using Bound.Managers;
+using Bound.Models;
 using Bound.States;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -6,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 
 namespace Bound
 {
@@ -21,8 +23,10 @@ namespace Bound
         public static int ScreenHeight;
         public static int ScreenWidth;
         public static float ResScale;
+        public SettingsManager Settings;
         public Input PlayerKeys;
         public static Dictionary<string, string> SettingsStates;
+        public bool UseDefaultMouse;
 
 
         private State _currentState;
@@ -42,6 +46,8 @@ namespace Bound
         public Texture2D BaseBackground;
         public Texture2D RedX;
         public Texture2D ArrowLeft;
+        public Texture2D MouseOutline;
+        public Texture2D MouseFill;
 
         public SpriteFont Font
         {
@@ -72,6 +78,8 @@ namespace Bound
 
         protected override void Initialize()
         {
+            Settings = SettingsManager.Load();
+
             _graphics.HardwareModeSwitch = false;
             _graphics.GraphicsProfile = GraphicsProfile.HiDef;
 
@@ -79,37 +87,20 @@ namespace Bound
 
             base.Initialize();
 
-            ScreenHeight = _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-            ScreenWidth = _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            _graphics.IsFullScreen = true;
+            var resolution = Settings.Settings.General["Resolution"].Split("x").Select(x => int.Parse(x)).ToList();
+
+            ScreenHeight = _graphics.PreferredBackBufferHeight = resolution[1];
+            ScreenWidth = _graphics.PreferredBackBufferWidth = resolution[0];
+            _graphics.IsFullScreen = (Settings.Settings.General["Fullscreen"] == "Yes") ? true : false;
+
             _graphics.ApplyChanges();
 
-            IsMouseVisible = true;
+            var defaultMouse = (Settings.Settings.General["DefaultMouse"] == "Yes") ? true : false ;
 
             ResScale = (float)ScreenHeight / (float)_defaultHeight;
 
             Random = new Random();
 
-            Game1.SettingsStates = new Dictionary<string, string>
-            {
-                {"Resolution",(ScreenWidth.ToString() + "x" + ScreenHeight.ToString())},
-                {"Fullscreen", "Yes" },
-                {"MasterVolume", "50" },
-                {"MusicVolume", "50" },
-                {"EnemyVolume", "50" },
-                {"PlayerVolume", "50" },
-            };
-
-            PlayerKeys = new Input
-            (
-                new Dictionary<string, string>()
-                {
-                    {"Up", "W" },
-                    {"Down", "S" },
-                    {"Left", "A" },
-                    {"Right", "D" },
-                }
-            );
 
             ResetState();
         }
@@ -130,6 +121,8 @@ namespace Bound
             BaseBackground = Content.Load<Texture2D>("Backgrounds/BaseBackground");
             RedX = Content.Load<Texture2D>("Controls/RedX");
             ArrowLeft = Content.Load<Texture2D>("Controls/ArrowLeft");
+            MouseOutline = Content.Load<Texture2D>("Mouse/MouseOutline");
+            MouseFill = Content.Load<Texture2D>("Mouse/MouseFill");
 
             _currentState = new MainMenu(this, Content, _graphics);
             _currentState.LoadContent();
@@ -176,7 +169,16 @@ namespace Bound
         {
             GraphicsDevice.Clear(Color.MidnightBlue);
 
+            var mousePoint = Mouse.GetState().Position;
+            var mousePosition = new Vector2(mousePoint.X, mousePoint.Y);
+
             _spriteBatch.Begin(SpriteSortMode.FrontToBack);
+
+            //if (!UseDefaultMouse)
+            //{
+            //    _spriteBatch.Draw(MouseOutline, mousePosition, null, Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.99f);
+            //    _spriteBatch.Draw(MouseFill, mousePosition, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.99f);
+            //}
 
             _currentState.Draw(gameTime, _spriteBatch);
 
