@@ -1,4 +1,5 @@
 ﻿using Bound.Controls;
+using Bound.Controls.Settings;
 using Bound.Managers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -35,12 +36,12 @@ namespace Bound.States.Popups
 
         public override void LoadContent()
         {
+            var texture = _game.Textures.BaseBackground;
             var eigthWidth = Game1.ScreenWidth / 8;
             var eigthHeight = Game1.ScreenHeight / 8;
-            var texture = _game.BaseBackground;
             var bbWidth = (int)(eigthWidth * 6);
             var bbHeight = (int)(eigthHeight * 6);
-            var font = _game.Font;
+            var font = _game.Textures.Font;
 
             var volumeOffset = 50;
 
@@ -75,21 +76,21 @@ namespace Bound.States.Popups
             _components = new List<Component>()
             {
                 background,
-                new Button(_game.Button, font, background)
+                new Button(_game.Textures.Button, font, background)
                 {
                     Text = "Back",
                     Click = new EventHandler(Button_Discard_Clicked),
                     Layer = 0.8f,
                     TextureScale = 1.5f,
                 },
-                new Button(_game.Button, font, background)
+                new Button(_game.Textures.Button, font, background)
                 {
                     Text = "Apply",
                     Click = new EventHandler(Button_Apply_Clicked),
                     Layer = 0.8f,
                     TextureScale = 1.5f,
                 },
-                new Button(_game.Button, font, background)
+                new Button(_game.Textures.Button, font, background)
                 {
                     Text = "Reset",
                     Click = new EventHandler(Button_Reset_Clicked),
@@ -101,7 +102,7 @@ namespace Bound.States.Popups
 
             _multiBoxes = new List<MultiChoice>()
             {
-                new MultiChoiceBox(texture, _game.ArrowLeft, font, resBoxIndex)
+                new MultiChoiceBox(texture, _game.Textures.ArrowLeft, font, resBoxIndex)
                 {
                     Text = "Resolution",
                     Choices = new List<string>()
@@ -117,7 +118,7 @@ namespace Bound.States.Popups
                     Order = 0,
                     Type = "Video",
                 },
-                new MultiChoiceBox(texture,_game.ArrowLeft, font, _game.Settings.Settings.General["Fullscreen"] == "Yes" ? 0 : 1)
+                new MultiChoiceBox(texture,_game.Textures.ArrowLeft, font, _game.Settings.Settings.General["Fullscreen"] == "Yes" ? 0 : 1)
                 {
                     Text = "Fullscreen",
                     Choices = new List<string>()
@@ -205,10 +206,9 @@ namespace Bound.States.Popups
         private void LoadNestedContent(int bbWidth, int bbHeight, BorderedBox background, float[] allignments)
         {
             var comp = _components[1] as Button;
-            float buttonHeight = _game.Button.Height * comp.Scale;
-            float buttonWidth = _game.Button.Width * comp.Scale;
+            float buttonHeight = _game.Textures.Button.Height * comp.Scale;
+            float buttonWidth = _game.Textures.Button.Width * comp.Scale;
             //possibly spaghetti code
-            comp = _components[2] as Button;
 
             var thirdTotalSpace = (float)(((bbWidth - buttonWidth) / 2) + (buttonWidth * 1.5f + (10 * comp.Scale))) / 3f;
 
@@ -262,7 +262,7 @@ namespace Bound.States.Popups
 
         #endregion
 
-        #region Other Methods
+        #region Clicked Methods
         private void Button_Discard_Clicked(object sender, EventArgs e)
         {
             Parent.Popups.Remove(this);

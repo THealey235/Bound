@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Bound.Controls
+namespace Bound.Controls.Settings
 {
     public class KeyInput : MultiChoice
     {
@@ -50,7 +50,7 @@ namespace Bound.Controls
         }
 
         public KeyInput(SpriteFont font, KeyValuePair<string, string> key, int longestInput)
-        { 
+        {
             _font = font;
             _components = new List<Component>();
 
@@ -59,9 +59,9 @@ namespace Bound.Controls
             Keys = key;
 
             TextureScale = 1f;
-            
+
             _longestInput = longestInput;
-           
+
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -83,22 +83,22 @@ namespace Bound.Controls
 
             var boxLength = _font.MeasureString(" ").X; //any 3 chars have the same length
 
-            FullWidth = (int)(10 + _longestInput + gap + game.Button.Width * Scale + gap);
-            FullHeight = (int)(_font.MeasureString("T").Y + (10));
+            FullWidth = (int)(10 + _longestInput + gap + game.Textures.Button.Width * Scale + gap);
+            FullHeight = (int)(_font.MeasureString("T").Y + 10);
 
             Position = new Vector2
             (
-                background.Position.X + (allignment),
-                (background.Position.Y + (background.Height / 6) - (FullHeight / 2)) + (FullHeight + (10 * Scale)) * Order
+                background.Position.X + allignment,
+                background.Position.Y + background.Height / 6 - FullHeight / 2 + (FullHeight + 10 * Scale) * Order
             );
 
-            var boxHeight = (int)(game.Button.Height * Scale);
+            var boxHeight = (int)(game.Textures.Button.Height * Scale);
 
             _textPosition = new Vector2(Position.X + 10, Position.Y + 5);
 
             _borderedBox = new BorderedBox
                 (
-                    game.BaseBackground,
+                    game.Textures.BaseBackground,
                     game.GraphicsDevice,
                     Color.White,
                     Position,
@@ -110,7 +110,7 @@ namespace Bound.Controls
             _components = new List<Component>
             {
                 _borderedBox,
-                new Button(game.Button, _font, _borderedBox)
+                new Button(game.Textures.Button, _font, _borderedBox)
                 {
                     Text = Key,
                     Click = new EventHandler(Clicked),
@@ -132,7 +132,7 @@ namespace Bound.Controls
             _previousKey = _currentKey;
             _currentKey = Keyboard.GetState();
 
-            foreach(var component in _components) 
+            foreach (var component in _components)
                 component.Update(gameTime);
 
 
@@ -170,7 +170,7 @@ namespace Bound.Controls
         {
             IsClicked = true;
         }
-        
+
         private void ChangeKey(string value)
         {
             NewKey = value;

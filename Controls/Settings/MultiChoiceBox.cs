@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Bound.Controls
+namespace Bound.Controls.Settings
 {
     public class MultiChoiceBox : MultiChoice
     {
@@ -44,7 +44,7 @@ namespace Bound.Controls
         {
             get
             {
-                return new Vector2(_centerOfArrows - (_font.MeasureString(Choices[CurIndex]).X / 2), Position.Y + 5);
+                return new Vector2(_centerOfArrows - _font.MeasureString(Choices[CurIndex]).X / 2, Position.Y + 5);
             }
         }
 
@@ -75,7 +75,7 @@ namespace Bound.Controls
                 spriteBatch.DrawString(_font, Text, _textPosition, PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
             }
 
-            var x = (_leftArrowPosition.X + _texture.Width * (_components[1] as Button).Scale);
+            var x = _leftArrowPosition.X + _texture.Width * (_components[1] as Button).Scale;
 
             spriteBatch.DrawString(_font, Choices[CurIndex], _choicePosition, PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
 
@@ -92,13 +92,13 @@ namespace Bound.Controls
             //TODO: rewrite BorderdBox constructor so i may rewrite this method
             //Note: this code is some hot garbage
 
-            var longestChoice = Choices.Aggregate(0, (a, c) => (int)((a > _font.MeasureString(c).X) ? a : _font.MeasureString(c).X));
+            var longestChoice = Choices.Aggregate(0, (a, c) => (int)(a > _font.MeasureString(c).X ? a : _font.MeasureString(c).X));
 
             _components = new List<Component>();
             var textureScale = 0.6f;
 
             var fullScale = textureScale * Game1.ResScale;
-            var arrowLength = (_texture.Width * 2 * fullScale);
+            var arrowLength = _texture.Width * 2 * fullScale;
             var gap = 10f * Game1.ResScale;
             //Dont ask me why it needs this, idc anymore: who even uses 720p monitors anyway?
             if (Game1.ScreenHeight == 720)
@@ -108,17 +108,17 @@ namespace Bound.Controls
             if (Type == "Video")
                 longestName = (int)_font.MeasureString(Text).X; //"Resolution" is the longest name in the video section
 
-            FullWidth = (int)((longestName + (gap)) + (arrowLength * 2) + longestChoice + (gap));
-            FullHeight = (int)((_font.MeasureString(Text).Y + (10)));
+            FullWidth = (int)(longestName + gap + arrowLength * 2 + longestChoice + gap);
+            FullHeight = (int)(_font.MeasureString(Text).Y + 10);
             Position = new Vector2
             (
-                background.Position.X + (allignment),
-                (background.Position.Y + (background.Height / 6) - (FullHeight / 2)) + (FullHeight + (10 * Scale) ) * Order + (yOffset * Scale)
+                background.Position.X + allignment,
+                background.Position.Y + background.Height / 6 - FullHeight / 2 + (FullHeight + 10 * Scale) * Order + yOffset * Scale
             );
 
             _box = new BorderedBox
                 (
-                    _game.BaseBackground,
+                    _game.Textures.BaseBackground,
                     _game.GraphicsDevice,
                     Color.White,
                     Position,
@@ -127,12 +127,12 @@ namespace Bound.Controls
                     FullHeight
                 );
 
-            _components.Add( _box );
+            _components.Add(_box);
 
-            _textPosition = new Vector2((Position.X) + (10), (Position.Y) + (5));
+            _textPosition = new Vector2(Position.X + 10, Position.Y + 5);
 
-            _leftArrowPosition = new Vector2(_textPosition.X + _font.MeasureString(Text).X + gap, (Position.Y) + ((FullHeight - _texture.Height * fullScale) / 2f));
-            _rightArrowPosition = new Vector2(_leftArrowPosition.X + arrowLength + gap + longestChoice + gap, (Position.Y) + ((FullHeight - _texture.Height * fullScale) / 2f));
+            _leftArrowPosition = new Vector2(_textPosition.X + _font.MeasureString(Text).X + gap, Position.Y + (FullHeight - _texture.Height * fullScale) / 2f);
+            _rightArrowPosition = new Vector2(_leftArrowPosition.X + arrowLength + gap + longestChoice + gap, Position.Y + (FullHeight - _texture.Height * fullScale) / 2f);
 
             _components.Add(
                 new Button(_texture, _font)
@@ -157,12 +157,12 @@ namespace Bound.Controls
                 }
             );
 
-            _centerOfArrows = (_leftArrowPosition.X + (_texture.Width * (_components[1] as Button).Scale) + _rightArrowPosition.X) / 2;
+            _centerOfArrows = (_leftArrowPosition.X + _texture.Width * (_components[1] as Button).Scale + _rightArrowPosition.X) / 2;
         }
 
         private void LeftArrow_Clicked(object sender, EventArgs e)
         {
-            CurIndex --;
+            CurIndex--;
             if (CurIndex < 0)
                 CurIndex = Choices.Count - 1;
         }

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bound.Controls
+namespace Bound.Controls.Settings
 {
     public abstract class MultiChoice
     {

@@ -27,6 +27,7 @@ namespace Bound
         public Input PlayerKeys;
         public static Dictionary<string, string> SettingsStates;
         public bool UseDefaultMouse;
+        public int RecentSave;
 
 
         private State _currentState;
@@ -41,29 +42,9 @@ namespace Bound
 
         #region Textures
 
-        public Texture2D Button;
-        public List<SpriteFont> Fonts;
-        public Texture2D BaseBackground;
-        public Texture2D RedX;
-        public Texture2D ArrowLeft;
-        public Texture2D MouseOutline;
-        public Texture2D MouseFill;
+        public Textures Textures;
 
-        public SpriteFont Font
-        {
-            get
-            {
-                return Game1.ScreenHeight switch
-                {
-                    720 => Fonts[0],
-                    900 => Fonts[1],
-                    1080 => Fonts[2],
-                    1440 => Fonts[3],
-                    2160 => Fonts[4],
-                    _ => Fonts[2],
-                };
-            }
-        }
+        
 
         #endregion
 
@@ -95,9 +76,9 @@ namespace Bound
 
             _graphics.ApplyChanges();
 
-            var defaultMouse = (Settings.Settings.General["DefaultMouse"] == "Yes") ? true : false ;
-
             ResScale = (float)ScreenHeight / (float)_defaultHeight;
+
+            RecentSave = int.Parse(Settings.Settings.General["MostRecentSave"]);
 
             Random = new Random();
 
@@ -109,20 +90,7 @@ namespace Bound
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            Button = Content.Load<Texture2D>("Controls/Button");
-            Fonts = new List<SpriteFont>()
-            {
-                Content.Load<SpriteFont>("Fonts/JX-720"),
-                Content.Load<SpriteFont>("Fonts/JX-900"),
-                Content.Load<SpriteFont>("Fonts/JX-1080"),
-                Content.Load<SpriteFont>("Fonts/JX-1440"),
-                Content.Load<SpriteFont>("Fonts/JX-2160"),
-            };
-            BaseBackground = Content.Load<Texture2D>("Backgrounds/BaseBackground");
-            RedX = Content.Load<Texture2D>("Controls/RedX");
-            ArrowLeft = Content.Load<Texture2D>("Controls/ArrowLeft");
-            MouseOutline = Content.Load<Texture2D>("Mouse/MouseOutline");
-            MouseFill = Content.Load<Texture2D>("Mouse/MouseFill");
+            Textures = new Textures(Content);
 
             _currentState = new MainMenu(this, Content, _graphics);
             _currentState.LoadContent();
@@ -131,14 +99,6 @@ namespace Bound
 
         }
 
-        public void ReloadTextures()
-        {
-            
-            Button = Content.Load<Texture2D>("Controls/Button");
-            BaseBackground = Content.Load<Texture2D>("Backgrounds/BaseBackground");
-            RedX = Content.Load<Texture2D>("Controls/RedX");
-            ArrowLeft = Content.Load<Texture2D>("Controls/ArrowLeft");
-        }
 
         protected override void Update(GameTime gameTime)
         {
@@ -174,12 +134,6 @@ namespace Bound
 
             _spriteBatch.Begin(SpriteSortMode.FrontToBack);
 
-            //if (!UseDefaultMouse)
-            //{
-            //    _spriteBatch.Draw(MouseOutline, mousePosition, null, Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.99f);
-            //    _spriteBatch.Draw(MouseFill, mousePosition, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.99f);
-            //}
-
             _currentState.Draw(gameTime, _spriteBatch);
 
             _spriteBatch.End();
@@ -199,6 +153,7 @@ namespace Bound
             if (_currentKeys.IsKeyDown(Keys.F11) && _previousKeys.IsKeyUp(Keys.F11))
             {
                 ToggleFullScreen();
+                SettingsManager.Save(Settings);
             }
         }
 
@@ -209,14 +164,17 @@ namespace Bound
             {
                 ScreenHeight = _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
                 ScreenWidth = _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                Settings.Settings.General["Fullscreen"] = "Yes";
             }
             else
             {
                 ScreenHeight = _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
                 ScreenWidth = _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                Settings.Settings.General["Fullscreen"] = "No";
             }
 
             _graphics.ApplyChanges();
+            Settings.UpdateResolution(Game1.ScreenWidth, Game1.ScreenHeight);
 
             ResetState();
         }

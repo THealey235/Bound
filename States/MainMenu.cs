@@ -31,8 +31,8 @@ namespace Bound.States
         {
             colour = Color.White;
 
-            var buttonTexture = _game.Button;
-            var font = _game.Font;          
+            var buttonTexture = _game.Textures.Button;
+            var font = _game.Textures.Font;          
 
             var leftOffset = 30 + buttonTexture.Width / 2;
             var topOffset = Game1.ScreenHeight / 2 - buttonTexture.Height;
@@ -44,15 +44,7 @@ namespace Bound.States
             {
                 new Button(buttonTexture, font)
                 {
-                    Text = "Load Game",
-                    Position = new Vector2(leftOffset , topOffset),
-                    Click = new EventHandler(Button_LoadGame_Clicked),
-                    Layer = layer,
-                    TextureScale = 2f,
-                },
-                new Button(buttonTexture, font)
-                {
-                    Text = "New Game",
+                    Text = "Saves",
                     Position = new Vector2(leftOffset , topOffset + (spacing)),
                     Click = new EventHandler(Button_NewGame_Clicked),
                     Layer = layer,
@@ -76,6 +68,16 @@ namespace Bound.States
                     Layer = layer,
                 },
             };
+
+            if (_game.RecentSave != -1)
+                _components.Add(new Button(buttonTexture, font)
+                {
+                    Text = "Continue",
+                    Position = new Vector2(leftOffset, topOffset),
+                    Click = new EventHandler(Button_LoadGame_Clicked),
+                    Layer = layer,
+                    TextureScale = 2f,
+                });
         }
 
         public override void Update(GameTime gameTime)
@@ -118,7 +120,8 @@ namespace Bound.States
 
         private void Button_NewGame_Clicked(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            Popups.Add(new NewGame(_game, _content, this, _graphics));
+            Popups[^1].LoadContent();
         }
 
         private void Button_Settings_Clicked(object sender, EventArgs e)

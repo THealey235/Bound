@@ -8,6 +8,7 @@
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/dev/Bound/Content/Backgrounds/Bordered.png</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/dev/Bound/Content/Controls/ArrowLeft.png</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/dev/Bound/Content/Controls/Button.png</File>
+    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/dev/Bound/Content/Controls/Button1.png</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/dev/Bound/Content/Controls/RedX.png</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/dev/Bound/Content/Fonts/JX-1080.spritefont</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/dev/Bound/Content/Fonts/JX-1440.spritefont</File>
@@ -18,6 +19,7 @@
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/dev/Bound/Content/Mouse/MouseOutline.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

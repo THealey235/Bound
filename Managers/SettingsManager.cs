@@ -68,7 +68,7 @@ namespace Bound.Managers
                     { "MusicVolume", "50" },
                     { "EnemyVolume", "50" },
                     { "PlayerVolume", "50" },
-                    { "DefaultMouse", "Yes" }
+                    { "MostRecentSave", "-1" }
                 },
                 InputValues = new Dictionary<string, string>()
                 {
@@ -78,11 +78,6 @@ namespace Bound.Managers
                     {"Right", "D" },
                 }
             };
-        }
-
-        public void Add(KeyValuePair<string, string> settings)
-        {
-            
         }
 
         public static SettingsManager Load()
