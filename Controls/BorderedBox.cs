@@ -8,7 +8,6 @@ namespace Bound.Controls
     public class BorderedBox : Component
     {
         private Texture2D _texture;
-        private Color _colour;
         private float _layer;
         private Texture2D _border;
         public List<Texture2D> _borderTextures;
@@ -44,6 +43,7 @@ namespace Bound.Controls
             }
         }
 
+        public Color Colour;
         public int Height;
         public bool IsBordered;
         public Color BorderColor;
@@ -60,7 +60,7 @@ namespace Bound.Controls
         public BorderedBox(Texture2D texture, GraphicsDevice graphicsDevice, Color color, Vector2 position, float layer, int width, int height)
         {
             _texture = texture;
-            _colour = color;
+            Colour = color;
             Position = position;
             _layer = layer;
             _width = width;
@@ -90,7 +90,7 @@ namespace Bound.Controls
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             //Base background
-            spriteBatch.Draw(_texture, Position, null, _colour, 0f, Vector2.Zero, _scale, SpriteEffects.None, _layer);
+            spriteBatch.Draw(_texture, Position, null, Colour, 0f, Vector2.Zero, _scale, SpriteEffects.None, _layer);
 
             if (IsBordered)
             {

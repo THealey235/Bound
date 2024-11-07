@@ -49,7 +49,7 @@ namespace Bound.Managers
                     Settings.InputValues.Add(kvp[0], kvp[1]);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Init();
             }

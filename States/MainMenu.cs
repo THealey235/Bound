@@ -120,7 +120,7 @@ namespace Bound.States
 
         private void Button_NewGame_Clicked(object sender, EventArgs e)
         {
-            Popups.Add(new NewGame(_game, _content, this, _graphics));
+            Popups.Add(new SavesMenu(_game, _content, this, _graphics));
             Popups[^1].LoadContent();
         }
 
@@ -132,6 +132,7 @@ namespace Bound.States
 
         private void Button_Quit_Clicked(object sender, EventArgs e)
         {
+            _game.SavesManager.UploadAll();
             _game.Exit();
         }
 

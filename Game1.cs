@@ -28,6 +28,7 @@ namespace Bound
         public static Dictionary<string, string> SettingsStates;
         public bool UseDefaultMouse;
         public int RecentSave;
+        public SaveManager SavesManager;
 
 
         private State _currentState;
@@ -36,7 +37,7 @@ namespace Bound
         private KeyboardState _currentKeys;
         private KeyboardState _previousKeys;
 
-        public Random Random;
+        public static Random Random;
 
         #endregion
 
@@ -82,6 +83,7 @@ namespace Bound
 
             Random = new Random();
 
+            SavesManager = new SaveManager();
 
             ResetState();
         }

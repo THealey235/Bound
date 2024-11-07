@@ -2,11 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Bound.Models
 {
     public class Textures
@@ -17,6 +12,7 @@ namespace Bound.Models
         public Texture2D BaseBackground;
         public Texture2D RedX;
         public Texture2D ArrowLeft;
+        public Texture2D Plus;
 
         public List<SpriteFont> Fonts;
         public SpriteFont Font
@@ -52,6 +48,7 @@ namespace Bound.Models
             BaseBackground = content.Load<Texture2D>("Backgrounds/BaseBackground");
             RedX = content.Load<Texture2D>("Controls/RedX");
             ArrowLeft = content.Load<Texture2D>("Controls/ArrowLeft");
+            Plus = content.Load<Texture2D>("Controls/Plus");
         }
     }
 }

@@ -11,14 +11,14 @@ using System.Collections.Generic;
 
 namespace Bound.States
 {
-    public class NewGame : Popup
+    public class SavesMenu : Popup
     {
 
         private List<Component> _components;
         private GraphicsDeviceManager _graphics;
-        private SaveState _currentSave;
+        private SaveInterface _currentSave;
 
-        public NewGame(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content, parent, graphics)
+        public SavesMenu(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content, parent, graphics)
         {
         }
 
@@ -66,25 +66,26 @@ namespace Bound.States
             float buttonWidth = _game.Textures.Button.Width * comp.Scale;
 
             //some of these numbers have been pulled straight out of my ass
-            var buttonPosition = new Vector2((bbWidth - buttonWidth) / 2 - buttonWidth / 2 - 8 * comp.Scale, bbHeight - (buttonHeight + (15 * comp.Scale)));
+            var buttonPosition = new Vector2(bbWidth / 2, bbHeight - (buttonHeight + (15 * comp.Scale)));
+            var gap = 10f * comp.Scale;
 
             for (int i = 1 ; i < 3; i++)
             {
                 comp = _components[i] as Button;
                 comp.RelativePosition = buttonPosition;
-                comp.xOffset = (int)(bbWidth / 2 - buttonWidth) * (i - 1);
+                comp.xOffset = (i == 1) ? -(int)(buttonWidth + gap) : (int)(gap);
             }
 
             for (int i = 1; i < 6; i++)
             {
-                _components.Add(new SaveState(_game.Textures.BaseBackground, font)
+                _components.Add(new SaveInterface(_game.Textures.BaseBackground, font, _game)
                 {
                     Text = "Save " + i.ToString(),
                     Click = new EventHandler(State_Choose_Click),
                     Layer = 0.8f
 
                 });
-                var ss = _components[^1] as SaveState;
+                var ss = _components[^1] as SaveInterface;
                 ss.LoadContent(_game, background, i - 1);
             }
         }
@@ -119,7 +120,7 @@ namespace Bound.States
         }
         private void State_Choose_Click(object sender, EventArgs e)
         {
-            _currentSave = sender as SaveState;
+            _currentSave = sender as SaveInterface;
         }
 
         #endregion
