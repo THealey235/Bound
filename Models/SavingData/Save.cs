@@ -121,7 +121,7 @@ namespace Bound.Models
             var save = new Save()
             {
                 Level = "Tutorial",
-                PlayerName = "null",
+                PlayerName = "_",
                 Manager = manager,
                 Attributes = new Dictionary<string, Attribute>(),
             };

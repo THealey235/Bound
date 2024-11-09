@@ -13,6 +13,8 @@ namespace Bound.Models
         public Texture2D RedX;
         public Texture2D ArrowLeft;
         public Texture2D Plus;
+        public Texture2D PlayButton;
+        public Texture2D TrashCan;
 
         public List<SpriteFont> Fonts;
         public SpriteFont Font
@@ -46,9 +48,11 @@ namespace Bound.Models
             };
 
             BaseBackground = content.Load<Texture2D>("Backgrounds/BaseBackground");
-            RedX = content.Load<Texture2D>("Controls/RedX");
-            ArrowLeft = content.Load<Texture2D>("Controls/ArrowLeft");
-            Plus = content.Load<Texture2D>("Controls/Plus");
+            RedX = content.Load<Texture2D>("Controls/Icos/RedX");
+            ArrowLeft = content.Load<Texture2D>("Controls/Icos/ArrowLeft");
+            Plus = content.Load<Texture2D>("Controls/Icos/Plus");
+            PlayButton = content.Load<Texture2D>("Controls/Icos/PlayButton");
+            TrashCan = content.Load<Texture2D>("Controls/Icos/TrashCan");
         }
     }
 }

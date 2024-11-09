@@ -71,6 +71,12 @@ namespace Bound.Managers
             var save = Saves[index];
             var path = GetPath(index);
 
+            if (Saves[index] == null)
+            {
+                File.Delete(path);
+                return;
+            }
+
             using (var writer = new StreamWriter(new FileStream(path, FileMode.Create)))
             {
                 writer.Write(save);

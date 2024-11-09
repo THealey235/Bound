@@ -1,8 +1,8 @@
-﻿using Bound.Managers;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Bound.Models;
 using Bound.States;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using Bound.Managers;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
