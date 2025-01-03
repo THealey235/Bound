@@ -1,4 +1,6 @@
 ﻿using Bound.Controls;
+using Bound.Managers;
+using Bound.States.Game;
 using Bound.States.Popups;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -15,27 +17,25 @@ namespace Bound.States
     {
 
         private List<Component> _components;
-        private GraphicsDeviceManager _graphics;
 
         public SavesMenu(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content, parent, graphics)
         {
+            Name = "savesmenu";
         }
 
         public override void LoadContent()
         {
             var button = _game.Textures.Button;
             var font = _game.Textures.Font;
-            var eigthWidth = Game1.ScreenWidth / 4;
-            var eigthHeight = Game1.ScreenHeight / 8;
-            var bbWidth = (int)(eigthWidth * 2);
-            var bbHeight = (int)(eigthHeight * 6);
+            var bbWidth = (int)(Game1.ScreenWidth / 4 * 1.5f);
+            var bbHeight = (int)(Game1.ScreenHeight / 8 * 6);
 
             var background = new BorderedBox
             (
                     _game.Textures.BaseBackground,
                     _game.GraphicsDevice,
                     Color.BlanchedAlmond,
-                    new Vector2(eigthWidth, eigthHeight),
+                    new Vector2((Game1.ScreenWidth  - bbWidth) / 2 , (Game1.ScreenHeight  - bbHeight) / 2 ),
                     0.6f,
                     bbWidth,
                     bbHeight
@@ -50,38 +50,19 @@ namespace Bound.States
                     Click = new EventHandler(Button_Discard_Clicked),
                     Layer = 0.8f,
                     TextureScale = 1.75f,
-                },
-                new Button(_game.Textures.Button, font, background)
-                {
-                    Text = "Continue",
-                    Click = new EventHandler(Button_Apply_Clicked),
-                    Layer = 0.8f,
-                    TextureScale = 1.75f,
-                },
+                    RelativePosition = new Vector2(
+                        bbWidth / 2  - _game.Textures.Button.Width * (1.75f * Game1.ResScale) / 2,
+                        bbHeight - _game.Textures.Button.Height * (1.75f * Game1.ResScale) - (15f * Game1.ResScale) ),
+                }
             };
-
-            var comp = _components[^1] as Button;
-            float buttonHeight = _game.Textures.Button.Height * comp.Scale;
-            float buttonWidth = _game.Textures.Button.Width * comp.Scale;
-
-            //some of these numbers have been pulled straight out of my ass
-            var buttonPosition = new Vector2(bbWidth / 2, bbHeight - (buttonHeight + (15 * comp.Scale)));
-            var gap = 10f * comp.Scale;
-
-            for (int i = 1 ; i < 3; i++)
-            {
-                comp = _components[i] as Button;
-                comp.RelativePosition = buttonPosition;
-                comp.xOffset = (i == 1) ? -(int)(buttonWidth + gap) : (int)(gap);
-            }
 
             for (int i = 1; i < 6; i++)
             {
                 _components.Add(new SaveInterface(_game.Textures.BaseBackground, font, _game)
                 {
                     Text = "Save " + i.ToString(),
-                    Layer = 0.8f
-
+                    Layer = 0.8f,
+                    Play = new EventHandler(Button_Play_Clicked)
                 });
                 var ss = _components[^1] as SaveInterface;
                 ss.LoadContent(_game, background, i - 1);
@@ -115,16 +96,20 @@ namespace Bound.States
                 comp.Update(gameTime);
         }
 
-
         #region Clicked Methods
 
         private void Button_Discard_Clicked(object sender, EventArgs e)
         {
             Parent.Popups.Remove(this);
         }
-        private void Button_Apply_Clicked(object sender, EventArgs e)
+
+        private void Button_Play_Clicked(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            var sen = sender as SaveInterface;
+            _game.RecentSave = sen.Index;
+            _game.Settings.Settings.General["MostRecentSave"] = sen.Index.ToString();
+            SettingsManager.Save(_game.Settings);
+            _game.ChangeState(_game.SavesManager.GetState(sen.Index, _game, _content, _graphics));
         }
 
         #endregion

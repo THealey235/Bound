@@ -8,6 +8,7 @@ using Bound.Managers;
 
 namespace Bound.Sprites
 {
+    //Currently unused as i do not have any entities such as enemies or players in my game
     public class Sprite : Component, ICloneable
     {
         #region Fields
@@ -132,7 +133,7 @@ namespace Bound.Sprites
             }
         }
 
-#endregion
+        #endregion
 
         #region Methods
         public Sprite(Texture2D texture)

@@ -1,15 +1,12 @@
 ﻿using Bound.Managers;
-using SharpDX.Direct3D9;
+using Bound.Models.Items;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace Bound.Models
 {
+    //This class is like staring at a sick, old, dying man with no arms or legs pretending to be functional and useful
     public class Save
     {
         public SaveManager Manager;
@@ -24,16 +21,24 @@ namespace Bound.Models
         public int MaxDashes;
 
         public Dictionary<string, Attribute> Attributes;
+        public Dictionary<int, Item> Inventory;
 
         public override string ToString()
         {
             //basic encryption, tough enough to prevent laymen from changing critical values but not enough to prevent modders.
+            //In other words: too lazy to do anything beter rn
             var str = PlayerName + "\n";
             str += EncryptString("Level", FomratStr(Level, "Level")) + "\n";
             str += "\n";
-            foreach (var item in Attributes.Values)
-                str += EncryptString(item.Name, FormatIntAsStr(item.Value)) + "\n";
+
+            var attributeOrder = Attributes.Keys.ToList();
+            attributeOrder.Sort();
+
+            foreach (var item in attributeOrder)
+                str += EncryptString(Attributes[item].Name, FormatIntAsStr(Attributes[item].Value)) + "\n";
             str += "\n";
+            foreach (var item in Inventory.Keys)
+                str += EncryptString(FormatIntAsStr(item), SaveManager.InventoryCode) + "\n";
 
             return str;
         }
@@ -71,6 +76,7 @@ namespace Bound.Models
 
         #endregion
 
+        //Hold all methods which encrypt or decrypt parts of the save file, also includes some helepers
         #region Encryption
         public string EncryptString(string name, string value)
         {
@@ -88,6 +94,23 @@ namespace Bound.Models
             return str.Aggregate("", (a, x) => a += x);
         }
 
+        public string EncryptString(string value, List<int> map)
+        {
+            var highestIndex = map.Aggregate(0, (a, x) => (x > a) ? x : a);
+            var str = GenerateLongNumber(highestIndex + 1).ToList();
+
+            var cursor = 0;
+            foreach (var i in map)
+            {
+                str[i] = value[cursor];
+                cursor++;
+            }
+
+            return str.Aggregate("", (a, x) => a += x);
+        }
+
+
+        //TODO: MAKE NOT STATIC PLS I BEG
         public static string DecryptString(SaveManager manager, string name, string input)
         {
             var str = "";
@@ -112,18 +135,33 @@ namespace Bound.Models
             return str;
         }
 
+        //ALL THIS CRAP BEING STATIC IS PISSING ME OFF
+        public static KeyValuePair<int, Item> DecryptItem(string item, Game1 game)
+        {
+            var strItemCode = "";
+            foreach (var index in SaveManager.InventoryCode)
+            {
+                strItemCode += item[index];
+            }
+
+            var itemCode = int.Parse(strItemCode);
+
+            return new KeyValuePair<int, Item>(itemCode, game.Items[itemCode]);
+        }
         #endregion
 
+        //returns a new save
         #region New Saves
 
         public static Save NewSave(SaveManager manager)
         {
             var save = new Save()
             {
-                Level = "Tutorial",
+                Level = "newgame",
                 PlayerName = "_",
                 Manager = manager,
                 Attributes = new Dictionary<string, Attribute>(),
+                Inventory = new Dictionary<int, Item>(),
             };
 
             AddMissingKeys(manager, save, manager.DefaultAttributes.Keys.ToList());
@@ -132,26 +170,33 @@ namespace Bound.Models
         }
 
 
-        public static Save ImportSave(SaveManager manager, List<string> values)
+        public static Save ImportSave(SaveManager manager, List<string> values, Game1 game)
         {
             try
             {
+
                 var save = new Save()
                 {
                     Level = DecryptString(manager, "Level", values[1]),
                     PlayerName = values[0],
                     Manager = manager,
                     Attributes = new Dictionary<string, Attribute>(),
+                    Inventory = new Dictionary<int, Item>(),
                 };
 
                 //adds attributes found in file
                 var attributeKeys = manager.DefaultAttributes.Keys.ToList();
+                attributeKeys.Sort();
                 string name;
+                int pointer = 3;
                 //3 is the ammount of non-Attribute values + 1
-                for (int i = 3; i < attributeKeys.Count; i++)
+                for (int i = pointer; i < attributeKeys.Count + 3; i++)
                 {
                     if (values[i] == "\n")
+                    {
+                        pointer = i + 1;
                         break;
+                    }
                     name = attributeKeys[i - 3];
                     save.Attributes.Add(name, new Attribute(name, int.Parse(DecryptString(manager, name, values[i].ToString()))));
                 }
@@ -160,6 +205,18 @@ namespace Bound.Models
                 if (save.Attributes.Count != manager.DefaultAttributes.Count)
                 {
                     AddMissingKeys(manager, save, attributeKeys);
+                }
+
+                pointer = (pointer == 3) ? attributeKeys.Count + 4 : pointer;
+                //Add inventory
+                if (values[pointer] != "")
+                {
+                    KeyValuePair<int, Item> plainItem;
+                    for (int i = pointer; i < values.Count; i++)
+                    {
+                        plainItem = DecryptItem(values[i], game);
+                        save.Inventory.Add(plainItem.Key, plainItem.Value);
+                    }
                 }
 
                 return save;

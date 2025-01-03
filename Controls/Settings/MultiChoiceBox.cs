@@ -27,6 +27,7 @@ namespace Bound.Controls.Settings
         public int FullWidth;
         public int FullHeight;
         public Color PenColour;
+        public Color ChoicePenColour;
         public int CurIndex;
         public int Order;
         public int yOffset;
@@ -59,7 +60,7 @@ namespace Bound.Controls.Settings
             };
 
             TextureScale = 1f;
-            PenColour = Color.Black;
+            PenColour = ChoicePenColour = Color.Black;
 
             CurIndex = index;
         }
@@ -77,7 +78,7 @@ namespace Bound.Controls.Settings
 
             var x = _leftArrowPosition.X + _texture.Width * (_components[1] as Button).Scale;
 
-            spriteBatch.DrawString(_font, Choices[CurIndex], _choicePosition, PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
+            spriteBatch.DrawString(_font, Choices[CurIndex], _choicePosition, ChoicePenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
 
         }
 
@@ -159,6 +160,78 @@ namespace Bound.Controls.Settings
 
             _centerOfArrows = (_leftArrowPosition.X + _texture.Width * (_components[1] as Button).Scale + _rightArrowPosition.X) / 2;
         }
+
+        public void LoadContent(Game1 _game, Vector2 center)
+        {
+            //TODO: rewrite BorderdBox constructor so i may rewrite this method
+            //Note: this code is some hot garbage
+
+            var longestChoice = Choices.Aggregate(0, (a, c) => (int)(a > _font.MeasureString(c).X ? a : _font.MeasureString(c).X));
+
+            _components = new List<Component>();
+            var textureScale = 0.6f;
+
+            var fullScale = textureScale * Game1.ResScale;
+            var arrowLength = _texture.Width * 2 * fullScale;
+            var gap = 10f * Game1.ResScale;
+            //Dont ask me why it needs this, idc anymore: who even uses 720p monitors anyway?
+            if (Game1.ScreenHeight == 720)
+                gap -= 3;
+
+            var longestName = (int)_font.MeasureString(Text).X;
+
+            FullWidth = (int)(longestName + gap + arrowLength * 2 + longestChoice + gap);
+            FullHeight = (int)(_font.MeasureString(Text).Y + 10);
+            Position = new Vector2
+            (
+                center.X - (FullWidth / 2),
+                center.Y - FullHeight / 2
+            );
+
+            _box = new BorderedBox
+                (
+                    _game.Textures.BaseBackground,
+                    _game.GraphicsDevice,
+                    Color.White,
+                    Position,
+                    Layer - 0.1f,
+                    FullWidth,
+                    FullHeight
+                );
+
+            _components.Add(_box);
+
+            _textPosition = new Vector2(Position.X + 10, Position.Y + 5);
+
+            _leftArrowPosition = new Vector2(_textPosition.X + _font.MeasureString(Text).X + gap, Position.Y + (FullHeight - _texture.Height * fullScale) / 2f);
+            _rightArrowPosition = new Vector2(_leftArrowPosition.X + arrowLength + gap + longestChoice + gap, Position.Y + (FullHeight - _texture.Height * fullScale) / 2f);
+
+            _components.Add(
+                new Button(_texture, _font)
+                {
+                    Text = "",
+                    Position = _leftArrowPosition,
+                    Click = new EventHandler(LeftArrow_Clicked),
+                    Layer = Layer + 0.1f,
+                    TextureScale = textureScale
+                }
+            );
+
+            _components.Add(
+                new Button(_texture, _font)
+                {
+                    Text = "",
+                    Position = _rightArrowPosition,
+                    Click = new EventHandler(RightArrow_Clicked),
+                    Layer = Layer + 0.1f,
+                    TextureScale = textureScale,
+                    Effect = SpriteEffects.FlipHorizontally
+                }
+            );
+
+            _centerOfArrows = (_leftArrowPosition.X + _texture.Width * (_components[1] as Button).Scale + _rightArrowPosition.X) / 2;
+        }
+
 
         private void LeftArrow_Clicked(object sender, EventArgs e)
         {

@@ -8,14 +8,9 @@ using System.Threading.Tasks;
 
 namespace Bound.Controls.Settings
 {
-    public abstract class MultiChoice
+    public abstract class MultiChoice : Component
     {
         public EventHandler OnApply;
-
-        public abstract void Draw(GameTime gameTime, SpriteBatch spriteBatch);
-
-        public abstract void Update(GameTime gameTime);
-
         public abstract void LoadContent(Game1 game, BorderedBox background, float allignment);
     }
 }

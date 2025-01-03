@@ -18,6 +18,7 @@ namespace Bound.States.Popups
         private List<Component> _components;
         private List<MultiChoice> _multiBoxes;
         private List<KeyInput> _keyInputs;
+        private BorderedBox _background;
 
         private KeyboardState _currentKeys;
         private KeyboardState _previousKeys;
@@ -32,6 +33,7 @@ namespace Bound.States.Popups
         {
             Parent = parent;
             _graphics = graphics;
+            Name = "settings";
         }
 
         public override void LoadContent()
@@ -45,7 +47,6 @@ namespace Bound.States.Popups
 
             var volumeOffset = 50;
 
-            //LMAO SETTINGS.SETTINGS.SETTINGS WTF IS THIS
             var generalSettings = _game.Settings.Settings.General;
 
             int resBoxIndex = int.Parse(generalSettings["Resolution"].Split("x")[1]) switch
@@ -57,7 +58,7 @@ namespace Bound.States.Popups
                 _ => 4
             };
 
-            var background = new BorderedBox
+            _background = new BorderedBox
                 (
                     texture,
                     _game.GraphicsDevice,
@@ -70,27 +71,27 @@ namespace Bound.States.Popups
 
 
             //0 : left allignemt, 1: right allignment
-            var allignments = new float[2] {15f, (eigthHeight / 2) + eigthHeight * 6};
+            var allignments = new float[2] {15f, (eigthHeight / 2) + eigthHeight * 6.75f};
 
 
             _components = new List<Component>()
             {
-                background,
-                new Button(_game.Textures.Button, font, background)
+                _background,
+                new Button(_game.Textures.Button, font, _background)
                 {
                     Text = "Back",
                     Click = new EventHandler(Button_Discard_Clicked),
                     Layer = 0.8f,
                     TextureScale = 1.5f,
                 },
-                new Button(_game.Textures.Button, font, background)
+                new Button(_game.Textures.Button, font, _background)
                 {
                     Text = "Apply",
                     Click = new EventHandler(Button_Apply_Clicked),
                     Layer = 0.8f,
                     TextureScale = 1.5f,
                 },
-                new Button(_game.Textures.Button, font, background)
+                new Button(_game.Textures.Button, font, _background)
                 {
                     Text = "Reset",
                     Click = new EventHandler(Button_Reset_Clicked),
@@ -131,19 +132,6 @@ namespace Bound.States.Popups
                     Order = 1,
                     Type = "Video"
                 },
-                //new MultiChoiceBox(texture, _game.ArrowLeft, font, _game.Settings.Settings.General["DefaultMouse"] == "Yes" ? 0 : 1)
-                //{
-                //    Text = "Custom Cursor",
-                //    Choices = new List<string>()
-                //    {
-                //        "Yes",
-                //        "No"
-                //    },
-                //    Layer = 0.8f,
-                //    OnApply = new EventHandler(CustomCursor_Apply),
-                //    Order = 2,
-                //    Type = "Video"
-                //},
                 new ScrollBox(font, "MasterVolume", 100f, "%", _game)
                 {
                     Text = "Master Volume",
@@ -198,26 +186,13 @@ namespace Bound.States.Popups
                 acc++;
             }
 
-            LoadNestedContent(bbWidth, bbHeight, background, allignments);
-
+            LoadNestedContent(bbWidth, bbHeight, _background, allignments);
         }
 
 
         private void LoadNestedContent(int bbWidth, int bbHeight, BorderedBox background, float[] allignments)
         {
-            var comp = _components[1] as Button;
-            float buttonHeight = _game.Textures.Button.Height * comp.Scale;
-            float buttonWidth = _game.Textures.Button.Width * comp.Scale;
-            //possibly spaghetti code
-
-            var thirdTotalSpace = (float)(((bbWidth - buttonWidth) / 2) + (buttonWidth * 1.5f + (10 * comp.Scale))) / 3f;
-
-            for (int i = 1; i < _components.Count; i++)
-            {
-                comp = _components[i] as Button;
-                comp.RelativePosition = new Vector2(((bbWidth - buttonWidth) / 2) - (buttonWidth * 1.5f + (10 * comp.Scale)), bbHeight - (buttonHeight + (15 * comp.Scale)));
-                comp.xOffset = (int)(thirdTotalSpace * (i - 1));
-            }
+            SetButtonPositions(bbWidth, bbHeight);
 
             for (int i = 0; i < _multiBoxes.Count; i++)
             {
@@ -330,7 +305,7 @@ namespace Bound.States.Popups
         private void Key_Apply(object sender, EventArgs e)
         {
             var ki = sender as KeyInput;
-            _game.Settings.Settings.InputValues[ki.Keys.Key] = ki.Key;
+            _game.Settings.Settings.InputValues[ki.Keys.Key] = _game.PlayerKeys.Keys[ki.Keys.Key] = ki.Key;
         }
 
         private void CustomCursor_Apply(object sender, EventArgs e)
@@ -339,6 +314,46 @@ namespace Bound.States.Popups
             _game.UseDefaultMouse = (box.CurIndex == 1) ? true : false;
             _game.IsMouseVisible = (box.CurIndex == 1) ? true : false;
             _game.Settings.Settings.General["DefaultMouse"] = (box.CurIndex == 1) ? "Yes" : "No";
+        }
+        private void Button_Quit_Clicked(object sender, EventArgs e)
+        {
+            _game.SavesManager.UploadSave(_game.RecentSave);
+            _game.ChangeState(new MainMenu(_game, _content, _graphics));
+        }
+        #endregion
+
+        #region Other Loads
+
+        public void LoadMenuButton()
+        {
+            var model = _components[1] as Button;
+            _components.Insert(1, new Button(_game.Textures.Button, _game.Textures.Font, _background)
+            {
+                Text = "Quit",
+                Click = new EventHandler(Button_Quit_Clicked),
+                Layer = model.Layer,
+                TextureScale = model.TextureScale,
+            });
+
+            SetButtonPositions(_background.Width, _background.Height);
+        }
+
+        private void SetButtonPositions(int bbWidth, int bbHeight)
+        {
+            var buttonNum = _components.Count - 1;
+            var comp = _components[1] as Button;
+            float buttonHeight = _game.Textures.Button.Height * comp.Scale;
+            float buttonWidth = _game.Textures.Button.Width * comp.Scale;
+            //possibly spaghetti code
+
+            var fractionTotalSpace = (float)(((bbWidth - buttonWidth) / 2) + (buttonWidth * 1.5f + (10 * comp.Scale))) / (float)buttonNum;
+
+            for (int i = 1; i < _components.Count; i++)
+            {
+                comp = _components[i] as Button;
+                comp.RelativePosition = new Vector2(((bbWidth - buttonWidth) / 2) - (buttonWidth * 1.5f + (10 * comp.Scale)), bbHeight - (buttonHeight + (15 * comp.Scale)));
+                comp.xOffset = (int)(fractionTotalSpace * (i - 1));
+            }
         }
 
         #endregion

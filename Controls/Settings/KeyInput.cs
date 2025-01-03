@@ -4,12 +4,21 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography;
 
 namespace Bound.Controls.Settings
 {
     public class KeyInput : MultiChoice
+    //_blackList.Contains(key) || key.Contains("NumPad") || key.Contains("Media") || key.Contains("Browser") || key.Contains("Chat")
     {
+        private static List<string> _blackList = new List<string>()
+        {
+            "Num", "Media", "Browser", "Chat", "EraseEof", "Escape", "Exsel", "Ime", "Launch", "Windows", "OemAuto", "OemEnlW", "ProcessKey", "Volume", "Sleep", "Subtract"
+            //not as if you'll get far enought to use Sleep, also i picked OemMinus over subract
+        };
+
         private List<Component> _components;
         private BorderedBox _borderedBox;
         private SpriteFont _font;
@@ -77,14 +86,14 @@ namespace Bound.Controls.Settings
 
         public override void LoadContent(Game1 game, BorderedBox background, float allignment)
         {
-            TextureScale = 1.1f;
+            TextureScale = 1.4f;
 
             var gap = 10f * Game1.ResScale;
 
             var boxLength = _font.MeasureString(" ").X; //any 3 chars have the same length
 
             FullWidth = (int)(10 + _longestInput + gap + game.Textures.Button.Width * Scale + gap);
-            FullHeight = (int)(_font.MeasureString("T").Y + 10);
+            FullHeight = (int)(game.Textures.Button.Height * Scale + 10 * Scale);
 
             Position = new Vector2
             (
@@ -94,7 +103,7 @@ namespace Bound.Controls.Settings
 
             var boxHeight = (int)(game.Textures.Button.Height * Scale);
 
-            _textPosition = new Vector2(Position.X + 10, Position.Y + 5);
+            _textPosition = new Vector2(Position.X + 10, Position.Y + FullHeight / 2 - (_font.MeasureString("Y").Y / 2));
 
             _borderedBox = new BorderedBox
                 (
@@ -173,9 +182,30 @@ namespace Bound.Controls.Settings
 
         private void ChangeKey(string value)
         {
+            value = FormatKey(value);
+            if (value == "invalid")
+                return;
+
             NewKey = value;
             IsClicked = false;
             (_components[1] as Button).Text = value;
+        }
+
+        private string FormatKey(string key)
+        {
+            if ((from item in _blackList
+                where key.Contains(item)
+                select item).ToArray().Length > 0) //if the key contains any blacklisted phrase stop it
+                //this is not efficient. TO DO: Fix this.
+            {
+                return "invalid";
+            }
+            if (Input.SpecialKeyMap.ContainsKey(key))
+            {
+                key = Input.SpecialKeyMap[key];
+            }
+
+            return key;
         }
     }
 }

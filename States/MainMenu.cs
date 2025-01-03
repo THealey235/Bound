@@ -1,4 +1,5 @@
 ﻿using Bound.Controls;
+using Bound.States.Game;
 using Bound.States.Popups;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -18,6 +19,8 @@ namespace Bound.States
 
         public Color colour;
 
+
+
         #endregion
 
         #region Inherited Methods
@@ -25,6 +28,7 @@ namespace Bound.States
         public MainMenu(Game1 game, ContentManager content, GraphicsDeviceManager graphics) : base(game, content)
         {
             _graphics = graphics;
+            Name = "mainmenu";
         }
 
         public override void LoadContent()
@@ -115,7 +119,7 @@ namespace Bound.States
 
         private void Button_LoadGame_Clicked(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            _game.ChangeState(_game.SavesManager.GetState(_game.RecentSave, _game, _content, _graphics));
         }
 
         private void Button_NewGame_Clicked(object sender, EventArgs e)

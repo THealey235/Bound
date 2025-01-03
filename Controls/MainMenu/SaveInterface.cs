@@ -34,6 +34,7 @@ namespace Bound.Controls
         public string Text;
         public Vector2 Position;
         public float Layer;
+        public EventHandler Play;
 
         private MouseState _previousMouse;
         private MouseState _currentMouse;
@@ -45,13 +46,20 @@ namespace Bound.Controls
         public Color PenColor = Color.White;
         public bool StopUpdate;
 
+        public int Index
+        {
+            get
+            {
+                return _index;
+            }
+        }
+
         public Rectangle Rectangle
         {
             get
             {
                 if (IsEmpty)
                     return new Rectangle((int)Position.X, (int)Position.Y, Width, Height);
-                //TODO: Change this to a list of rectangles (?) and have the delete and continue buttons
                 return new Rectangle((int)Position.X, (int)Position.Y, Width, Height);
             }
         }
@@ -63,14 +71,14 @@ namespace Bound.Controls
             _texture = texture;
             _font = font;
             _game = game;
-
-            //TODO: Change once i implement saves
             IsEmpty = true;
 
             _plusColour = Color.Gray;
             StopUpdate = false;
             PenColor = Color.DarkRed;
         }
+
+        #region Inherited
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
@@ -101,7 +109,9 @@ namespace Bound.Controls
                 if (_confirmBox.IsConfirmed)
                 {
                     if (_confirmBox.IsYes)
+                    {
                         RemoveSave();
+                    }
                     //Do nothing if no
 
                     StopUpdate = false;
@@ -134,6 +144,8 @@ namespace Bound.Controls
                     MouseLock = false;
             }
         }
+
+        #endregion
 
         #region Updates
         private void EmptyUpdate()
@@ -217,7 +229,7 @@ namespace Bound.Controls
 
             _plusScale = 1f * Game1.ResScale;
 
-            Width = (int)(_font.MeasureString(Text).X + gap);
+            Width = (int)(_font.MeasureString(Text).X + gap + 170f * _plusScale);
             Height = (int)(_font.MeasureString(Text).Y * 3);
 
             Position = new Vector2(background.Position.X + background.Width / 2 - Width / 2, background.Position.Y + background.Height / 5 - Height / 2 + (Height + 10 * Game1.ResScale) * index);
@@ -258,6 +270,7 @@ namespace Bound.Controls
         {
             _game.Settings.Settings.General["MostRecentSave"] = _index.ToString();
             SettingsManager.Save(_game.Settings);
+            Play(this, new EventArgs());
         }
 
         private void Button_Clicked(object sender, EventArgs e)
