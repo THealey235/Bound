@@ -9,11 +9,13 @@ namespace Bound.States.Game
     public class Level0 : State
     {
         private Player _player;
+        private Game1 _game;
 
         public Level0(Game1 game, ContentManager content, Player player) : base(game, content)
         {
             Name = "levelzero";
             _player = player;
+            _game = game;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)

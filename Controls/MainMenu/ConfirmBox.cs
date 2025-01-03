@@ -52,7 +52,7 @@ namespace Bound.Controls
         {
             var width = (int)((5f * Game1.ResScale) * 2 + _font.MeasureString(Text).X * 1.15f);
             var height = Game1.ScreenHeight / 8;
-            var textureScale = 1f;
+            var textureScale = 0.4f;
             var scale = textureScale * Game1.ResScale;
             //2f extra because it needs it for some reason
             var buttonWidth = _game.Textures.Button.Width * scale * 2f;

@@ -40,7 +40,7 @@ namespace Bound.States
                     bbWidth,
                     bbHeight
             );
-
+            var tScale = 0.8f;
             _components = new List<Component>()
             {
                 background,
@@ -49,10 +49,10 @@ namespace Bound.States
                     Text = "Back",
                     Click = new EventHandler(Button_Discard_Clicked),
                     Layer = 0.8f,
-                    TextureScale = 1.75f,
+                    TextureScale = tScale,
                     RelativePosition = new Vector2(
-                        bbWidth / 2  - _game.Textures.Button.Width * (1.75f * Game1.ResScale) / 2,
-                        bbHeight - _game.Textures.Button.Height * (1.75f * Game1.ResScale) - (15f * Game1.ResScale) ),
+                        bbWidth / 2  - _game.Textures.Button.Width * (tScale * Game1.ResScale) / 2,
+                        bbHeight - _game.Textures.Button.Height * (tScale * Game1.ResScale) - (15f * Game1.ResScale) ),
                 }
             };
 

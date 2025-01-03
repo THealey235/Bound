@@ -151,13 +151,13 @@ namespace Bound.Controls.Settings
         //Sets the position and values of all children.
         public override void LoadContent(Game1 _game, BorderedBox background, float allignment)
         {
-            var gap = 10f * Game1.ResScale;
+            var gap = 5f * Game1.ResScale;
             if (Game1.ScreenHeight == 720)
                 gap -= 3;
 
             TextureScale = 1f;
 
-            _barLength = (int)(300 * Scale);
+            _barLength = (int)(100 * Scale);
 
             var toAdd = Game1.ScreenHeight == 720 ? 10 : 1.5f * Game1.ResScale; //I dislike 720p
 
@@ -170,21 +170,21 @@ namespace Bound.Controls.Settings
 
             FullHeight = (int)(_font.MeasureString(Text).Y + 10);
 
-            FullWidth = (int)(longestName + gap + _barLength + 2 * gap + _font.MeasureString("100%").X + toAdd);
+            FullWidth = (int)(3 + longestName + gap + _barLength + 2 * gap + _font.MeasureString("100%").X + toAdd);
 
             Position = new Vector2
             (
-                background.Position.X + allignment * Scale,
-                background.Position.Y + background.Height / 6 - FullHeight / 2 + (FullHeight + 10 * Scale) * Order + yOffset * Scale
+                background.Position.X + allignment,
+                background.Position.Y + background.Height / 6 - FullHeight / 2 + (FullHeight + 2 * Scale) * Order + yOffset * Scale
             );
 
             _textPosition = new Vector2(Position.X + 10, Position.Y + (FullHeight - _font.MeasureString(Text).Y) / 2);
             _valuePosition = new Vector2(Position.X + FullWidth - Game1.ResScale, Position.Y + (FullHeight - _font.MeasureString(CurValue).Y) / 2);
 
             _barHeight = FullHeight / 2;
-            _barPos = new Vector2(10 + Position.X + longestName + gap, Position.Y + FullHeight / 4 + 2 * Game1.ResScale);
+            _barPos = new Vector2(10 + Position.X + longestName + gap, Position.Y + FullHeight / 4 + 3);
 
-            _cursorWidth = (int)(15f * Game1.ResScale);
+            _cursorWidth = (int)(5f * Game1.ResScale);
             _greenBar = new BorderedBox
                 (
                     _game.Textures.BaseBackground,

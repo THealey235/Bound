@@ -26,7 +26,7 @@ namespace Bound
         private SpriteBatch _spriteBatch;
         public Player Player;
 
-        private int _defaultHeight = 1080;
+        private int _defaultHeight = 360;
 
         //can be accessed without having by a state/component without a game object accessible
         public static int ScreenHeight;
@@ -96,8 +96,7 @@ namespace Bound
 
             _graphics.ApplyChanges();
 
-            //Scale used to change the size of textures based on the resolution. Defalut = 1080p.
-            //This is why some textures look a bit funky on some res's with an odd sf such as 1.33333333f
+            //Scale used to change the size of textures based on the resolution. Defalut = 640x360.
             ResScale = (float)ScreenHeight / (float)_defaultHeight;
 
             RecentSave = int.Parse(Settings.Settings.General["MostRecentSave"]);
@@ -134,9 +133,6 @@ namespace Bound
             _currentState.LoadContent();
 
             _nextState = null;
-
-            ToggleFullScreen();
-
         }
 
         //Update loop called every frame
@@ -169,7 +165,6 @@ namespace Bound
             base.Update(gameTime);
         }
 
-        //allows other states to change the private variable in a controlled manner
         public void ChangeState(State state)
         {
             _nextState = state;

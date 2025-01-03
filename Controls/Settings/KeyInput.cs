@@ -16,7 +16,7 @@ namespace Bound.Controls.Settings
         private static List<string> _blackList = new List<string>()
         {
             "Num", "Media", "Browser", "Chat", "EraseEof", "Escape", "Exsel", "Ime", "Launch", "Windows", "OemAuto", "OemEnlW", "ProcessKey", "Volume", "Sleep", "Subtract"
-            //not as if you'll get far enought to use Sleep, also i picked OemMinus over subract
+            //not as if you'll get far enought to use Sleep, also i picked OemMinus over subtract
         };
 
         private List<Component> _components;
@@ -67,7 +67,7 @@ namespace Bound.Controls.Settings
 
             Keys = key;
 
-            TextureScale = 1f;
+            TextureScale = 0.35f;
 
             _longestInput = longestInput;
 
@@ -86,13 +86,12 @@ namespace Bound.Controls.Settings
 
         public override void LoadContent(Game1 game, BorderedBox background, float allignment)
         {
-            TextureScale = 1.4f;
 
-            var gap = 10f * Game1.ResScale;
+            var gap = 5f * Game1.ResScale;
 
             var boxLength = _font.MeasureString(" ").X; //any 3 chars have the same length
 
-            FullWidth = (int)(10 + _longestInput + gap + game.Textures.Button.Width * Scale + gap);
+            FullWidth = (int)(5 * Game1.ResScale + _longestInput + gap + game.Textures.Button.Width * Scale + gap);
             FullHeight = (int)(game.Textures.Button.Height * Scale + 10 * Scale);
 
             Position = new Vector2
@@ -103,7 +102,7 @@ namespace Bound.Controls.Settings
 
             var boxHeight = (int)(game.Textures.Button.Height * Scale);
 
-            _textPosition = new Vector2(Position.X + 10, Position.Y + FullHeight / 2 - (_font.MeasureString("Y").Y / 2));
+            _textPosition = new Vector2(Position.X + 5 * Game1.ResScale, Position.Y + FullHeight / 2 - (_font.MeasureString("Y").Y / 2));
 
             _borderedBox = new BorderedBox
                 (
@@ -124,9 +123,9 @@ namespace Bound.Controls.Settings
                     Text = Key,
                     Click = new EventHandler(Clicked),
                     Layer = Layer + 0.1f,
-                    RelativePosition = new Vector2(10 + _longestInput, (FullHeight - boxHeight) / 2),
+                    RelativePosition = new Vector2(10 * Game1.ResScale + _longestInput, (FullHeight - boxHeight) / 2),
                     TextureScale = TextureScale,
-                    PenColour = Color.Red
+                    PenColour = Color.DarkRed,
                 }
             };
         }

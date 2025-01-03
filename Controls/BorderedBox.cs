@@ -18,7 +18,7 @@ namespace Bound.Controls
         {
             get
             {
-                return (int)(3 * Game1.ResScale);
+                return (int)(1 * Game1.ResScale);
             }
         }
         private Vector2 _scale

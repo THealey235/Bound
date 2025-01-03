@@ -1,4 +1,5 @@
 ﻿using Bound.Controls;
+using Bound.Managers;
 using Bound.States.Game;
 using Bound.States.Popups;
 using Microsoft.Xna.Framework;
@@ -40,8 +41,8 @@ namespace Bound.States
 
             var leftOffset = 30 + buttonTexture.Width / 2;
             var topOffset = Game1.ScreenHeight / 2 - buttonTexture.Height;
-            //2f is base button scale
-            var spacing = (buttonTexture.Height * ( Game1.ResScale * 2f) / 2) + (60 * Game1.ResScale);
+            var textureScale = 1f;
+            var spacing = (buttonTexture.Height * ( Game1.ResScale * textureScale) / 2) + (30 * Game1.ResScale * textureScale);
             var layer = 0.5f;
 
             _components = new List<Component>()
@@ -50,9 +51,9 @@ namespace Bound.States
                 {
                     Text = "Saves",
                     Position = new Vector2(leftOffset , topOffset + (spacing)),
-                    Click = new EventHandler(Button_NewGame_Clicked),
+                    Click = new EventHandler(Button_Saves_Clicked),
                     Layer = layer,
-                    TextureScale = 2f,
+                    TextureScale = textureScale,
 
                 },
                 new Button(buttonTexture, font)
@@ -60,7 +61,7 @@ namespace Bound.States
                     Text = "Settings",
                     Position = new Vector2(leftOffset , topOffset + (spacing * 2)),
                     Click = new EventHandler(Button_Settings_Clicked),
-                    TextureScale = 2f,
+                    TextureScale = textureScale,
                     Layer = layer,
                 },
                 new Button(buttonTexture, font)
@@ -68,7 +69,7 @@ namespace Bound.States
                     Text = "Quit",
                     Position = new Vector2(leftOffset , topOffset + (spacing * 3)),
                     Click = new EventHandler(Button_Quit_Clicked),
-                    TextureScale = 2f,
+                    TextureScale = textureScale,
                     Layer = layer,
                 },
             };
@@ -78,9 +79,9 @@ namespace Bound.States
                 {
                     Text = "Continue",
                     Position = new Vector2(leftOffset, topOffset),
-                    Click = new EventHandler(Button_LoadGame_Clicked),
+                    Click = new EventHandler(Button_Continue_Clicked),
                     Layer = layer,
-                    TextureScale = 2f,
+                    TextureScale = textureScale,
                 });
         }
 
@@ -117,12 +118,12 @@ namespace Bound.States
 
         #region Clicked Methods
 
-        private void Button_LoadGame_Clicked(object sender, EventArgs e)
+        private void Button_Continue_Clicked(object sender, EventArgs e)
         {
             _game.ChangeState(_game.SavesManager.GetState(_game.RecentSave, _game, _content, _graphics));
         }
 
-        private void Button_NewGame_Clicked(object sender, EventArgs e)
+        private void Button_Saves_Clicked(object sender, EventArgs e)
         {
             Popups.Add(new SavesMenu(_game, _content, this, _graphics));
             Popups[^1].LoadContent();

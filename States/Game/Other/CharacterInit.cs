@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 
 namespace Bound.States.Game
@@ -173,7 +174,10 @@ namespace Bound.States.Game
         }
         private void Class_Apply(object sender, EventArgs e)
         {
-            var attributes = new Dictionary<string, Models.Attribute>();
+            var attributes = new Dictionary<string, Models.Attribute>()
+            {
+                { "MoveSpeed", new Models.Attribute("MoveSpeed", 10) }
+            };
 
             foreach (var att in _attributes)
                 attributes.Add(att.Key, new Models.Attribute(att.Key, att.Value));
@@ -183,7 +187,7 @@ namespace Bound.States.Game
         private void Heirloom_Apply(object sender, EventArgs e)
         {
             var box = _choiceBoxes[1];
-            var code = _game.ItemCodes[box.Choices[box.CurIndex]];
+            var code = _game.ItemCodes[box.Choices[box.CurIndex].Aggregate("", (a, c) => (c == ' ') ? a : a + c)];
             _game.SavesManager.ActiveSave.Inventory.Add(code, _game.Items[code]);
         }
         private void Difficulty_Apply(object sender, EventArgs e)
@@ -203,7 +207,7 @@ namespace Bound.States.Game
         {
             switch (_difficulty.Choices[_difficulty.CurIndex])
             {
-                case "Light Breeze":
+                case "Breeze":
                     _difficulty.ChoicePenColour = Color.Green; break;
                 case "Gale":
                     _difficulty.ChoicePenColour = Color.Orange; break;
@@ -272,7 +276,7 @@ namespace Bound.States.Game
                 Text = "Difficulty",
                 Choices = new List<string>()
                 {
-                    "Light Breeze",
+                    "Breeze",
                     "Gale",
                     "Storm",
                     "Hurricane",
@@ -295,7 +299,7 @@ namespace Bound.States.Game
                     Text = "Start",
                     Click = new EventHandler(Button_Start_Clicked),
                     Layer = layer,
-                    TextureScale = 1.5f,
+                    TextureScale = 0.8f,
                     Position = new Vector2(Game1.ScreenWidth / 2 - (_game.Textures.Buttons["B&W"].Width * scale) / 2, origin.Y * 6),
                     PenColour = Color.White,
                 },
@@ -350,7 +354,7 @@ namespace Bound.States.Game
 
             (_components[0] as TextInput).LoadContent(_game, origin);
             for (int i = 0; i < _choiceBoxes.Count; i++)
-                _choiceBoxes[i].LoadContent(_game, new Vector2(origin.X, origin.Y + ((75f * Game1.ResScale) * (i + 2))));
+                _choiceBoxes[i].LoadContent(_game, new Vector2(origin.X, origin.Y + ((25f * Game1.ResScale) * (i + 2))));
         }
 
 

@@ -94,9 +94,7 @@ namespace Bound.Controls
             if (IsEmpty)
                 spriteBatch.Draw(_plusTexture, _plusPosition, null, _plusColour, 0f, Vector2.Zero, _plusScale, SpriteEffects.None, Layer + 0.02f);
             else
-            {
                 spriteBatch.DrawString(_font, _game.SavesManager.Saves[_index].PlayerName, _namePosition, PenColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
-            }
 
             spriteBatch.DrawString(_font, Text, Position, PenColor);
         }
@@ -165,9 +163,9 @@ namespace Bound.Controls
 
         public void LoadContent(Game1 _game, BorderedBox background, int index)
         {
-            var textureScale = 0.65f;
+            var textureScale = 0.3f;
             var fullScale = textureScale * Game1.ResScale;
-            var gap = 200f * Game1.ResScale;
+            var gap = 100f * Game1.ResScale;
 
             InitialiseValues(_game, background, index, gap);
             SetEmptyValues(_game);
@@ -227,12 +225,12 @@ namespace Bound.Controls
 
             _index = index;
 
-            _plusScale = 1f * Game1.ResScale;
+            _plusScale = 0.25f * Game1.ResScale;
 
-            Width = (int)(_font.MeasureString(Text).X + gap + 170f * _plusScale);
+            Width = (int)(_font.MeasureString(Text).X + gap + 80f * _plusScale);
             Height = (int)(_font.MeasureString(Text).Y * 3);
 
-            Position = new Vector2(background.Position.X + background.Width / 2 - Width / 2, background.Position.Y + background.Height / 5 - Height / 2 + (Height + 10 * Game1.ResScale) * index);
+            Position = new Vector2(background.Position.X + background.Width / 2 - Width / 2, background.Position.Y + background.Height / 7 - Height / 2 + (Height + 4 * Game1.ResScale) * index);
 
             _plusTexture = _game.Textures.Plus;
 

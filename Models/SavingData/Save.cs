@@ -1,5 +1,6 @@
 ﻿using Bound.Managers;
 using Bound.Models.Items;
+using SharpDX.X3DAudio;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,14 +29,14 @@ namespace Bound.Models
             //basic encryption, tough enough to prevent laymen from changing critical values but not enough to prevent modders.
             //In other words: too lazy to do anything beter rn
             var str = PlayerName + "\n";
-            str += EncryptString("Level", FomratStr(Level, "Level")) + "\n";
+            str += EncryptString("Level", Level) + "\n";
             str += "\n";
 
             var attributeOrder = Attributes.Keys.ToList();
             attributeOrder.Sort();
 
             foreach (var item in attributeOrder)
-                str += EncryptString(Attributes[item].Name, FormatIntAsStr(Attributes[item].Value)) + "\n";
+                str += EncryptString(Attributes[item].Name, Attributes[item].Value.ToString()) + "\n";
             str += "\n";
             foreach (var item in Inventory.Keys)
                 str += EncryptString(FormatIntAsStr(item), SaveManager.InventoryCode) + "\n";
@@ -68,7 +69,7 @@ namespace Bound.Models
 
         private string FomratStr(string value, string name)
         {
-            var maxIndex = Manager.AttributeMap["Level"].Aggregate(0, (a, c) => (c > a) ? c : a);
+            var maxIndex = Manager.AttributeMap[name].Aggregate(0, (a, c) => (c > a) ? c : a);
             for (int i = 0; i < (maxIndex + 1) - value.Length; i++)
                 value += "0";
             return value;
@@ -81,14 +82,21 @@ namespace Bound.Models
         public string EncryptString(string name, string value)
         {
             var highestIndex = Manager.AttributeMap[name].Aggregate(0, (a, x) => (x > a) ? x : a);
-            var str = GenerateLongNumber(highestIndex + 1).ToList();
+            var str = GenerateLongNumber(highestIndex + 4).ToList();
 
             var code = Manager.AttributeMap[name];
             var cursor = 0;
             foreach (var i in code)
             {
-                str[i] = value[cursor];
-                cursor++;
+                try
+                {
+                    str[i] = value[cursor];
+                    cursor++;
+                }
+                catch (Exception)
+                {
+                    break;
+                }
             }
 
             return str.Aggregate("", (a, x) => a += x);
@@ -102,8 +110,15 @@ namespace Bound.Models
             var cursor = 0;
             foreach (var i in map)
             {
-                str[i] = value[cursor];
-                cursor++;
+                try
+                {
+                    str[i] = value[cursor];
+                    cursor++;
+                }
+                catch (Exception)
+                {
+                    break;
+                }
             }
 
             return str.Aggregate("", (a, x) => a += x);
@@ -186,18 +201,17 @@ namespace Bound.Models
 
                 //adds attributes found in file
                 var attributeKeys = manager.DefaultAttributes.Keys.ToList();
-                attributeKeys.Sort();
                 string name;
                 int pointer = 3;
                 //3 is the ammount of non-Attribute values + 1
-                for (int i = pointer; i < attributeKeys.Count + 3; i++)
+                for (int i = pointer; i < attributeKeys.Count + pointer; i++)
                 {
                     if (values[i] == "\n")
                     {
                         pointer = i + 1;
                         break;
                     }
-                    name = attributeKeys[i - 3];
+                    name = attributeKeys[i - pointer];
                     save.Attributes.Add(name, new Attribute(name, int.Parse(DecryptString(manager, name, values[i].ToString()))));
                 }
 
@@ -209,14 +223,13 @@ namespace Bound.Models
 
                 pointer = (pointer == 3) ? attributeKeys.Count + 4 : pointer;
                 //Add inventory
-                if (values[pointer] != "")
+                KeyValuePair<int, Item> plainItem;
+                for (int i = pointer; i < values.Count; i++)
                 {
-                    KeyValuePair<int, Item> plainItem;
-                    for (int i = pointer; i < values.Count; i++)
-                    {
-                        plainItem = DecryptItem(values[i], game);
-                        save.Inventory.Add(plainItem.Key, plainItem.Value);
-                    }
+                    if (values[i] == "")
+                        break;
+                    plainItem = DecryptItem(values[i], game);
+                    save.Inventory.Add(plainItem.Key, plainItem.Value);
                 }
 
                 return save;

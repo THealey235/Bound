@@ -45,7 +45,7 @@ namespace Bound.States.Popups
             var bbHeight = (int)(eigthHeight * 6);
             var font = _game.Textures.Font;
 
-            var volumeOffset = 50;
+            var volumeOffset = 40;
 
             var generalSettings = _game.Settings.Settings.General;
 
@@ -82,21 +82,21 @@ namespace Bound.States.Popups
                     Text = "Back",
                     Click = new EventHandler(Button_Discard_Clicked),
                     Layer = 0.8f,
-                    TextureScale = 1.5f,
+                    TextureScale = 0.6f,
                 },
                 new Button(_game.Textures.Button, font, _background)
                 {
                     Text = "Apply",
                     Click = new EventHandler(Button_Apply_Clicked),
                     Layer = 0.8f,
-                    TextureScale = 1.5f,
+                    TextureScale = 0.6f,
                 },
                 new Button(_game.Textures.Button, font, _background)
                 {
                     Text = "Reset",
                     Click = new EventHandler(Button_Reset_Clicked),
                     Layer = 0.8f,
-                    TextureScale = 1.5f,
+                    TextureScale = 0.6f,
                 }
 
             };
@@ -344,15 +344,27 @@ namespace Bound.States.Popups
             var comp = _components[1] as Button;
             float buttonHeight = _game.Textures.Button.Height * comp.Scale;
             float buttonWidth = _game.Textures.Button.Width * comp.Scale;
-            //possibly spaghetti code
-
-            var fractionTotalSpace = (float)(((bbWidth - buttonWidth) / 2) + (buttonWidth * 1.5f + (10 * comp.Scale))) / (float)buttonNum;
-
+            
+            var middleIndex = ((buttonNum - 1) / 2f) + 1; // add 1 since i start iterating through at 1 not 0
+            var midPoint = _background.Width / 2;
+            var gap = 15f;
             for (int i = 1; i < _components.Count; i++)
             {
                 comp = _components[i] as Button;
-                comp.RelativePosition = new Vector2(((bbWidth - buttonWidth) / 2) - (buttonWidth * 1.5f + (10 * comp.Scale)), bbHeight - (buttonHeight + (15 * comp.Scale)));
-                comp.xOffset = (int)(fractionTotalSpace * (i - 1));
+                var d = Math.Round((double)middleIndex - i, MidpointRounding.AwayFromZero);
+                var x = 0d;
+                if (middleIndex % 2 == 0)
+                    if (d >= 0)
+                        x = midPoint - ((d * gap) + (0.5 * buttonWidth) + (d * buttonWidth));
+                    else
+                        x = midPoint + (0.5 * buttonWidth) + gap + ((d * -1 - 1) * buttonWidth);
+                else
+                    if (d > 0)
+                        x = midPoint - ((0.5 * gap) + ((d - 1) * gap) + (d * buttonWidth));
+                    else
+                        x = midPoint + (0.5 * gap) + (d * -1 - 1) * (gap + buttonWidth);
+
+                comp.RelativePosition = new Vector2((float)x, bbHeight - (buttonHeight + (15 * comp.Scale)));
             }
         }
 

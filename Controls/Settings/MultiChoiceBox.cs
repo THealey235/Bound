@@ -59,7 +59,7 @@ namespace Bound.Controls.Settings
                 "Null"
             };
 
-            TextureScale = 1f;
+            TextureScale = 0.2f;
             PenColour = ChoicePenColour = Color.Black;
 
             CurIndex = index;
@@ -96,18 +96,17 @@ namespace Bound.Controls.Settings
             var longestChoice = Choices.Aggregate(0, (a, c) => (int)(a > _font.MeasureString(c).X ? a : _font.MeasureString(c).X));
 
             _components = new List<Component>();
-            var textureScale = 0.6f;
 
-            var fullScale = textureScale * Game1.ResScale;
-            var arrowLength = _texture.Width * 2 * fullScale;
-            var gap = 10f * Game1.ResScale;
-            //Dont ask me why it needs this, idc anymore: who even uses 720p monitors anyway?
+            var fullScale = TextureScale * Game1.ResScale;
+            var arrowLength = (float)(_texture.Width * 2.8 * fullScale);
+            var gap = 8f * Game1.ResScale;
+            //Dont ask me why it needs this, idc anymore: who even uses 720p anyway?
             if (Game1.ScreenHeight == 720)
                 gap -= 3;
 
             var longestName = 0;
             if (Type == "Video")
-                longestName = (int)_font.MeasureString(Text).X; //"Resolution" is the longest name in the video section
+                longestName = (int)_font.MeasureString(Text).X;
 
             FullWidth = (int)(longestName + gap + arrowLength * 2 + longestChoice + gap);
             FullHeight = (int)(_font.MeasureString(Text).Y + 10);
@@ -142,7 +141,7 @@ namespace Bound.Controls.Settings
                     Position = _leftArrowPosition,
                     Click = new EventHandler(LeftArrow_Clicked),
                     Layer = Layer + 0.1f,
-                    TextureScale = textureScale
+                    TextureScale = TextureScale
                 }
             );
 
@@ -153,7 +152,7 @@ namespace Bound.Controls.Settings
                     Position = _rightArrowPosition,
                     Click = new EventHandler(RightArrow_Clicked),
                     Layer = Layer + 0.1f,
-                    TextureScale = textureScale,
+                    TextureScale = TextureScale,
                     Effect = SpriteEffects.FlipHorizontally
                 }
             );
@@ -163,18 +162,13 @@ namespace Bound.Controls.Settings
 
         public void LoadContent(Game1 _game, Vector2 center)
         {
-            //TODO: rewrite BorderdBox constructor so i may rewrite this method
-            //Note: this code is some hot garbage
 
             var longestChoice = Choices.Aggregate(0, (a, c) => (int)(a > _font.MeasureString(c).X ? a : _font.MeasureString(c).X));
 
             _components = new List<Component>();
-            var textureScale = 0.6f;
-
-            var fullScale = textureScale * Game1.ResScale;
+            var fullScale = TextureScale * Game1.ResScale;
             var arrowLength = _texture.Width * 2 * fullScale;
-            var gap = 10f * Game1.ResScale;
-            //Dont ask me why it needs this, idc anymore: who even uses 720p monitors anyway?
+            var gap = 8f * fullScale;
             if (Game1.ScreenHeight == 720)
                 gap -= 3;
 
@@ -213,7 +207,7 @@ namespace Bound.Controls.Settings
                     Position = _leftArrowPosition,
                     Click = new EventHandler(LeftArrow_Clicked),
                     Layer = Layer + 0.1f,
-                    TextureScale = textureScale
+                    TextureScale = TextureScale,
                 }
             );
 
@@ -224,7 +218,7 @@ namespace Bound.Controls.Settings
                     Position = _rightArrowPosition,
                     Click = new EventHandler(RightArrow_Clicked),
                     Layer = Layer + 0.1f,
-                    TextureScale = textureScale,
+                    TextureScale = TextureScale,
                     Effect = SpriteEffects.FlipHorizontally
                 }
             );
