@@ -187,7 +187,7 @@ namespace Bound.States.Game
         private void Heirloom_Apply(object sender, EventArgs e)
         {
             var box = _choiceBoxes[1];
-            var code = _game.ItemCodes[box.Choices[box.CurIndex].Aggregate("", (a, c) => (c == ' ') ? a : a + c)];
+            var code = _game.ItemCodes[box.Choices[box.CurIndex]];
             _game.SavesManager.ActiveSave.Inventory.Add(code, _game.Items[code]);
         }
         private void Difficulty_Apply(object sender, EventArgs e)
