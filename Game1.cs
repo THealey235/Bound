@@ -25,6 +25,7 @@ namespace Bound
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         public Player Player;
+        private List<Sprite> _sprites;
 
         private int _defaultHeight = 360;
 
@@ -68,6 +69,7 @@ namespace Bound
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
+            _graphics.PreferHalfPixelOffset = true;
             //Root diretcory for the texture files
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
@@ -81,7 +83,6 @@ namespace Bound
             //makes it "Borderless Windowed" and enables high pixel count textures for 4k monitors and advanced shaders
             _graphics.HardwareModeSwitch = false;
             _graphics.GraphicsProfile = GraphicsProfile.HiDef;
-
             _graphics.ApplyChanges();
 
             //calls the inhereited method
@@ -113,7 +114,11 @@ namespace Bound
             }
 
             PlayerKeys = new Input(Settings.Settings.InputValues);
-            Player = new Player(Textures.PlayerStatic, PlayerKeys);
+            Player = new Player(Textures.PlayerStatic, PlayerKeys)
+            {
+                Layer = 0.75f,
+                Position = new Vector2(100, 0),
+            };
 
             ResetState();
         }
@@ -133,6 +138,7 @@ namespace Bound
             _currentState.LoadContent();
 
             _nextState = null;
+
         }
 
         //Update loop called every frame
@@ -175,8 +181,11 @@ namespace Bound
         {
             GraphicsDevice.Clear(Color.Black);
 
-            //Front to back means that textures with a lower Layer value will be drawn behind textures with higher Layer values
-            _spriteBatch.Begin(SpriteSortMode.FrontToBack);
+            //Front to back means that textures with a lower Layer value will be drawn behind textures with higher Layer values.
+            //By setting sampler state to PointClamp, no interpolation occurs when accessing Texture2D files, this was especially bad
+            //when using my texture atlases as they would be prone to texture bleeding due to interpolation.
+            //Transform matrix if to keep the character at the center of the screen.
+            _spriteBatch.Begin(SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
 
             _currentState.Draw(gameTime, _spriteBatch);
 
@@ -246,6 +255,30 @@ namespace Bound
             }
         }
 
+        public List<List<int>> RetrieveLevelMap(int level)
+        {
+            List<List<int>> map;
+            using (var reader = new System.IO.StreamReader($"Content/Levels/Level{level}.txt"))
+            {
+                map = reader.ReadToEnd().Split("\r\n").Select(x => x.Split(',').Select(y => ProcessIndex(y)).ToList()).ToList();
+            }
+            return map;
+        }
+
+        private int ProcessIndex(string x) => int.TryParse(x, out var index) ? index : -1;
+
+        public List<Rectangle> GenerateSurfaces(List<List<int>> levelMap, float scale)
+        {
+            var surfaces = new List<Rectangle>();
+            for (int i = 0; i > levelMap.Count; i++)
+            {
+                for (int j = 0; j <  levelMap[i].Count; j++)
+                {
+
+                }
+            }
+            return surfaces;
+        }
         #endregion
     }
 }

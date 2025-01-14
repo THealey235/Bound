@@ -1,6 +1,7 @@
 ﻿using Bound.Models.Items;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +11,9 @@ namespace Bound.Managers
     public class Textures
     {
         private ContentManager _content;
+        private Texture2D _blockAtlas;
 
+        public int BlockWidth = 16;
         public Texture2D Button;
         public Texture2D BaseBackground;
         public Texture2D RedX;
@@ -20,6 +23,7 @@ namespace Bound.Managers
         public Texture2D TrashCan;
         public Texture2D Null;
         public Texture2D PlayerStatic;
+        public Texture2D Block;
 
         public Dictionary<string, Texture2D> Items;
         public Dictionary<string, Texture2D> Buttons;
@@ -71,6 +75,8 @@ namespace Bound.Managers
             };
 
             PlayerStatic = content.Load<Texture2D>("Player/Player1Static");
+            _blockAtlas = content.Load<Texture2D>("Atlases/BlockAtlas");
+            Block = content.Load<Texture2D>("Atlases/DirtBlock");
         }
 
         public (Dictionary<int, Item>, Dictionary<string, int>) LoadItems()
@@ -108,6 +114,27 @@ namespace Bound.Managers
             }
 
             return (items, codes);
+        }
+
+        public void DrawBlock(SpriteBatch spriteBatch, int index, Vector2 position, Color colour, float rotation, Vector2 origin, float scale, SpriteEffects spriteEffects, float layer, int increment)
+        {
+            var rowLength = _blockAtlas.Width / BlockWidth;
+            var column = index / rowLength;
+            var row = index % rowLength;
+            layer *= (float)(0.000001 * increment);
+
+            spriteBatch.Draw
+            (
+                _blockAtlas,
+                new Vector2((position.X) * Game1.ResScale, (position.Y) * Game1.ResScale),
+                new Rectangle(BlockWidth * row, BlockWidth * column, BlockWidth, BlockWidth),
+                colour,
+                rotation,
+                origin,
+                scale * Game1.ResScale,
+                spriteEffects,
+                layer
+            );
         }
     }
 }

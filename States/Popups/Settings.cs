@@ -64,7 +64,7 @@ namespace Bound.States.Popups
                     _game.GraphicsDevice,
                     Color.BlanchedAlmond,
                     new Vector2(eigthWidth, eigthHeight),
-                    0.6f,
+                    0.79f,
                     bbWidth,
                     bbHeight
                 );
@@ -114,7 +114,7 @@ namespace Bound.States.Popups
                         "2560x1440",
                         "3840x2160"
                     },
-                    Layer = 0.8f,
+                    Layer = 0.81f,
                     OnApply = new EventHandler(Resolution_Apply),
                     Order = 0,
                     Type = "Video",
@@ -127,7 +127,7 @@ namespace Bound.States.Popups
                         "Yes",
                         "No"
                     },
-                    Layer = 0.8f,
+                    Layer = 0.81f,
                     OnApply = new EventHandler(Fullscreen_Apply),
                     Order = 1,
                     Type = "Video"
@@ -135,7 +135,7 @@ namespace Bound.States.Popups
                 new ScrollBox(font, "MasterVolume", 100f, "%", _game)
                 {
                     Text = "Master Volume",
-                    Layer = 0.8f,
+                    Layer = 0.81f,
                     OnApply = new EventHandler(Volume_Apply),
                     Order = 2,
                     yOffset = volumeOffset,
@@ -143,7 +143,7 @@ namespace Bound.States.Popups
                 new ScrollBox(font, "MusicVolume", 100f, "%", _game)
                 {
                     Text = "Music Volume",
-                    Layer = 0.8f,
+                    Layer = 0.81f,
                     OnApply = new EventHandler(Volume_Apply),
                     Order = 3,
                     yOffset = volumeOffset,
@@ -151,7 +151,7 @@ namespace Bound.States.Popups
                 new ScrollBox(font, "EnemyVolume", 100f, "%", _game)
                 {
                     Text = "Enemy Volume",
-                    Layer = 0.8f,
+                    Layer = 0.81f,
                     OnApply = new EventHandler(Volume_Apply),
                     Order = 4,
                     yOffset = volumeOffset,
@@ -159,7 +159,7 @@ namespace Bound.States.Popups
                 new ScrollBox(font, "PlayerVolume", 100f, "%", _game)
                 {
                     Text = "Player Volume",
-                    Layer = 0.8f,
+                    Layer = 0.81f,
                     OnApply = new EventHandler(Volume_Apply),
                     Order = 5,
                     yOffset = volumeOffset,
@@ -178,7 +178,7 @@ namespace Bound.States.Popups
                 (
                      new KeyInput(font, kvp, longestInput)
                      {
-                         Layer = 0.8f,
+                         Layer = 0.81f,
                          Order = acc,
                          OnApply = new EventHandler(Key_Apply)
                      }

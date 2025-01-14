@@ -122,7 +122,7 @@ namespace Bound.Controls.Settings
                     _game.GraphicsDevice,
                     Color.White,
                     Position,
-                    Layer - 0.1f,
+                    Layer,
                     FullWidth,
                     FullHeight
                 );

@@ -29,6 +29,13 @@ namespace Bound.Sprites
 
         protected Texture2D _texture;
 
+        protected float g = 0.09f;
+        protected float _terminalVelocity = 2;
+
+        protected float Scale { get; set; }
+
+        protected float gravity = 0;
+
         #endregion
 
         #region Properties
@@ -148,6 +155,8 @@ namespace Bound.Sprites
 
             TextureData = new Color[_texture.Width * _texture.Height];
             _texture.GetData(TextureData);
+
+            _scale = 1f;
         }
 
         public Sprite(Dictionary<string, Animation> animations)
@@ -167,6 +176,8 @@ namespace Bound.Sprites
             _animationManager = new AnimationManager(animation);
 
             Origin = new Vector2(animation.FrameWidth / 2, animation.FrameHeight / 2);
+
+            _scale = 1f;
         }
 
         public override void Update(GameTime gameTime)
@@ -177,7 +188,7 @@ namespace Bound.Sprites
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             if (_texture != null)
-                spriteBatch.Draw(_texture, Position, null, Colour, _rotation, Origin, 1f, SpriteEffects.None, Layer);
+                spriteBatch.Draw(_texture, Position, null, Colour, _rotation, Origin, Game1.ResScale * Scale, SpriteEffects.None, Layer);
             else if (_animationManager != null)
                 _animationManager.Draw(spriteBatch);
         }
@@ -259,6 +270,19 @@ namespace Bound.Sprites
             }
 
             return sprite;
+        }
+
+        protected float SimulateGravity(float gravity, int resistance, int mass)
+        {
+            if (_terminalVelocity <= gravity)
+                return gravity;
+            else if (resistance == 0)
+                gravity += g;
+            else
+                //f = ma
+                gravity += ((mass * (g * 10)) - resistance) / (float)mass;
+            return gravity;
+
         }
 
         #endregion
