@@ -10,10 +10,22 @@ namespace Bound.Managers
 {
     public class Textures
     {
-        private ContentManager _content;
-        private Texture2D _blockAtlas;
+        #region PreDefined
 
         public int BlockWidth = 16;
+
+        public enum Blocks
+        {
+            Grass, Path, OakPlank, OakLog, Glass, DoorA, DoorB, OakSlab
+        }
+
+        public List<int> GhostBlocks = new List<int>() //contains blocks that you can walk through
+        {
+            (int)Blocks.DoorA, (int)Blocks.DoorB
+        };
+        #endregion
+        private ContentManager _content;
+        public Texture2D BlockAtlas;
         public Texture2D Button;
         public Texture2D BaseBackground;
         public Texture2D RedX;
@@ -75,7 +87,7 @@ namespace Bound.Managers
             };
 
             PlayerStatic = content.Load<Texture2D>("Player/Player1Static");
-            _blockAtlas = content.Load<Texture2D>("Atlases/BlockAtlas");
+            BlockAtlas = content.Load<Texture2D>("Atlases/BlockAtlas");
             Block = content.Load<Texture2D>("Atlases/DirtBlock");
         }
 
@@ -118,14 +130,15 @@ namespace Bound.Managers
 
         public void DrawBlock(SpriteBatch spriteBatch, int index, Vector2 position, Color colour, float rotation, Vector2 origin, float scale, SpriteEffects spriteEffects, float layer, int increment)
         {
-            var rowLength = _blockAtlas.Width / BlockWidth;
+            var rowLength = BlockAtlas.Width / BlockWidth;
             var column = index / rowLength;
             var row = index % rowLength;
-            layer *= (float)(0.000001 * increment);
+            var pos = new Vector2((position.X) * Game1.ResScale, (position.Y) * Game1.ResScale);
+            var src = new Rectangle(BlockWidth * row, BlockWidth * column, BlockWidth, BlockWidth);
 
             spriteBatch.Draw
             (
-                _blockAtlas,
+                BlockAtlas,
                 new Vector2((position.X) * Game1.ResScale, (position.Y) * Game1.ResScale),
                 new Rectangle(BlockWidth * row, BlockWidth * column, BlockWidth, BlockWidth),
                 colour,

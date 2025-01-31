@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using Bound.Sprites;
 
 namespace Bound.States
 {
@@ -24,8 +25,13 @@ namespace Bound.States
         //all "substates" known as popups. i.e. Settings or SavesMenu
         public List<State> Popups;
 
-        //i.e. "MainMenu"
+        //i.e. "mainMenu"
         public string Name;
+
+        protected Player _player;
+        protected List<List<int>> _levelMap;
+        protected float _scale;
+        protected List<Rectangle> _surfaces;
 
         public State(Game1 game, ContentManager content)
         {

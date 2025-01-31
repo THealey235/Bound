@@ -76,6 +76,8 @@ namespace Bound.Managers
                     {"Down", "S" },
                     {"Left", "A" },
                     {"Right", "D" },
+                    {"Jump", "SPACE" },
+                    {"Reset", "R" }
                 }
             };
         }

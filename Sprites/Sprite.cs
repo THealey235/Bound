@@ -32,13 +32,12 @@ namespace Bound.Sprites
         protected float g = 0.09f;
         protected float _terminalVelocity = 2;
 
-        protected float Scale { get; set; }
-
         protected float gravity = 0;
 
         #endregion
 
         #region Properties
+        public Vector2 Velocity;
 
         public List<Sprite> Children { get; set; }
 
@@ -46,6 +45,7 @@ namespace Bound.Sprites
 
         public bool IsRemoved { get; set; }
 
+        protected Game1 _game;
         public float Layer
         {
             get { return _layer; }
@@ -55,6 +55,14 @@ namespace Bound.Sprites
 
                 if (_animationManager != null)
                     _animationManager.Layer = _layer;
+            }
+        }
+
+        public float Scale
+        {
+            get
+            {
+                return _scale * Game1.ResScale;
             }
         }
 
@@ -85,13 +93,21 @@ namespace Bound.Sprites
             }
         }
 
+        public Vector2 ScaledPosition
+        {
+            get
+            {
+                return new Vector2(Position.X * Game1.ResScale, Position.Y * Game1.ResScale);
+            }
+        }
+
         public Rectangle Rectangle
         {
             get
             {
                 if (_texture != null)
                 {
-                    return new Rectangle((int)Position.X - (int)Origin.X, (int)Position.Y - (int)Origin.Y, _texture.Width, _texture.Height);
+                    return new Rectangle((int)(Position.X), (int)(Position.Y), (int)(_texture.Width * _scale), (int)(_texture.Height * _scale));
                 }
 
                 if (_animationManager != null)
@@ -143,7 +159,7 @@ namespace Bound.Sprites
         #endregion
 
         #region Methods
-        public Sprite(Texture2D texture)
+        public Sprite(Texture2D texture, Game1 game)
         {
             _texture = texture;
 
@@ -157,9 +173,11 @@ namespace Bound.Sprites
             _texture.GetData(TextureData);
 
             _scale = 1f;
+
+            _game = game;
         }
 
-        public Sprite(Dictionary<string, Animation> animations)
+        public Sprite(Dictionary<string, Animation> animations, Game1 game)
         {
             _texture = null;
 
@@ -178,6 +196,8 @@ namespace Bound.Sprites
             Origin = new Vector2(animation.FrameWidth / 2, animation.FrameHeight / 2);
 
             _scale = 1f;
+
+            _game = game;
         }
 
         public override void Update(GameTime gameTime)
@@ -193,7 +213,9 @@ namespace Bound.Sprites
                 _animationManager.Draw(spriteBatch);
         }
 
-        //per pixel collision detection is not implemented for animated sprites
+        #region Collision
+        //per pixel collision detection is not implemented for animated sprites, not my code
+        //this will more than likey be never be used
         public bool Intersects(Sprite sprite)
         {
             if (this.TextureData == null)
@@ -258,6 +280,77 @@ namespace Bound.Sprites
         //{
 
         //}
+
+        #region Sprite Collision
+        protected bool IsTouchingLeft(Sprite sprite)
+        {
+            return this.Rectangle.Right + this.Velocity.X > sprite.Rectangle.Left &&
+                this.Rectangle.Left < sprite.Rectangle.Left &&
+                this.Rectangle.Bottom > sprite.Rectangle.Top &&
+                this.Rectangle.Top < sprite.Rectangle.Bottom;
+        }
+
+        protected bool IsTouchingRight(Sprite sprite)
+        {
+            return this.Rectangle.Left + this.Velocity.X < sprite.Rectangle.Right &&
+                this.Rectangle.Right > sprite.Rectangle.Right &&
+                this.Rectangle.Bottom > sprite.Rectangle.Top &&
+                this.Rectangle.Top < sprite.Rectangle.Bottom;
+        }
+
+        protected bool IsTouchingTop(Sprite sprite)
+        {
+            return this.Rectangle.Bottom + this.Velocity.Y > sprite.Rectangle.Top &&
+                this.Rectangle.Top < sprite.Rectangle.Top &&
+                this.Rectangle.Right > sprite.Rectangle.Left &&
+                this.Rectangle.Left < sprite.Rectangle.Right;
+        }
+
+        protected bool IsTouchingBottom(Sprite sprite)
+        {
+            return this.Rectangle.Top + this.Velocity.Y < sprite.Rectangle.Bottom &&
+                this.Rectangle.Bottom > sprite.Rectangle.Bottom &&
+                this.Rectangle.Right > sprite.Rectangle.Left &&
+                this.Rectangle.Left < sprite.Rectangle.Right;
+        }
+        #endregion
+
+        #region Rectangle Collision
+        protected bool IsTouchingLeft(Rectangle rect)
+        {
+            return this.Rectangle.Right + this.Velocity.X > rect.Left &&
+                this.Rectangle.Left < rect.Left &&
+                this.Rectangle.Bottom > rect.Top &&
+                this.Rectangle.Top < rect.Bottom;
+        }
+
+        protected bool IsTouchingRight(Rectangle rect)
+        {
+            return this.Rectangle.Left + this.Velocity.X < rect.Right &&
+                this.Rectangle.Right > rect.Right &&
+                this.Rectangle.Bottom > rect.Top &&
+                this.Rectangle.Top < rect.Bottom;
+        }
+
+        protected bool IsTouchingTop(Rectangle rect)
+        {
+            return this.Rectangle.Bottom + this.Velocity.Y > rect.Top &&
+                this.Rectangle.Top < rect.Top &&
+                this.Rectangle.Right > rect.Left &&
+                this.Rectangle.Left < rect.Right;
+        }
+
+        protected bool IsTouchingBottom(Rectangle rect)
+        {
+            return this.Rectangle.Top + this.Velocity.Y < rect.Bottom &&
+                this.Rectangle.Bottom > rect.Bottom &&
+                this.Rectangle.Right > rect.Left &&
+                this.Rectangle.Left < rect.Right;
+        }
+
+        #endregion
+
+        #endregion
 
         public object Clone()
         {

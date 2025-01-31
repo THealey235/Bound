@@ -10,8 +10,12 @@ using System.Linq;
 using Bound.States.Popups;
 using Bound.Models.Items;
 using Bound.Sprites;
+using System.Diagnostics;
+using System.Text;
+using CameraFollowingSprite.Core;
+using System.Security.Cryptography.Xml;
 
-//A "State" is the current level of the game this can be the main menu, character creation or even a boss arena;
+//A "State" is the current level of the game this can be the main menu, character creation or even a boss arena
 //A "Component" is the abstract class of all objects which will be drawn/updated
 //For more info refer to their respective .cs files
 
@@ -26,6 +30,10 @@ namespace Bound
         private SpriteBatch _spriteBatch;
         public Player Player;
         private List<Sprite> _sprites;
+        private List<string> _statesWithoutPlayer = new List<string>()
+        {
+            StateNames.MainMenu, StateNames.CharacterInit
+        };
 
         private int _defaultHeight = 360;
 
@@ -33,12 +41,17 @@ namespace Bound
         public static int ScreenHeight;
         public static int ScreenWidth;
         public static float ResScale;
+        public static bool InDebug = false;
+        public static Color DebugColour = Color.White;
+        public static Vector2 V2Transform;
+        public static StateNames StateNames = new StateNames();
 
         //all the managers of objects that will be stored on disk
         public SettingsManager Settings;
         public Input PlayerKeys;
         public static Dictionary<string, string> SettingsStates;
         public SaveManager SavesManager;
+        public Camera Camera;
 
         //most recent save accesssed to know which save to load when the user presses "continue" on the main menu
         public int RecentSave;
@@ -61,6 +74,15 @@ namespace Bound
 
         //Holds all textures to be used
         public Textures Textures;
+
+        public string CurrentStateName
+        {
+            get
+            {
+                return _currentState.Name;
+            }
+        }
+
 
         #endregion
 
@@ -114,11 +136,15 @@ namespace Bound
             }
 
             PlayerKeys = new Input(Settings.Settings.InputValues);
-            Player = new Player(Textures.PlayerStatic, PlayerKeys)
+            Player = new Player(Textures.PlayerStatic, PlayerKeys, this)
             {
                 Layer = 0.75f,
                 Position = new Vector2(100, 0),
             };
+
+            Camera = new Camera();
+
+            V2Transform = Vector2.Zero;
 
             ResetState();
         }
@@ -153,11 +179,16 @@ namespace Bound
                 _currentState.LoadContent();
             }
 
+            _previousKeys = _currentKeys;
+            _currentKeys = Keyboard.GetState();
+
             //checks if F11 is pressed, if so: toggle fullscreen
             ChangeFullscreenMode();
+            //check debug
+            ChangeDebugMode();
 
             //if you aren't in the main menu you may press escape to access settings and return to the main menu
-            if (_currentKeys.IsKeyDown(Keys.Escape) && _previousKeys.IsKeyUp(Keys.Escape) && _currentState.Popups.Count == 0 && _currentState.Name != "mainmenu")
+            if (_currentKeys.IsKeyDown(Keys.Escape) && _previousKeys.IsKeyUp(Keys.Escape) && _currentState.Popups.Count == 0 && _currentState.Name != StateNames.MainMenu)
             {
                 var settings = new Settings(this, Content, _currentState, _graphics);
                 _currentState.Popups.Add(settings);
@@ -167,6 +198,11 @@ namespace Bound
 
             _currentState.Update(gameTime);
             _currentState.PostUpdate(gameTime);
+
+            Camera.Follow(Player);
+
+            if (_statesWithoutPlayer.Contains(_currentState.Name))
+                V2Transform = Vector2.Zero;
 
             base.Update(gameTime);
         }
@@ -179,13 +215,16 @@ namespace Bound
         //Draws the textures on to the screen.
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.Cornsilk);
 
             //Front to back means that textures with a lower Layer value will be drawn behind textures with higher Layer values.
             //By setting sampler state to PointClamp, no interpolation occurs when accessing Texture2D files, this was especially bad
             //when using my texture atlases as they would be prone to texture bleeding due to interpolation.
-            //Transform matrix if to keep the character at the center of the screen.
-            _spriteBatch.Begin(SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
+            //Transform matrix is to keep the character at the center of the screen.
+            if (_currentState.Name[0] == 'l')
+                _spriteBatch.Begin(SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp, transformMatrix: Camera.Transform);
+            else
+                _spriteBatch.Begin(SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
 
             _currentState.Draw(gameTime, _spriteBatch);
 
@@ -204,13 +243,23 @@ namespace Bound
         }
         private void ChangeFullscreenMode()
         {
-            _previousKeys = _currentKeys;
-            _currentKeys = Keyboard.GetState();
 
             if (_currentKeys.IsKeyDown(Keys.F11) && _previousKeys.IsKeyUp(Keys.F11))
             {
                 ToggleFullScreen();
                 SettingsManager.Save(Settings);
+            }
+        }
+
+        private void ChangeDebugMode()
+        {
+            if (_currentKeys.IsKeyDown(Keys.F3) && _previousKeys.IsKeyUp(Keys.F3))
+                InDebug = !InDebug;
+            if (_currentKeys.IsKeyDown(Keys.F4) && _previousKeys.IsKeyUp(Keys.F4))
+            {
+                if (DebugColour == Color.White)
+                    DebugColour = Color.Black;
+                else DebugColour = Color.White;
             }
         }
 
@@ -249,10 +298,16 @@ namespace Bound
                 state.LoadContent();
 
             //if it is the main menu remove the "quit" button from settings to return to the main menu
-            if (_currentState.Name != "mainmenu" && _currentState.Popups.Count > 0)
+            if (_currentState.Name != StateNames.MainMenu && _currentState.Popups.Count > 0)
             {
-                (_currentState.Popups[^1] as Settings).LoadMenuButton();
+                var settings = (_currentState.Popups[^1] as Settings);
+                Player.Reset();
+                Camera.Follow(Player);
+                settings.LoadContent();
+                settings.LoadMenuButton();
             }
+
+            Player.Reset();
         }
 
         public List<List<int>> RetrieveLevelMap(int level)
@@ -267,14 +322,17 @@ namespace Bound
 
         private int ProcessIndex(string x) => int.TryParse(x, out var index) ? index : -1;
 
-        public List<Rectangle> GenerateSurfaces(List<List<int>> levelMap, float scale)
+        public List<Rectangle> GenerateSurfaces(List<List<int>> levelMap, int scale)
         {
             var surfaces = new List<Rectangle>();
-            for (int i = 0; i > levelMap.Count; i++)
+            var sideLength = Textures.BlockWidth * scale; //they are squares => height = width
+            for (int i = 0; i < levelMap.Count; i++)
             {
-                for (int j = 0; j <  levelMap[i].Count; j++)
+                for (int j = 0; j < levelMap[i].Count; j++)
                 {
-
+                    if (levelMap[i][j] == -1)
+                        continue;
+                    surfaces.Add(new Rectangle(i * scale, j * scale, sideLength, sideLength));
                 }
             }
             return surfaces;

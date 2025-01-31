@@ -22,13 +22,15 @@ namespace Bound.Models
 
         public bool IsPressed(string key, bool IsHoldable)
         {
+            if (!Keys.ContainsKey(key))
+                return false;
             key = Keys[key];
-            //If it is a keyboard key
+            //If it is a mouse button
+            //TODO: Refactor this rats' nest, i don't even know if it works
             if (key.Substring(0, 1) == "M" && key.Length == 2)
             {
                 bool pButtonState;
                 bool cButtonState;
-
 
                 switch (key.Substring(1, 1))
                 {
@@ -79,9 +81,6 @@ namespace Bound.Models
                     return true;
                 else return false;
             }
-
-            //If it is a mouse button
-            //TODO: Refactor this rats' nest, i don't even know if it works
         }
 
         public void Update()
@@ -98,6 +97,7 @@ namespace Bound.Models
         public static Dictionary<string, string> SpecialKeyMap = new Dictionary<string, string>
         {
             { "CapsLock", "CAPS"},
+            { "Space", "SPACE"},
             { "Decimal", "Dcml"},
             { "Delete", "DEL"},
             { "Divide", "DIV"},

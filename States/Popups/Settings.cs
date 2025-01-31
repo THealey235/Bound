@@ -19,10 +19,10 @@ namespace Bound.States.Popups
         private List<MultiChoice> _multiBoxes;
         private List<KeyInput> _keyInputs;
         private BorderedBox _background;
-
         private KeyboardState _currentKeys;
         private KeyboardState _previousKeys;
         private GraphicsDeviceManager _graphics;
+        private bool _enableEscape;
 
         public State Parent;
 
@@ -33,7 +33,8 @@ namespace Bound.States.Popups
         {
             Parent = parent;
             _graphics = graphics;
-            Name = "settings";
+            Name = Game1.StateNames.Settings;
+            _enableEscape = false;
         }
 
         public override void LoadContent()
@@ -63,7 +64,7 @@ namespace Bound.States.Popups
                     texture,
                     _game.GraphicsDevice,
                     Color.BlanchedAlmond,
-                    new Vector2(eigthWidth, eigthHeight),
+                    new Vector2(eigthWidth + Game1.V2Transform.X, eigthHeight + Game1.V2Transform.Y),
                     0.79f,
                     bbWidth,
                     bbHeight
@@ -216,6 +217,14 @@ namespace Bound.States.Popups
 
             _previousKeys = _currentKeys;
             _currentKeys = Keyboard.GetState();
+
+            if (_enableEscape)
+            {
+                if (_currentKeys.IsKeyUp(Keys.Escape) && _previousKeys.IsKeyDown(Keys.Escape))
+                    Button_Discard_Clicked(new object(), new EventArgs());
+            }
+            else
+                if (_currentKeys.IsKeyUp(Keys.Escape)) _enableEscape = true;
         }
 
         public override void PostUpdate(GameTime gameTime)
@@ -247,6 +256,11 @@ namespace Bound.States.Popups
             ApplyChanges();
 
             _game.ResetState();
+
+            if (_game.CurrentStateName != Game1.StateNames.MainMenu)
+            {
+                
+            }
         }
         private void Button_Reset_Clicked(object sender, EventArgs e)
         {
@@ -266,7 +280,6 @@ namespace Bound.States.Popups
                 keyBox.OnApply?.Invoke(keyBox, EventArgs.Empty);
 
             _graphics.ApplyChanges();
-
             SettingsManager.Save(_game.Settings);
         }
         private void Resolution_Apply(object sender, EventArgs e)

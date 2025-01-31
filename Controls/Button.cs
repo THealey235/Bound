@@ -25,6 +25,8 @@ namespace Bound.Controls
 
         private Texture2D _texture;
 
+        private Vector2 _position;
+
         public float Scale
         {
             get
@@ -52,6 +54,8 @@ namespace Bound.Controls
         public BorderedBox Parent;
 
         public int xOffset;
+
+        public bool ToCenter = true;
 
         public bool IsHovering
         {
@@ -83,7 +87,20 @@ namespace Bound.Controls
 
         public Color PenColour { get; set; }
 
-        public Vector2 Position { get; set; }
+        public Vector2 Position
+        {
+            get
+            {
+                if (Parent == null)
+                    return _position;
+                else
+                    return new Vector2(Parent.Position.X + RelativePosition.X + xOffset, Parent.Position.Y + RelativePosition.Y);
+            }
+            set
+            {
+                _position = value;
+            }
+        }
 
         public Rectangle Rectangle
         {
@@ -130,7 +147,6 @@ namespace Bound.Controls
 
             if (Parent != null)
             {
-                Position = new Vector2(Parent.Position.X + RelativePosition.X + xOffset, Parent.Position.Y + RelativePosition.Y); ;
                 spriteBatch.Draw(_texture, Position, null, colour, 0f, Vector2.Zero, Scale, Effect, Layer);
             }
             else
@@ -151,6 +167,11 @@ namespace Bound.Controls
             _currentMouse = Mouse.GetState();
 
             var mouseRectangle = new Rectangle(_currentMouse.X, _currentMouse.Y, 1, 1);
+            if (ToCenter)
+            {
+                mouseRectangle.X += (int)Game1.V2Transform.X;
+                mouseRectangle.Y += (int)Game1.V2Transform.Y;
+            }
 
             _isHovering = false;
 

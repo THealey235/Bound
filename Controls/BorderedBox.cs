@@ -74,6 +74,7 @@ namespace Bound.Controls
             SetRectangleTexture(_graphicsDevice, _texture);
         }
 
+
         public BorderedBox(Texture2D texture, GraphicsDevice graphicsDevice, Color color, Vector2 position, float layer, int width, int height, Color borderColor)
             : this(texture, graphicsDevice, color, position, layer, width, height)
         {

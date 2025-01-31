@@ -29,7 +29,7 @@ namespace Bound.States
         public MainMenu(Game1 game, ContentManager content, GraphicsDeviceManager graphics) : base(game, content)
         {
             _graphics = graphics;
-            Name = "mainmenu";
+            Name = Game1.StateNames.MainMenu;
         }
 
         public override void LoadContent()
@@ -54,7 +54,7 @@ namespace Bound.States
                     Click = new EventHandler(Button_Saves_Clicked),
                     Layer = layer,
                     TextureScale = textureScale,
-
+                    ToCenter = false
                 },
                 new Button(buttonTexture, font)
                 {
@@ -63,6 +63,7 @@ namespace Bound.States
                     Click = new EventHandler(Button_Settings_Clicked),
                     TextureScale = textureScale,
                     Layer = layer,
+                    ToCenter = false
                 },
                 new Button(buttonTexture, font)
                 {
@@ -70,6 +71,7 @@ namespace Bound.States
                     Position = new Vector2(leftOffset , topOffset + (spacing * 3)),
                     Click = new EventHandler(Button_Quit_Clicked),
                     TextureScale = textureScale,
+                    ToCenter = false,
                     Layer = layer,
                 },
             };
@@ -80,6 +82,7 @@ namespace Bound.States
                     Text = "Continue",
                     Position = new Vector2(leftOffset, topOffset),
                     Click = new EventHandler(Button_Continue_Clicked),
+                    ToCenter = false,
                     Layer = layer,
                     TextureScale = textureScale,
                 });
