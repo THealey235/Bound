@@ -1,4 +1,5 @@
-﻿using Bound.Sprites;
+﻿using Bound.Controls.Game;
+using Bound.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,6 +14,7 @@ namespace Bound.States.Game
     {
         private List<Block> _blocks;
         private List<Rectangle> _blockRects;
+        private List<HotbarSlot> _hotbarSlots;
         public Level0(Game1 game, ContentManager content, Player player) : base(game, content)
         {
             Name = Game1.StateNames.Level0;
@@ -33,6 +35,9 @@ namespace Bound.States.Game
                 block.Draw(gameTime, spriteBatch);
 
             _player.Draw(gameTime, spriteBatch);
+
+            foreach (var slot in  _hotbarSlots)
+                slot.Draw(gameTime, spriteBatch);
 
             if (Game1.InDebug)
             {
@@ -66,6 +71,21 @@ namespace Bound.States.Game
                 }
             }
             _blockRects = UpdateBlockRects();
+
+            var hotbarBG = _game.Textures.HotbarBG;
+            _hotbarSlots = new List<HotbarSlot>();
+            var hotbarScale = 0.5f;
+            for (int i = 0; i < 3; i++)
+            {
+                _hotbarSlots.Add(
+                    new HotbarSlot(
+                        hotbarBG,
+                        new Vector2((20 + (hotbarBG.Width + 10) * i * hotbarScale) * Game1.ResScale, 10 * Game1.ResScale),
+                        _game,
+                        _game.Player.Layer + 0.001f,
+                        hotbarScale
+                    ));
+            }
         }
 
         public override void PostUpdate(GameTime gameTime)

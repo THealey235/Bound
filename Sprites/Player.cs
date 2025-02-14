@@ -90,7 +90,7 @@ namespace Bound.Sprites
 
             if (!inFreefall && _keys.IsPressed("Jump", true))
             {
-                gravity = -6;
+                gravity = -4;
             }
 
             Position += Velocity;

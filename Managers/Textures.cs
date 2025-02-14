@@ -23,7 +23,9 @@ namespace Bound.Managers
         {
             (int)Blocks.DoorA, (int)Blocks.DoorB
         };
+
         #endregion
+
         private ContentManager _content;
         public Texture2D BlockAtlas;
         public Texture2D Button;
@@ -36,6 +38,7 @@ namespace Bound.Managers
         public Texture2D Null;
         public Texture2D PlayerStatic;
         public Texture2D Block;
+        public Texture2D HotbarBG;
 
         public Dictionary<string, Texture2D> Items;
         public Dictionary<string, Texture2D> Buttons;
@@ -89,6 +92,7 @@ namespace Bound.Managers
             PlayerStatic = content.Load<Texture2D>("Player/Player1Static");
             BlockAtlas = content.Load<Texture2D>("Atlases/BlockAtlas");
             Block = content.Load<Texture2D>("Atlases/DirtBlock");
+            HotbarBG = content.Load<Texture2D>("Backgrounds/HotbarBG");
         }
 
         public (Dictionary<int, Item>, Dictionary<string, int>) LoadItems()
@@ -126,28 +130,6 @@ namespace Bound.Managers
             }
 
             return (items, codes);
-        }
-
-        public void DrawBlock(SpriteBatch spriteBatch, int index, Vector2 position, Color colour, float rotation, Vector2 origin, float scale, SpriteEffects spriteEffects, float layer, int increment)
-        {
-            var rowLength = BlockAtlas.Width / BlockWidth;
-            var column = index / rowLength;
-            var row = index % rowLength;
-            var pos = new Vector2((position.X) * Game1.ResScale, (position.Y) * Game1.ResScale);
-            var src = new Rectangle(BlockWidth * row, BlockWidth * column, BlockWidth, BlockWidth);
-
-            spriteBatch.Draw
-            (
-                BlockAtlas,
-                new Vector2((position.X) * Game1.ResScale, (position.Y) * Game1.ResScale),
-                new Rectangle(BlockWidth * row, BlockWidth * column, BlockWidth, BlockWidth),
-                colour,
-                rotation,
-                origin,
-                scale * Game1.ResScale,
-                spriteEffects,
-                layer
-            );
         }
     }
 }

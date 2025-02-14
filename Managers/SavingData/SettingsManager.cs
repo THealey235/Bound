@@ -16,7 +16,18 @@ namespace Bound.Managers
         private static string _filename = "settings.txt"; //since we dont give a path this'll go to the bin folder
         public SettingsModel Settings { get; private set; }
 
-        public SettingsManager()
+        public Dictionary<string, string> DefaultInputValues = new Dictionary<string, string>()
+        {
+            {"Up", "W" },
+            {"Down", "S" },
+            {"Left", "A" },
+            {"Right", "D" },
+            {"Jump", "SPACE" },
+            {"Reset", "R" },
+            {"Inventory", "TAB"}
+        };
+
+    public SettingsManager()
         {
             Init();
         }
@@ -70,15 +81,7 @@ namespace Bound.Managers
                     { "PlayerVolume", "50" },
                     { "MostRecentSave", "-1" }
                 },
-                InputValues = new Dictionary<string, string>()
-                {
-                    {"Up", "W" },
-                    {"Down", "S" },
-                    {"Left", "A" },
-                    {"Right", "D" },
-                    {"Jump", "SPACE" },
-                    {"Reset", "R" }
-                }
+                InputValues = DefaultInputValues
             };
         }
 

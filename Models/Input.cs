@@ -15,9 +15,15 @@ namespace Bound.Models
         public MouseState PreviousMouseState;
         public MouseState CurrentMouseState;
 
-        public Input(Dictionary<string, string> keys)
+        public Input(Dictionary<string, string> keys, Game1 game)
         {
             Keys = keys;
+
+            foreach (var kvp in game.Settings.DefaultInputValues)
+            {
+                if (!keys.ContainsKey(kvp.Key))
+                    Keys.Add(kvp.Key, kvp.Value);
+            }
         }
 
         public bool IsPressed(string key, bool IsHoldable)
@@ -80,6 +86,7 @@ namespace Bound.Models
                 else if (PreviousKeyboardState.IsKeyUp(inputMode) && CurrentKeyboardState.IsKeyDown(inputMode))
                     return true;
                 else return false;
+                
             }
         }
 
@@ -128,6 +135,7 @@ namespace Bound.Models
             { "RightControl", "RCTRL" },
             { "RightShift", "RSHFT" },
             { "Multiply", "MLTPLY" },
+            { "Tab", "TAB" },
             { "Separator", "SEP"}, //idk what this is. from stack overflow, apparently used on some brazilian/far east
         };
 

@@ -10,10 +10,7 @@ using System.Linq;
 using Bound.States.Popups;
 using Bound.Models.Items;
 using Bound.Sprites;
-using System.Diagnostics;
-using System.Text;
 using CameraFollowingSprite.Core;
-using System.Security.Cryptography.Xml;
 
 //A "State" is the current level of the game this can be the main menu, character creation or even a boss arena
 //A "Component" is the abstract class of all objects which will be drawn/updated
@@ -135,7 +132,7 @@ namespace Bound
                 Input.KeysFromSpecialKey.Add(values[i], keys[i]);
             }
 
-            PlayerKeys = new Input(Settings.Settings.InputValues);
+            PlayerKeys = new Input(Settings.Settings.InputValues, this);
             Player = new Player(Textures.PlayerStatic, PlayerKeys, this)
             {
                 Layer = 0.75f,
@@ -188,12 +185,19 @@ namespace Bound
             ChangeDebugMode();
 
             //if you aren't in the main menu you may press escape to access settings and return to the main menu
-            if (_currentKeys.IsKeyDown(Keys.Escape) && _previousKeys.IsKeyUp(Keys.Escape) && _currentState.Popups.Count == 0 && _currentState.Name != StateNames.MainMenu)
+            if (_currentState.Popups.Count == 0 && _currentState.Name != StateNames.MainMenu)
             {
-                var settings = new Settings(this, Content, _currentState, _graphics);
-                _currentState.Popups.Add(settings);
-                settings.LoadContent();
-                settings.LoadMenuButton();
+                if (_currentKeys.IsKeyDown(Keys.Escape) && _previousKeys.IsKeyUp(Keys.Escape))
+                {
+                    var settings = new Settings(this, Content, _currentState, _graphics);
+                    _currentState.Popups.Add(settings);
+                    settings.LoadContent();
+                    settings.LoadMenuButton();
+                }
+                else if (_currentState.Name != StateNames.CharacterInit && PlayerKeys.IsPressed("Inventory", false))
+                {
+                    Console.WriteLine("Yellow");
+                }
             }
 
             _currentState.Update(gameTime);
