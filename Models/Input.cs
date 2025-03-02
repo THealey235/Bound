@@ -75,11 +75,7 @@ namespace Bound.Models
 
             else
             {
-                Keys inputMode;
-                if (KeysFromSpecialKey.Keys.Contains(key))
-                    inputMode = (Keys)Enum.Parse(typeof(Keys), KeysFromSpecialKey[key], true);
-                else
-                    inputMode = (Keys)((int)(char.ToUpper(key.ToCharArray()[0])));
+                var inputMode = GetKey(key);
 
                 if (IsHoldable && CurrentKeyboardState.IsKeyDown(inputMode))
                     return true;
@@ -97,6 +93,17 @@ namespace Bound.Models
 
             PreviousKeyboardState = CurrentKeyboardState;
             CurrentKeyboardState = Keyboard.GetState();
+        }
+
+        public Keys GetKey(string key)
+        {
+            Keys inputMode;
+            if (KeysFromSpecialKey.Keys.Contains(key))
+                inputMode = (Keys)Enum.Parse(typeof(Keys), KeysFromSpecialKey[key], true);
+            else
+                inputMode = (Keys)((int)(char.ToUpper(key.ToCharArray()[0])));
+
+            return inputMode;
         }
 
         #region Statics
@@ -137,6 +144,16 @@ namespace Bound.Models
             { "Multiply", "MLTPLY" },
             { "Tab", "TAB" },
             { "Separator", "SEP"}, //idk what this is. from stack overflow, apparently used on some brazilian/far east
+            { "D1", "1"},
+            { "D2", "2"},
+            { "D3", "3"},
+            { "D4", "4"},
+            { "D5", "5"},
+            { "D6", "6"},
+            { "D7", "7"},
+            { "D8", "8"},
+            { "D9", "9"},
+            { "D0", "0"},
         };
 
         //im sure there is a better way to do this

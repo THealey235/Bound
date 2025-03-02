@@ -10,6 +10,7 @@
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Backgrounds/BaseBackground.png</File>
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Backgrounds/Bordered.png</File>
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Backgrounds/HotbarBG.png</File>
+    <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Backgrounds/HotbarBG1.png</File>
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Buttons/Button.png</File>
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Buttons/Button1.png</File>
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Buttons/BW.png</File>
@@ -26,9 +27,14 @@
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/MissingTexture.png</File>
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Mouse/MouseFill.png</File>
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Mouse/MouseOutline.png</File>
+    <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Overlays/HotbarSelectedSlot.png</File>
+    <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Overlays/HotbarSelectedSlot1.png</File>
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Player/Player1Static.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

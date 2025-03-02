@@ -9,6 +9,8 @@ namespace Bound.Models
         public string MainMenu = "mainmenu";
         public string CharacterInit = "newgame";
         public string Inventory = "inventory";
+        public string GameOptions = "gameoptions";
+        public string StatsWindow = "statswindow";
 
         public StateNames()
         {

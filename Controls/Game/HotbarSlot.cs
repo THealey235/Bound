@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Bound.Controls.Game
 {
-    internal class HotbarSlot : Component
+    public class HotbarSlot : Component
     {
         private Texture2D _background;
         private Texture2D _item;
@@ -12,6 +12,7 @@ namespace Bound.Controls.Game
         public Vector2 Position;
         public float Layer;
         public float Scale;
+        public bool IsSelected;
 
         public HotbarSlot(Texture2D texture, Vector2 position, Game1 game, float layer, float scale)
         {
@@ -20,6 +21,7 @@ namespace Bound.Controls.Game
             _game = game;
             Layer = layer;
             Scale = scale;
+            IsSelected = false;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)

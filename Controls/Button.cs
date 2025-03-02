@@ -57,6 +57,8 @@ namespace Bound.Controls
 
         public bool ToCenter = true;
 
+        public Color ButtonColour = Color.White;
+
         public bool IsHovering
         {
             get
@@ -142,7 +144,7 @@ namespace Bound.Controls
 
             if (!_isHovering)
             {
-                colour = Color.White;
+                colour = ButtonColour;
             }
 
             if (Parent != null)

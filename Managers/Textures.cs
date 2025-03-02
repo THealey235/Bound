@@ -39,6 +39,7 @@ namespace Bound.Managers
         public Texture2D PlayerStatic;
         public Texture2D Block;
         public Texture2D HotbarBG;
+        public Texture2D HotbarSelectedSlot;
 
         public Dictionary<string, Texture2D> Items;
         public Dictionary<string, Texture2D> Buttons;
@@ -86,13 +87,15 @@ namespace Bound.Managers
 
             Buttons = new Dictionary<string, Texture2D>
             {
-                { "B&W", content.Load<Texture2D>("Controls/Buttons/BW")}
+                { "B&W", content.Load<Texture2D>("Controls/Buttons/BW")},
+                { "Blank", content.Load<Texture2D>("Controls/Buttons/Button") }
             };
 
             PlayerStatic = content.Load<Texture2D>("Player/Player1Static");
             BlockAtlas = content.Load<Texture2D>("Atlases/BlockAtlas");
             Block = content.Load<Texture2D>("Atlases/DirtBlock");
-            HotbarBG = content.Load<Texture2D>("Backgrounds/HotbarBG");
+            HotbarBG = content.Load<Texture2D>("Backgrounds/HotbarBG1");
+            HotbarSelectedSlot = content.Load<Texture2D>("Overlays/HotbarSelectedSlot1");
         }
 
         public (Dictionary<int, Item>, Dictionary<string, int>) LoadItems()

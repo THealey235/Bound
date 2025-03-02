@@ -38,4 +38,5 @@ Other Sprites:
 General:
 	> Level State:
 		- fix whatever that mess is: requires a second level to determine what is essential to each one	
-	> Clamp Player Positions
+	> Clamp Player Position
+	> Save Player Position and other new inventory states to save file

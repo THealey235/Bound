@@ -130,7 +130,8 @@ namespace Bound.Controls.Settings
             _previousMouse = _currentMouse;
             _currentMouse = Mouse.GetState();
 
-            var mouseRectangle = new Rectangle(_currentMouse.X, _currentMouse.Y, 1, 1);
+            var mouseRectangle = new Rectangle(_currentMouse.X + (int)Game1.V2Transform.X, _currentMouse.Y + (int)Game1.V2Transform.Y, 1, 1);
+
 
             //if it has just been clicked on or left click is still pressed
             if (mouseRectangle.Intersects(_cursorRectangle) &&
@@ -241,7 +242,8 @@ namespace Bound.Controls.Settings
 
         private void FollowCursor()
         {
-            var x = MathHelper.Clamp(_currentMouse.X, _barPos.X, _barPos.X + _barLength);
+            //Could be implemented more efficiently but too lazy to do so right now
+            var x = MathHelper.Clamp(_currentMouse.X + (int)Game1.V2Transform.X, _barPos.X, _barPos.X + _barLength);
             x = (float)(x - _barPos.X) / _barLength * 100;
             x = x > 99f ? 100f : x;
             CurValue = ((int)x).ToString() + _symbol;

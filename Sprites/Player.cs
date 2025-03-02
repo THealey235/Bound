@@ -2,7 +2,6 @@
 using Bound.States;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,6 +15,19 @@ namespace Bound.Sprites
         private double _dTime;
         private SpriteEffects _spriteEffect;
         private DebugRectangle _debugRectangle;
+        private Dictionary<string, Attribute> _attributes;
+        private Save _saveState;
+
+        public int HotbarSlot = 1;
+        public Dictionary<string, Attribute> Attributes
+        {
+            get { return _attributes; }
+        }
+
+        public Save SaveState
+        {
+            get { return _saveState; }
+        }
 
         public float Speed
         {
@@ -42,10 +54,23 @@ namespace Bound.Sprites
                 , Layer + 0.01f,
                 Scale
             );
+            _saveState = _game.SavesManager.Saves[_game.SaveIndex];
+            _attributes = _saveState.Attributes;
         }
 
         public Player(Dictionary<string, Animation> animations, Input Keys, Game1 game) : base(animations, game)
         {
+        }
+
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            if (_texture != null)
+                spriteBatch.Draw(_texture, ScaledPosition, null, Colour, _rotation, Vector2.Zero, Game1.ResScale * _scale, _spriteEffect, Layer);
+            else if (_animationManager != null)
+                _animationManager.Draw(spriteBatch);
+
+            if (Game1.InDebug)
+                _debugRectangle.Draw(gameTime, spriteBatch);
         }
 
         public void Update(GameTime gameTime, List<Rectangle> surfaces)
@@ -54,6 +79,17 @@ namespace Bound.Sprites
             _dTime = gameTime.ElapsedGameTime.TotalMilliseconds;
             _keys.Update();
 
+            DoPhysics(surfaces);
+
+            for (int i = 1; i < 4; i++)
+            {
+                if (_keys.IsPressed($"Hotbar {i}", false))
+                    HotbarSlot = i;
+            }
+        }
+
+        private void DoPhysics(List<Rectangle> surfaces)
+        {
             Velocity = new Vector2(0, 0);
             var inFreefall = true;
 
@@ -125,16 +161,6 @@ namespace Bound.Sprites
             return inFreefall;
         }
 
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
-        {
-            if (_texture != null)
-                spriteBatch.Draw(_texture, ScaledPosition, null, Colour, _rotation, Vector2.Zero, Game1.ResScale * _scale, _spriteEffect, Layer);
-            else if (_animationManager != null)
-                _animationManager.Draw(spriteBatch);
-
-            if (Game1.InDebug)
-                _debugRectangle.Draw(gameTime, spriteBatch);
-        }
         
         public void Reset()
         {
@@ -145,6 +171,12 @@ namespace Bound.Sprites
                 , Layer + 0.01f,
                 Scale
             );
+        }
+
+        public void UpdateWhileStatic(GameTime gameTime)
+        {
+            _keys.Update();
+            _dTime = gameTime.ElapsedGameTime.TotalMilliseconds;
         }
     }
 }

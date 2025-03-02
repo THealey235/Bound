@@ -24,7 +24,10 @@ namespace Bound.Managers
             {"Right", "D" },
             {"Jump", "SPACE" },
             {"Reset", "R" },
-            {"Inventory", "TAB"}
+            {"Menu", "TAB"},
+            {"Hotbar 1", "1"},
+            {"Hotbar 2", "2"},
+            {"Hotbar 3", "3"},
         };
 
     public SettingsManager()

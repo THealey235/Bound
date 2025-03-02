@@ -32,9 +32,9 @@ namespace Bound
             StateNames.MainMenu, StateNames.CharacterInit
         };
 
-        private int _defaultHeight = 360;
 
         //can be accessed without having by a state/component without a game object accessible
+        public int DefaultHeight = 360;
         public static int ScreenHeight;
         public static int ScreenWidth;
         public static float ResScale;
@@ -117,7 +117,7 @@ namespace Bound
             _graphics.ApplyChanges();
 
             //Scale used to change the size of textures based on the resolution. Defalut = 640x360.
-            ResScale = (float)ScreenHeight / (float)_defaultHeight;
+            ResScale = (float)ScreenHeight / (float)DefaultHeight;
 
             RecentSave = int.Parse(Settings.Settings.General["MostRecentSave"]);
 
@@ -194,9 +194,12 @@ namespace Bound
                     settings.LoadContent();
                     settings.LoadMenuButton();
                 }
-                else if (_currentState.Name != StateNames.CharacterInit && PlayerKeys.IsPressed("Inventory", false))
+                else if (_currentState.Name != StateNames.CharacterInit && PlayerKeys.IsPressed("Menu", false))
                 {
-                    Console.WriteLine("Yellow");
+                    var options = new States.Popups.Game.Options(this, Content, _currentState, _graphics);
+                    _currentState.Popups.Add(options);
+                    options.Layer = Player.Layer + 0.001f;
+                    options.LoadContent();
                 }
             }
 
@@ -294,7 +297,7 @@ namespace Bound
         //the textures and popups have correctly scaled textures since LoadContent is only typically run once
         public void ResetState()
         {
-            ResScale = (float)ScreenHeight / (float)_defaultHeight;
+            ResScale = (float)ScreenHeight / (float)DefaultHeight;
 
             _currentState.LoadContent();
 
