@@ -17,24 +17,6 @@ namespace Bound.Managers
 
         private Game1 _game;
 
-        public KeyValuePair<string, List<int>> LevelMap = new KeyValuePair<string, List<int>>("Level", new List<int>() { 1, 9, 4, 7, 3, 2, 14, 25, 12, 17, 19, 22 } );
-        public Dictionary<string, List<int>> AttributeMap = new Dictionary<string, List<int>>()
-        {
-            { "HP", new List<int>() { 4, 7 , 2, 3 } },
-            { "MoveSpeed", new List<int>() { 2, 9, 7 , 4 } },
-            { "MP", new List<int>() { 7, 9, 8, 1 } },
-            { "Stamina", new List<int>() { 2, 3, 1, 5} },
-            { "Dashes", new List<int>() { 1, 4, 7 , 6} },
-            { "Level", new List<int>() { 1, 9, 4, 7, 3, 2, 14, 25, 12} },
-            { "Season Attunement", new List<int>{ 5 } },
-            { "Strength", new List<int>{8, 5} },
-            { "Dexterity" , new List<int>{9, 2} },
-            { "Ammo Handling", new List<int>{6, 1} },
-            { "Precision", new List<int>{10, 7} },
-            { "Arcane", new List<int>{14, 5} },
-            { "Focus", new List<int>{10, 4} },
-        };
-
         public Dictionary<string, int> DefaultAttributes = new Dictionary<string, int>
         {
             { "Ammo Handling", 5 },
@@ -155,6 +137,8 @@ namespace Bound.Managers
                 SettingsManager.Save(game.Settings);
                 return new MainMenu(game, content, graphics);
             }
+
+            _game.Player.UpdateAttributes(saveIndex);
 
             return Saves[saveIndex].Level switch
             {

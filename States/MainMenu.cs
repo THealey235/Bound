@@ -29,7 +29,7 @@ namespace Bound.States
         public MainMenu(Game1 game, ContentManager content, GraphicsDeviceManager graphics) : base(game, content)
         {
             _graphics = graphics;
-            Name = Game1.StateNames.MainMenu;
+            Name = Game1.Names.MainMenu;
         }
 
         public override void LoadContent()

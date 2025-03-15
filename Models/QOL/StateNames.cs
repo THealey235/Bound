@@ -2,8 +2,9 @@
 
 namespace Bound.Models
 {
-    public struct StateNames
+    public struct Names
     {
+        #region StateNames
         public string Level0 = "levelzero";
         public string Settings = "settings";
         public string MainMenu = "mainmenu";
@@ -11,8 +12,14 @@ namespace Bound.Models
         public string Inventory = "inventory";
         public string GameOptions = "gameoptions";
         public string StatsWindow = "statswindow";
+        #endregion
 
-        public StateNames()
+        #region Misc IDs
+        public string ID_PlayerName = "PlayerName";
+        public string ID_CurrentLevel = "Level";
+        #endregion
+
+        public Names()
         {
         }
     }

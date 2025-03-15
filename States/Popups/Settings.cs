@@ -33,7 +33,7 @@ namespace Bound.States.Popups
         {
             Parent = parent;
             _graphics = graphics;
-            Name = Game1.StateNames.Settings;
+            Name = Game1.Names.Settings;
             _enableEscape = false;
         }
 
@@ -257,7 +257,7 @@ namespace Bound.States.Popups
 
             _game.ResetState();
 
-            if (_game.CurrentStateName != Game1.StateNames.MainMenu)
+            if (_game.CurrentStateName != Game1.Names.MainMenu)
             {
                 
             }

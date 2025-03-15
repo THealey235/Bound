@@ -17,11 +17,14 @@ namespace Bound.States.Game
 
         public Level(Game1 game, ContentManager content, Player player, int levelNum) : base(game, content)
         {
-            Name = Game1.StateNames.Level0;
+            Name = Game1.Names.Level0;
             _player = player;
             _game = game;
             _levelMap = _game.RetrieveLevelMap(levelNum);
             _scale = 1.5f;
+
+            _player.UpdateAttributes(game.SaveIndex);
+            _player.SaveState = game.SavesManager.ActiveSave;
 
             LoadContent();
         }

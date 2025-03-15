@@ -188,7 +188,7 @@ namespace Bound.States.Game
         {
             var box = _choiceBoxes[1];
             var code = _game.ItemCodes[box.Choices[box.CurIndex]];
-            _game.SavesManager.ActiveSave.Inventory.Add(code, _game.Items[code]);
+            _game.SavesManager.ActiveSave.Inventory.Add(_game.Items[code]);
         }
         private void Difficulty_Apply(object sender, EventArgs e)
         {

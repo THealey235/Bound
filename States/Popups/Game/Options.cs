@@ -20,7 +20,7 @@ namespace Bound.States.Popups.Game
 
         public Options(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content, parent, graphics)
         {
-            Name = Game1.StateNames.GameOptions;
+            Name = Game1.Names.GameOptions;
             Layer = 0.8f;
         }
 

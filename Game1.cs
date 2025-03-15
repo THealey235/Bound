@@ -29,7 +29,7 @@ namespace Bound
         private List<Sprite> _sprites;
         private List<string> _statesWithoutPlayer = new List<string>()
         {
-            StateNames.MainMenu, StateNames.CharacterInit
+            Names.MainMenu, Names.CharacterInit
         };
 
 
@@ -41,7 +41,7 @@ namespace Bound
         public static bool InDebug = false;
         public static Color DebugColour = Color.White;
         public static Vector2 V2Transform;
-        public static StateNames StateNames = new StateNames();
+        public static Names Names = new Names();
 
         //all the managers of objects that will be stored on disk
         public SettingsManager Settings;
@@ -185,7 +185,7 @@ namespace Bound
             ChangeDebugMode();
 
             //if you aren't in the main menu you may press escape to access settings and return to the main menu
-            if (_currentState.Popups.Count == 0 && _currentState.Name != StateNames.MainMenu)
+            if (_currentState.Popups.Count == 0 && _currentState.Name != Names.MainMenu)
             {
                 if (_currentKeys.IsKeyDown(Keys.Escape) && _previousKeys.IsKeyUp(Keys.Escape))
                 {
@@ -194,7 +194,7 @@ namespace Bound
                     settings.LoadContent();
                     settings.LoadMenuButton();
                 }
-                else if (_currentState.Name != StateNames.CharacterInit && PlayerKeys.IsPressed("Menu", false))
+                else if (_currentState.Name != Names.CharacterInit && PlayerKeys.IsPressed("Menu", false))
                 {
                     var options = new States.Popups.Game.Options(this, Content, _currentState, _graphics);
                     _currentState.Popups.Add(options);
@@ -305,7 +305,7 @@ namespace Bound
                 state.LoadContent();
 
             //if it is the main menu remove the "quit" button from settings to return to the main menu
-            if (_currentState.Name != StateNames.MainMenu && _currentState.Popups.Count > 0)
+            if (_currentState.Name != Names.MainMenu && _currentState.Popups.Count > 0)
             {
                 var settings = (_currentState.Popups[^1] as Settings);
                 Player.Reset();

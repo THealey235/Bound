@@ -16,17 +16,12 @@ namespace Bound.Sprites
         private SpriteEffects _spriteEffect;
         private DebugRectangle _debugRectangle;
         private Dictionary<string, Attribute> _attributes;
-        private Save _saveState;
 
+        public Save SaveState;
         public int HotbarSlot = 1;
         public Dictionary<string, Attribute> Attributes
         {
             get { return _attributes; }
-        }
-
-        public Save SaveState
-        {
-            get { return _saveState; }
         }
 
         public float Speed
@@ -54,8 +49,10 @@ namespace Bound.Sprites
                 , Layer + 0.01f,
                 Scale
             );
-            _saveState = _game.SavesManager.Saves[_game.SaveIndex];
-            _attributes = _saveState.Attributes;
+            SaveState = _game.SavesManager.Saves[_game.SaveIndex];
+            
+            if (SaveState != null)
+                _attributes = SaveState.Attributes;
         }
 
         public Player(Dictionary<string, Animation> animations, Input Keys, Game1 game) : base(animations, game)
@@ -177,6 +174,11 @@ namespace Bound.Sprites
         {
             _keys.Update();
             _dTime = gameTime.ElapsedGameTime.TotalMilliseconds;
+        }
+
+        public void UpdateAttributes(int saveIndex)
+        {
+            _attributes = _game.SavesManager.Saves[saveIndex].Attributes;
         }
     }
 }

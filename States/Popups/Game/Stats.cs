@@ -19,7 +19,7 @@ namespace Bound.States.Popups.Game
         
         public Stats(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content, parent, graphics)
         {
-            Name = Game1.StateNames.StatsWindow;
+            Name = Game1.Names.StatsWindow;
             Layer = 0.79f;
         }
 
