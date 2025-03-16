@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Bound.Models
 {
-    //This class is like staring at a sick, old, dying man with no arms or legs pretending to be functional and useful
+    
     public class Save
     {
         public SaveManager Manager;
@@ -49,7 +49,7 @@ namespace Bound.Models
             }
         }
 
-        #region New Encryption
+        #region Encryption
 
         private static readonly Dictionary<char, string> _encryptionTable = new Dictionary<char, string>
         {
@@ -161,15 +161,10 @@ namespace Bound.Models
         {
             var kvp = line.Split(SEPERATOR);
             if (kvp.Length < 2)
-            {
                 return (Decrypt(kvp[0]), null);
-            }
             if (kvp.Length > 2)
-            {
                 return (Decrypt(kvp[0]), String.Join(';', kvp.Skip(1).Select(x => Decrypt(x))));
-            }
 
-            var test = kvp[0].Chunk(_encryptedCharLength).ToList().Select(x => new string(x)).ToList();
             return (Decrypt(kvp[0]), Decrypt(kvp[1]));
         }
 
@@ -222,9 +217,9 @@ namespace Bound.Models
                         switch (kvp.Key)
                         {
                             case "Level":
-                                save.Level = kvp.Value;break;
+                                save.Level = kvp.Value; break;
                             case "PlayerName":
-                                save.PlayerName = kvp.Value;break;
+                                save.PlayerName = kvp.Value; break;
 
                         }
                     }
