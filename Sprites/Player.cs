@@ -29,7 +29,7 @@ namespace Bound.Sprites
             get { return (float)(_speed * _dTime); }
         }
 
-        public Vector2 ScaledPosition
+        public new Vector2 ScaledPosition
         {
             get
             {

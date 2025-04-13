@@ -12,6 +12,7 @@ namespace Bound.Models
         public string Inventory = "inventory";
         public string GameOptions = "gameoptions";
         public string StatsWindow = "statswindow";
+        public string InventoryWindow = "invWindow";
         #endregion
 
         #region Misc IDs

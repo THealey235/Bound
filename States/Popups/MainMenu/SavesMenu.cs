@@ -34,7 +34,7 @@ namespace Bound.States
             (
                     _game.Textures.BaseBackground,
                     _game.GraphicsDevice,
-                    Color.BlanchedAlmond,
+                    Game1.MenuColorPalette[0],
                     new Vector2((Game1.ScreenWidth  - bbWidth) / 2 , (Game1.ScreenHeight  - bbHeight) / 2 ),
                     0.6f,
                     bbWidth,
@@ -58,7 +58,7 @@ namespace Bound.States
 
             for (int i = 1; i < 6; i++)
             {
-                _components.Add(new SaveInterface(_game.Textures.BaseBackground, font, _game)
+                _components.Add(new SaveInterface(_game.Textures.BaseBackground, font, _game)   
                 {
                     Text = "Save " + i.ToString(),
                     Layer = 0.8f,
@@ -105,11 +105,11 @@ namespace Bound.States
 
         private void Button_Play_Clicked(object sender, EventArgs e)
         {
-            var sen = sender as SaveInterface;
-            _game.RecentSave = sen.Index;
-            _game.Settings.Settings.General["MostRecentSave"] = sen.Index.ToString();
+            var save = sender as SaveInterface;
+            _game.RecentSave = save.Index;
+            _game.Settings.Settings.General["MostRecentSave"] = save.Index.ToString();
             SettingsManager.Save(_game.Settings);
-            _game.ChangeState(_game.SavesManager.GetState(sen.Index, _game, _content, _graphics));
+            _game.ChangeState(_game.SavesManager.GetState(save.Index, _game, _content, _graphics));
         }
 
         #endregion

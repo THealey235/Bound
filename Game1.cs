@@ -26,7 +26,6 @@ namespace Bound
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         public Player Player;
-        private List<Sprite> _sprites;
         private List<string> _statesWithoutPlayer = new List<string>()
         {
             Names.MainMenu, Names.CharacterInit
@@ -42,6 +41,7 @@ namespace Bound
         public static Color DebugColour = Color.White;
         public static Vector2 V2Transform;
         public static Names Names = new Names();
+        public static Color[] MenuColorPalette = new Color[] { new Color(60, 60, 60), Color.LightGray, Color.White };
 
         //all the managers of objects that will be stored on disk
         public SettingsManager Settings;
@@ -151,7 +151,7 @@ namespace Bound
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            Textures = new Textures(Content);
+            Textures = new Textures(Content, this);
 
             var itemDicts = Textures.LoadItems();
             Items = itemDicts.Item1;
@@ -222,7 +222,7 @@ namespace Bound
         //Draws the textures on to the screen.
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Cornsilk);
+            GraphicsDevice.Clear(Color.Black);
 
             //Front to back means that textures with a lower Layer value will be drawn behind textures with higher Layer values.
             //By setting sampler state to PointClamp, no interpolation occurs when accessing Texture2D files, this was especially bad
@@ -294,10 +294,13 @@ namespace Bound
         }
 
         //Used to reload all current popups and states so that when the res changes
-        //the textures and popups have correctly scaled textures since LoadContent is only typically run once
+        //the textures and popups have correctly scaled textures since LoadContent is only typically ran once
         public void ResetState()
         {
             ResScale = (float)ScreenHeight / (float)DefaultHeight;
+
+            if (!_statesWithoutPlayer.Contains(_currentState.Name))
+                Camera.Follow(Player);
 
             _currentState.LoadContent();
 
@@ -307,11 +310,15 @@ namespace Bound
             //if it is the main menu remove the "quit" button from settings to return to the main menu
             if (_currentState.Name != Names.MainMenu && _currentState.Popups.Count > 0)
             {
-                var settings = (_currentState.Popups[^1] as Settings);
+                
                 Player.Reset();
                 Camera.Follow(Player);
-                settings.LoadContent();
-                settings.LoadMenuButton();
+                if (_currentState.Popups.Count > 0)
+                {
+                    var settings = (_currentState.Popups[^1] as Settings);
+                    settings.LoadContent();
+                    settings.LoadMenuButton();
+                }
             }
 
             Player.Reset();
@@ -343,6 +350,18 @@ namespace Bound
                 }
             }
             return surfaces;
+        }
+
+        public static Color BlendColors(Color color1, Color color2, float alpha)
+        {
+            alpha = MathHelper.Clamp(alpha, 0f, 1f);
+
+            int r = (int)(color1.R * (1 - alpha) + color2.R * alpha);
+            int g = (int)(color1.G * (1 - alpha) + color2.G * alpha);
+            int b = (int)(color1.B * (1 - alpha) + color2.B * alpha);
+            int a = (int)(color1.A * (1 - alpha) + color2.A * alpha);
+
+            return new Color(r, g, b, a);
         }
         #endregion
     }

@@ -203,7 +203,6 @@ namespace Bound.Models
 
                 var AttributeKeys = manager.DefaultAttributes.Keys.ToList();
 
-                string plainText;
                 foreach (var line in lines)
                 {
                     var kvp = DecryptLine(line);

@@ -37,30 +37,21 @@ namespace Bound.States.Popups.Game
             var font = _game.Textures.Font;
             var leftOffset = 10 * Game1.ResScale;
             var spacing = (button.Height * scale + 15) * Game1.ResScale;
-            var topOffset = (int)((Game1.ScreenHeight - (spacing * 5 - 15 * Game1.ResScale)) / 2);
+            var topOffset = (int)((Game1.ScreenHeight - (spacing * 4 - 15 * Game1.ResScale)) / 2);
             var buttonColour = Color.SandyBrown;
 
             _components = new List<Component>()
             {
-                new Button(button, font)
-                {
-                    Text = "Loadout",
-                    Click = new EventHandler(Button_Loadout_Clicked),
-                    Layer = Layer,
-                    TextureScale = scale,
-                    Position = new Vector2(leftOffset, topOffset) + Game1.V2Transform,
-                    ToCenter = true,
-                    ButtonColour = buttonColour,
-                },
+
                 new Button(button, font)
                 {
                     Text = "Inventory",
                     Click = new EventHandler(Button_Inventory_Clicked),
                     Layer = Layer,
                     TextureScale = scale,
-                    Position = new Vector2(leftOffset, topOffset + spacing) + Game1.V2Transform,
+                    Position = new Vector2(leftOffset, topOffset) + Game1.V2Transform,
                     ToCenter = true,
-                    ButtonColour = buttonColour,
+                    Colour = buttonColour,
                 },
                 new Button(button, font)
                 {
@@ -68,9 +59,9 @@ namespace Bound.States.Popups.Game
                     Click = new EventHandler(Button_Stats_Clicked),
                     Layer = Layer,
                     TextureScale = scale,
-                    Position = new Vector2(leftOffset, topOffset + spacing * 2) + Game1.V2Transform,
+                    Position = new Vector2(leftOffset, topOffset + spacing) + Game1.V2Transform,
                     ToCenter = true,
-                    ButtonColour = buttonColour,
+                    Colour = buttonColour,
                 },
                 new Button(button, font)
                 {
@@ -78,9 +69,9 @@ namespace Bound.States.Popups.Game
                     Click = new EventHandler(Button_Settings_Clicked),
                     Layer = Layer,
                     TextureScale = scale,
-                    Position = new Vector2(leftOffset, topOffset + spacing * 3) + Game1.V2Transform,
+                    Position = new Vector2(leftOffset, topOffset + spacing * 2) + Game1.V2Transform,
                     ToCenter = true,
-                    ButtonColour = buttonColour,
+                    Colour = buttonColour,
                 },
                 new Button(button, font)
                 {
@@ -88,9 +79,9 @@ namespace Bound.States.Popups.Game
                     Click = new EventHandler(Button_Discard_Clicked),
                     Layer = Layer,
                     TextureScale = scale,
-                    Position = new Vector2(leftOffset, topOffset + spacing * 4) + Game1.V2Transform,
+                    Position = new Vector2(leftOffset, topOffset + spacing * 3) + Game1.V2Transform,
                     ToCenter = true,
-                    ButtonColour = buttonColour,
+                    Colour = buttonColour,
                 }
             };
         }
@@ -113,12 +104,9 @@ namespace Bound.States.Popups.Game
 
         private void Button_Inventory_Clicked(object sender, EventArgs e)
         {
-            
-        }
-
-        private void Button_Loadout_Clicked(object sender, EventArgs e)
-        {
-
+            var inventory = new Inventory(_game, _content, Parent, _graphics);
+            Parent.Popups.Add(inventory);
+            inventory.LoadContent();
         }
 
         private void Button_Stats_Clicked(object sender, EventArgs e)

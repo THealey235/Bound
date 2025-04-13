@@ -12,14 +12,12 @@ When downloading this repository and opening it in Visual Studio 2022, make sure
 
 
 Inventory:
-	> HP, MP, Stamina
+	> HP, MP, Stamina bars on HUD
 	> Levelling System: xp or money
 	> Ability to acquire ability points
 	> Ability to spend ability points
 	> Menu for items and consumables: 
-		Options
-		- Hot loadout and then backpack? (Elden Ring)
-		- or hot bar and inventory with placeable/permanent storage in a main hub (Terraria)
+		- Hot loadout and an infinite backpack system.
 
 Items:
 	> Requires Inventory

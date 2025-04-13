@@ -19,6 +19,9 @@
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Content\Items\Accessories\" />
+    <Folder Include="Content\Items\LegArmour\" />
+    <Folder Include="Content\Items\Footwear\" />
     <Folder Include="Content\Levels\" />
     <Folder Include="Decomp\" />
     <Folder Include="States\Game\Levels\" />

@@ -19,13 +19,15 @@ namespace Bound.Controls
 
         private SpriteFont _font;
 
-        private bool _isHovering;
+        protected bool _isHovering;
 
         private MouseState _previousMouse;
 
-        private Texture2D _texture;
+        protected Texture2D _texture;
 
         private Vector2 _position;
+
+        private Color _hoveringColour = Color.Gray;
 
         public float Scale
         {
@@ -55,6 +57,7 @@ namespace Bound.Controls
 
         public int xOffset;
 
+        //Whether to centre its position around the player's camera
         public bool ToCenter = true;
 
         public Color ButtonColour = Color.White;
@@ -112,6 +115,19 @@ namespace Bound.Controls
             }
         }
 
+        public Color Colour
+        {
+            get
+            {
+                return ButtonColour;
+            }
+            set
+            {
+                ButtonColour = value;
+                _hoveringColour = Game1.BlendColors(value, Color.Gray, 0.75f);
+            }
+        }
+
         public string Text;
 
         #endregion
@@ -140,19 +156,14 @@ namespace Bound.Controls
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            var colour = Color.Gray;
+            var colour = _hoveringColour;
 
             if (!_isHovering)
             {
                 colour = ButtonColour;
             }
 
-            if (Parent != null)
-            {
-                spriteBatch.Draw(_texture, Position, null, colour, 0f, Vector2.Zero, Scale, Effect, Layer);
-            }
-            else
-                spriteBatch.Draw(_texture, Position, null, colour, 0f, Vector2.Zero, Scale, Effect, Layer);
+            spriteBatch.Draw(_texture, Position, null, colour, 0f, Vector2.Zero, Scale, Effect, Layer);
 
             if (!string.IsNullOrEmpty(Text))
             {

@@ -8,11 +8,10 @@ namespace Bound.Controls
     public class BorderedBox : Component
     {
         private Texture2D _texture;
-        private float _layer;
         private Texture2D _border;
         public List<Texture2D> _borderTextures;
-        private GraphicsDevice _graphicsDevice;
         private int _width;
+        private GraphicsDevice _graphics;
 
         private int _barWidth
         {
@@ -39,10 +38,11 @@ namespace Bound.Controls
             {
                 _width = value;
                 _border.Dispose();
-                SetRectangleTexture(_graphicsDevice, _texture);
+                SetRectangleTexture();
             }
         }
 
+        public float Layer;
         public Color Colour;
         public int Height;
         public bool IsBordered;
@@ -62,16 +62,15 @@ namespace Bound.Controls
             _texture = texture;
             Colour = color;
             Position = position;
-            _layer = layer;
+            Layer = layer;
             _width = width;
             Height = height;
-
-            _graphicsDevice = graphicsDevice;
+            _graphics = graphicsDevice;
 
             IsBordered = true;
 
             BorderColor = new Color(0, 0, 0, 255);
-            SetRectangleTexture(_graphicsDevice, _texture);
+            SetRectangleTexture();
         }
 
 
@@ -79,7 +78,7 @@ namespace Bound.Controls
             : this(texture, graphicsDevice, color, position, layer, width, height)
         {
             BorderColor = borderColor;
-            SetRectangleTexture(_graphicsDevice, _texture);
+            SetRectangleTexture();
         }
 
         public BorderedBox(Texture2D texture, GraphicsDevice graphicsDevice, Color color, Vector2 position, float layer, int width, int height, List<Texture2D> _borders)
@@ -91,11 +90,11 @@ namespace Bound.Controls
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             //Base background
-            spriteBatch.Draw(_texture, Position, null, Colour, 0f, Vector2.Zero, _scale, SpriteEffects.None, _layer);
+            spriteBatch.Draw(_texture, Position, null, Colour, 0f, Vector2.Zero, _scale, SpriteEffects.None, Layer);
 
             if (IsBordered)
             {
-                spriteBatch.Draw(_border, Position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, _layer + 0.01f);
+                spriteBatch.Draw(_border, Position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.0001f);
             }
         }
 
@@ -106,7 +105,7 @@ namespace Bound.Controls
 
         #region Other Methods
 
-        public void SetRectangleTexture(GraphicsDevice graphics, Texture2D texture)
+        public void SetRectangleTexture()
         {
 
             var colours = new List<Color>();
@@ -130,7 +129,7 @@ namespace Bound.Controls
                 }
             }
 
-            _border = new Texture2D(graphics, Width, Height);
+            _border = new Texture2D(_graphics, Width, Height);
             _border.SetData<Color>(colours.ToArray());
         }
 

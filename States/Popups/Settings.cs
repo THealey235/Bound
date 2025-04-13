@@ -63,7 +63,7 @@ namespace Bound.States.Popups
                 (
                     texture,
                     _game.GraphicsDevice,
-                    Color.BlanchedAlmond,
+                    Game1.MenuColorPalette[0],
                     new Vector2(eigthWidth + Game1.V2Transform.X, eigthHeight + Game1.V2Transform.Y),
                     0.79f,
                     bbWidth,

@@ -27,6 +27,7 @@ namespace Bound.Controls
         private float _plusScale;
         private Texture2D _plusTexture;
         private Color _plusColour;
+        private Color _hoveringColor;
         private Vector2 _plusPosition;
         private Vector2 _namePosition;
 
@@ -43,7 +44,7 @@ namespace Bound.Controls
         public int Height;
         public Color BorderColor = Color.Black;
         public bool IsEmpty;
-        public Color PenColor = Color.White;
+        public Color PenColor = Game1.MenuColorPalette[2];
         public bool StopUpdate;
 
         public int Index
@@ -132,7 +133,7 @@ namespace Bound.Controls
             if (IsEmpty)
             {
                 _plusColour = Color.Gray;
-                _background.Colour = Color.Wheat;
+                _background.Colour = Game1.MenuColorPalette[1];
                 
 
                 if (mouseRectangle.Intersects(Rectangle) && !MouseLock)
@@ -148,14 +149,14 @@ namespace Bound.Controls
         #region Updates
         private void EmptyUpdate()
         {
-            _background.Colour = Color.Gray;
+            _background.Colour = _hoveringColor;
             _plusColour = Color.White;
 
             if (_currentMouse.LeftButton == ButtonState.Released && _previousMouse.LeftButton == ButtonState.Pressed)
             {
                 NewSave();
                 IsEmpty = false;
-                _background.Colour = Color.Wheat;
+                _background.Colour = Game1.MenuColorPalette[1];
             }
         }
 
@@ -238,12 +239,14 @@ namespace Bound.Controls
             (
                 _texture,
                 _game.GraphicsDevice,
-                Color.Wheat,
+                Game1.MenuColorPalette[1],
                 Position,
                 Layer,
                 Width,
                 Height
             );
+
+            _hoveringColor = Game1.BlendColors(_background.Colour, Color.Gray, 0.5f);
         }
 
 

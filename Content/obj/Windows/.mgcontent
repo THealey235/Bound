@@ -14,6 +14,7 @@
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Buttons/Button.png</File>
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Buttons/Button1.png</File>
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Buttons/BW.png</File>
+    <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/EmptyBox.png</File>
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Icos/ArrowLeft.png</File>
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Icos/PlayButton.png</File>
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Icos/Plus.png</File>
@@ -24,6 +25,10 @@
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Fonts/JX-2160.spritefont</File>
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Fonts/JX-720.spritefont</File>
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Fonts/JX-900.spritefont</File>
+    <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/ChestArmour/Default.png</File>
+    <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Footwear/Default.png</File>
+    <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/HeadGear/Default.png</File>
+    <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/LegArmour/Default.png</File>
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/MissingTexture.png</File>
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Mouse/MouseFill.png</File>
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Mouse/MouseOutline.png</File>
@@ -32,6 +37,11 @@
     <File>C:/Users/240290/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Player/Player1Static.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
