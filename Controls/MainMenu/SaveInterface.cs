@@ -256,7 +256,7 @@ namespace Bound.Controls
 
         private void NewSave()
         {
-            _game.SavesManager.Saves[_index] = Save.NewSave(_game.SavesManager);
+            _game.SavesManager.Saves[_index] = Save.NewSave(_game.SavesManager, _game);
             _game.SavesManager.UploadSave(_index);
         }
         private void RemoveSave()

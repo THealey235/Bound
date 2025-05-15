@@ -37,8 +37,11 @@ namespace Bound.Managers
             LegArmour,
             Footwear,
             Accessory,
-            Item,
+            Weapon,
+            Consumable,
             Skill,
+            Item,
+            Unrecognised,
         }
 
         #endregion
@@ -67,8 +70,11 @@ namespace Bound.Managers
         public Dictionary<string, List<Texture2D>> LegArmour = new Dictionary<string, List<Texture2D>>();
         public Dictionary<string, List<Texture2D>> Footwear = new Dictionary<string, List<Texture2D>>();
         public Dictionary<string, Texture2D> Accessories = new Dictionary<string, Texture2D>();
-        public Dictionary<string, Texture2D> Items = new Dictionary<string, Texture2D>();
+        public Dictionary<string, Texture2D> Weapons = new Dictionary<string, Texture2D>();
+        public Dictionary<string, Texture2D> Consumables = new Dictionary<string, Texture2D>();
         public Dictionary<string, Texture2D> Skills = new Dictionary<string, Texture2D>();
+        public Dictionary<string, Texture2D> Items = new Dictionary<string, Texture2D>();
+
         public Dictionary<string, Texture2D> Buttons;
 
         public List<SpriteFont> Fonts;
@@ -140,9 +146,17 @@ namespace Bound.Managers
             LoadDirectory("Content/Items/LegArmour", LegArmour);
             LoadDirectory("Content/Items/Footwear", Footwear);
             LoadDirectory("Content/Items/Accessories", Accessories);
+            LoadDirectory("Content/Items/Consumables", Consumables);
+            LoadDirectory("Content/Items/Skills", Skills);
 
 
-            Accessories["Default"] = Blank;
+            foreach (var dict in new List<Dictionary<string, Texture2D>>() { Accessories, Consumables})
+            {
+                foreach (var kvp in dict)
+                    Items.Add(kvp.Key, kvp.Value);
+                dict.Add("Default", Blank);
+            }
+
             Items.Add("Default", Blank);
             Skills.Add("Default", Blank);
 
@@ -184,7 +198,7 @@ namespace Bound.Managers
                 );
             }
         }
-        public (Dictionary<int, Item>, Dictionary<string, int>) LoadItems()
+        public Dictionary<string, Item> LoadItems()
         {
             List<List<string>> readItems;
             using (var reader = new StreamReader(new FileStream("Content/Items.csv", FileMode.Open)))
@@ -196,9 +210,9 @@ namespace Bound.Managers
                         .ToList();
             }
 
-            var items = new Dictionary<int, Item>();
-            var codes = new Dictionary<string, int>();
+            var items = new Dictionary<string, Item>();
 
+            // 0: Name, 1: ItemType, 2: Description, 3: Attributes
             Texture2D texture;
             for (int i = 0; i < readItems.Count; i++)
             {
@@ -207,10 +221,9 @@ namespace Bound.Managers
                     texture = (Items.ContainsKey(readItems[i][0])) ? Items[readItems[i][0]] : Null;
                     //If it has attributes
                     if (readItems[i].Count > 2)
-                        items.Add(i, new Item(texture, i, readItems[i][0], readItems[i][1], readItems[i][2]));
+                        items.Add(readItems[i][0], new Item(texture, i, readItems[i][0], readItems[i][2], StringToType(readItems[i][1])));
                     else
-                        items.Add(i, new Item(texture, i, readItems[i][0], readItems[i][1]));
-                    codes.Add(readItems[i][0], i);
+                        items.Add(readItems[i][0], new Item(texture, i, readItems[i][0], readItems[i][2], readItems[i][1], StringToType(readItems[i][3])));
                 }
                 catch (Exception)
                 {
@@ -218,9 +231,25 @@ namespace Bound.Managers
                 }
             }
 
-            
+            return items;
 
-            return (items, codes);
+        }
+
+        private ItemType StringToType(string input)
+        {
+            var output = input.ToLower() switch
+            {
+                "headgear" => ItemType.HeadGear,
+                "chestarmour" => ItemType.ChestArmour,
+                "legarmour" => ItemType.LegArmour,
+                "footwear" => ItemType.Footwear,
+                "accessory" => ItemType.Accessory,
+                "consumable" => ItemType.Consumable,
+                "skill" => ItemType.Skill,
+                "weapon" => ItemType.Weapon,
+                _ => ItemType.Unrecognised,
+            };
+            return output;
         }
 
         public Texture2D CreateSubTexture(GraphicsDevice graphicsDevice, Texture2D sourceTexture, Rectangle sourceRectangle)
@@ -246,7 +275,7 @@ namespace Bound.Managers
             return newTexture;
         }
 
-        public Texture2D GetItemTexture(string itemName, ItemType itemType, ItemTextureType type)
+        public Texture2D GetItemTexture(string itemName, ItemType itemType, ItemTextureType type = ItemTextureType.Icon)
         {
             var index = (int)type;
             try
@@ -263,10 +292,14 @@ namespace Bound.Managers
                         return Footwear[itemName][index];
                     case ItemType.Accessory:
                         return Accessories[itemName];
-                    case ItemType.Item:
+                    case ItemType.Weapon:
                         return Items[itemName];
+                    case ItemType.Consumable:
+                        return Consumables[itemName];
                     case ItemType.Skill:
                         return Skills[itemName];
+                    case ItemType.Item:
+                        return Items[itemName];
                     default:
                         return Null;
                 }

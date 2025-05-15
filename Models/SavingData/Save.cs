@@ -1,6 +1,5 @@
 ﻿using Bound.Managers;
-using Bound.Models.Items;
-using SharpDX.X3DAudio;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +19,10 @@ namespace Bound.Models
         public int MaxMana;
         public int MaxStamina;
         public int MaxDashes;
+        public Vector2 Position;
 
         public Dictionary<string, Attribute> Attributes;
-        public List<Item> Inventory;
+        public Inventory Inventory;
 
         public override string ToString()
         {
@@ -34,7 +34,10 @@ namespace Bound.Models
             foreach (var item in Attributes)
                 str += EncryptKVP(item.Key, item.Value.Value.ToString()) + "\n";
 
-            str += EncryptKeyListPair("Inventory", Inventory.Select(x => x.Id.ToString()).ToList()) + "\n";
+            if (Inventory.EntireInvetory.Count > 0)
+                str += EncryptKeyListPair("Inventory", Inventory.FormatForSave()) + "\n";
+
+            str += EncryptKeyListPair("Position", new List<string>() { Position.X.ToString(), Position.Y.ToString() });
 
             return str;
         }
@@ -173,7 +176,7 @@ namespace Bound.Models
         //returns a new save
         #region New Saves
 
-        public static Save NewSave(SaveManager manager)
+        public static Save NewSave(SaveManager manager, Game1 game)
         {
             var save = new Save()
             {
@@ -181,7 +184,7 @@ namespace Bound.Models
                 PlayerName = "_",
                 Manager = manager,
                 Attributes = new Dictionary<string, Attribute>(),
-                Inventory = new List<Item>(),
+                Inventory = new Inventory(game),
             };
 
             AddMissingKeys(manager, save, manager.DefaultAttributes.Keys.ToList());
@@ -198,7 +201,7 @@ namespace Bound.Models
                 {
                     Manager = manager,
                     Attributes = new Dictionary<string, Attribute>(),
-                    Inventory = new List<Item>(),
+                    Inventory = new Inventory(game),
                 };
 
                 var AttributeKeys = manager.DefaultAttributes.Keys.ToList();
@@ -210,7 +213,16 @@ namespace Bound.Models
                     if (AttributeKeys.Contains(kvp.Key))
                         save.Attributes.Add(kvp.Key, new Attribute(kvp.Key, int.Parse(kvp.Value)));
                     else if (kvp.Key == "Inventory")
-                        save.Inventory = kvp.Value.Split(';').Select(x => game.Items[int.Parse(x)]).ToList();
+                    {
+                        var inventory = kvp.Value.Split(';').ToList();
+                        foreach (var item in inventory)
+                            save.Inventory.Import(item);
+                    }
+                    else if (kvp.Key == "Position")
+                    {
+                        var pos = kvp.Value.Split(';');
+                        save.Position = new Vector2(float.Parse(pos[0]), float.Parse(pos[1]));
+                    }
                     else
                     {
                         switch (kvp.Key)

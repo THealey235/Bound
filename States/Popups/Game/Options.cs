@@ -104,7 +104,7 @@ namespace Bound.States.Popups.Game
 
         private void Button_Inventory_Clicked(object sender, EventArgs e)
         {
-            var inventory = new Inventory(_game, _content, Parent, _graphics);
+            var inventory = new InventoryMenu(_game, _content, Parent, _graphics);
             Parent.Popups.Add(inventory);
             inventory.LoadContent();
         }

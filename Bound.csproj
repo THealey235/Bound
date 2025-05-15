@@ -15,15 +15,18 @@
     <None Remove="desktop.ini" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.3" />
     <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
-    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\Items\Accessories\" />
+	<MonoGameContentReference Include="Content/Content.mgcb" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Content\Items\LegArmour\" />
     <Folder Include="Content\Items\Footwear\" />
+    <Folder Include="Content\Items\Skills\" />
     <Folder Include="Content\Levels\" />
-    <Folder Include="Decomp\" />
     <Folder Include="States\Game\Levels\" />
   </ItemGroup>
   <ItemGroup>

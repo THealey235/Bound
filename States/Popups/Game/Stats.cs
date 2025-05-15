@@ -51,7 +51,7 @@ namespace Bound.States.Popups.Game
             var border = 5 * Game1.ResScale;
             var textStartingPosition = new Vector2(statsBoxPos.X + border, statsBoxPos.Y + border);
             var stringLength = (int)(statsBackground.Width / (_game.Textures.Font.MeasureString("X").X * 1.05));
-            _playerStats.Add(( $"Name{_game.Player.SaveState.PlayerName.PadLeft(stringLength - 4)}", textStartingPosition ));
+            _playerStats.Add(( $"Name{_game.Player.Save.PlayerName.PadLeft(stringLength - 4)}", textStartingPosition ));
 
             var i = 2;
             var spacing = _game.Textures.Font.MeasureString("t").Y + 1 * Game1.ResScale;

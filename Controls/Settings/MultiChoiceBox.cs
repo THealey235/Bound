@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Bound.Controls.Settings
 {
-    public class MultiChoiceBox : MultiChoice
+    public class MultiChoiceBox : ChoiceBox
     {
         private Texture2D _texture;
         private BorderedBox _box;
@@ -18,6 +18,9 @@ namespace Bound.Controls.Settings
         private Vector2 _textPosition;
         private Vector2 _leftArrowPosition;
         private Vector2 _rightArrowPosition;
+        private BorderedBox _parentBackground;
+        private Game1 _game;
+        private float _allignment;
 
         public List<string> Choices;
         public string Text;
@@ -88,7 +91,15 @@ namespace Bound.Controls.Settings
                 component.Update(gameTime);
         }
 
-        public override void LoadContent(Game1 _game, BorderedBox background, float allignment)
+        public override void LoadContent(Game1 game, BorderedBox background, float allignment)
+        {
+            _parentBackground = background;
+            _game = game;
+            _allignment = allignment;
+            Load(background, allignment);
+        }
+
+        private void Load(BorderedBox background, float allignment)
         {
             //TODO: rewrite BorderdBox constructor so i may rewrite this method
             //Note: this code is some hot garbage
@@ -238,6 +249,12 @@ namespace Bound.Controls.Settings
             CurIndex++;
             if (CurIndex > Choices.Count - 1)
                 CurIndex = 0;
+        }
+
+        public override void UpdatePosition(Vector2 position)
+        {
+            Position = position;
+            Load(_parentBackground, _allignment);
         }
     }
 }

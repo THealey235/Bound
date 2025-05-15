@@ -28,7 +28,8 @@ namespace Bound.Controls.Game
             }
         }
         
-        public Textures.ItemType _itemType;
+        public readonly Textures.ItemType ItemType;
+
         public string ContainedItem
         {
             get
@@ -38,7 +39,7 @@ namespace Bound.Controls.Game
             set
             {
                 _containedItem = value;
-                _texture = _game.Textures.GetItemTexture(value, _itemType, Textures.ItemTextureType.Icon);
+                _texture = _game.Textures.GetItemTexture(value, ItemType, Textures.ItemTextureType.Icon);
             }
         }
 
@@ -68,7 +69,7 @@ namespace Bound.Controls.Game
         {
             _ID = id;
             _game = game;
-            _itemType = type;
+            ItemType = type;
             _bgDefaultColour = Game1.MenuColorPalette[1];
             _hoveringColour = Game1.BlendColors(_bgDefaultColour, Color.Gray, 0.5f);
             _background = new BorderedBox(

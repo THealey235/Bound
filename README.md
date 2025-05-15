@@ -16,11 +16,8 @@ Inventory:
 	> Levelling System: xp or money
 	> Ability to acquire ability points
 	> Ability to spend ability points
-	> Menu for items and consumables: 
-		- Hot loadout and an infinite backpack system.
 
 Items:
-	> Requires Inventory
 	> Item hitboxes
 	> Item stat bonuses => need to give player attributes.
 
@@ -37,4 +34,4 @@ General:
 	> Level State:
 		- fix whatever that mess is: requires a second level to determine what is essential to each one	
 	> Clamp Player Position
-	> Save Player Position and other new inventory states to save file
+	> Add respawn points similar to DS.

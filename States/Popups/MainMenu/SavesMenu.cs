@@ -106,7 +106,7 @@ namespace Bound.States
         private void Button_Play_Clicked(object sender, EventArgs e)
         {
             var save = sender as SaveInterface;
-            _game.RecentSave = save.Index;
+            _game.RecentSave = _game.SaveIndex = save.Index;
             _game.Settings.Settings.General["MostRecentSave"] = save.Index.ToString();
             SettingsManager.Save(_game.Settings);
             _game.ChangeState(_game.SavesManager.GetState(save.Index, _game, _content, _graphics));

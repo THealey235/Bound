@@ -1,8 +1,8 @@
 
 #----------------------------- Global Properties ----------------------------#
 
-/outputDir:bin/$(Platform)
-/intermediateDir:obj/$(Platform)
+/outputDir:Content/bin
+/intermediateDir:Content/obj
 /platform:Windows
 /config:
 /profile:Reach
@@ -240,6 +240,42 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/JX-900.spritefont
 
+#begin Items/Accessories/Crimson Blessing.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Items/Accessories/Crimson Blessing.png
+
+#begin Items/Accessories/Fast Feet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Items/Accessories/Fast Feet.png
+
+#begin Items/Accessories/Silver Powder.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Items/Accessories/Silver Powder.png
+
 #begin Items/ChestArmour/Default.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -251,6 +287,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Items/ChestArmour/Default.png
+
+#begin Items/Consumables/Lesser Guinn.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Items/Consumables/Lesser Guinn.png
 
 #begin Items/Footwear/Default.png
 /importer:TextureImporter

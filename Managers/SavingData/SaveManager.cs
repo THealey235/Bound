@@ -91,18 +91,20 @@ namespace Bound.Managers
         {
             //negative index means start couting from last index, python type shit
             if (index < 0)
-            {
-                index = Saves.Count + index;
-            }
+                index += Saves.Count;
 
             var save = Saves[index];
             var path = GetPath(index);
+
 
             if (Saves[index] == null)
             {
                 File.Delete(path);
                 return;
             }
+
+            if (index == _game.SaveIndex)
+                save.Position = _game.Player.Position;
 
             using (var writer = new StreamWriter(new FileStream(path, FileMode.Create)))
             {
@@ -139,6 +141,7 @@ namespace Bound.Managers
             }
 
             _game.Player.UpdateAttributes(saveIndex);
+            _game.Player.Position = Saves[saveIndex].Position;
 
             return Saves[saveIndex].Level switch
             {

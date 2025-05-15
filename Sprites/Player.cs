@@ -17,7 +17,7 @@ namespace Bound.Sprites
         private DebugRectangle _debugRectangle;
         private Dictionary<string, Attribute> _attributes;
 
-        public Save SaveState;
+        public Save Save;
         public int HotbarSlot = 1;
         public Dictionary<string, Attribute> Attributes
         {
@@ -49,10 +49,10 @@ namespace Bound.Sprites
                 , Layer + 0.01f,
                 Scale
             );
-            SaveState = _game.SavesManager.Saves[_game.SaveIndex];
+            Save = _game.SavesManager.Saves[_game.SaveIndex];
             
-            if (SaveState != null)
-                _attributes = SaveState.Attributes;
+            if (Save != null)
+                _attributes = Save.Attributes;
         }
 
         public Player(Dictionary<string, Animation> animations, Input Keys, Game1 game) : base(animations, game)

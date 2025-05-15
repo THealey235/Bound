@@ -10,11 +10,10 @@ using Bound.Controls.Game;
 
 namespace Bound.States.Popups.Game
 {
-    public class Inventory : Popup
+    public class InventoryMenu : Popup
     {
         private List<Component> _components;
         public BorderedBox _background;
-        private List<(string Text, Vector2 Position)> _playerStats = new List<(string Text, Vector2 Position)>();
         private List<InventorySlot> _armour;
         private List<InventorySlot> _accessories;
         private List<InventorySlot> _hotbar;
@@ -24,7 +23,7 @@ namespace Bound.States.Popups.Game
 
         public float Layer;
 
-        public Inventory(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content, parent, graphics)
+        public InventoryMenu(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content, parent, graphics)
         {
             Name = Game1.Names.InventoryWindow;
             Layer = 0.79f;
@@ -218,19 +217,23 @@ namespace Bound.States.Popups.Game
         private void Button_Armour_Clicked(object sender, EventArgs eventArgs)
         {
             var button = sender as InventorySlot;
+            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, _graphics, button.ItemType, Layer + 0.01f));
         }
 
         private void Button_Accessory_Clicked(object sender, EventArgs e)
         {
             var button = sender as InventorySlot;
+            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, _graphics, button.ItemType, Layer + 0.01f));
         }
         private void Button_Hotbar_Clicked(object sender, EventArgs e)
         {
             var button = sender as InventorySlot;
+            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, _graphics, new List<Textures.ItemType>() { Textures.ItemType.Weapon, Textures.ItemType.Consumable }, Layer + 0.01f));
         }
         private void Button_Skills_Clicked(object sender, EventArgs e)
         {
             var button = sender as InventorySlot;
+            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, _graphics, button.ItemType, Layer + 0.01f));
         }
 
         #endregion

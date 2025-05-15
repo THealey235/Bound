@@ -24,7 +24,7 @@ namespace Bound.States.Game
             _scale = 1.5f;
 
             _player.UpdateAttributes(game.SaveIndex);
-            _player.SaveState = game.SavesManager.ActiveSave;
+            _player.Save = game.SavesManager.ActiveSave;
 
             LoadContent();
         }

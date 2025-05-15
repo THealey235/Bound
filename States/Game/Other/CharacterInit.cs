@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Design;
 using System.Linq;
 
 
@@ -187,8 +188,8 @@ namespace Bound.States.Game
         private void Heirloom_Apply(object sender, EventArgs e)
         {
             var box = _choiceBoxes[1];
-            var code = _game.ItemCodes[box.Choices[box.CurIndex]];
-            _game.SavesManager.ActiveSave.Inventory.Add(_game.Items[code]);
+            _game.SavesManager.ActiveSave.Inventory.Add(box.Choices[box.CurIndex]);
+            _game.SavesManager.ActiveSave.Inventory.Add(box.Choices[2]);
         }
         private void Difficulty_Apply(object sender, EventArgs e)
         {

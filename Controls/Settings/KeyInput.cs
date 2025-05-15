@@ -5,13 +5,10 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Security.Cryptography;
-using System.Security.Cryptography.Xml;
 
 namespace Bound.Controls.Settings
 {
-    public class KeyInput : MultiChoice
+    public class KeyInput : ChoiceBox
     //_blackList.Contains(key) || key.Contains("NumPad") || key.Contains("Media") || key.Contains("Browser") || key.Contains("Chat")
     {
         private static List<string> _blackList = new List<string>()
@@ -29,6 +26,9 @@ namespace Bound.Controls.Settings
         private KeyboardState _currentKey;
         private MouseState _previousMouse;
         private MouseState _currentMouse;
+        private BorderedBox _parentBackground;
+        private Game1 _game;
+        private float _allignment;
 
         public KeyValuePair<string, string> Keys;
         public Color PenColour;
@@ -87,7 +87,14 @@ namespace Bound.Controls.Settings
 
         public override void LoadContent(Game1 game, BorderedBox background, float allignment)
         {
+            _parentBackground = background;
+            _game = game;
+            _allignment = allignment;
+            Load(game, background, allignment);
+        }
 
+        private void Load(Game1 game, BorderedBox background, float allignment)
+        {
             var gap = 5f * Game1.ResScale;
 
             var boxLength = _font.MeasureString(" ").X; //any 3 chars have the same length
@@ -130,7 +137,6 @@ namespace Bound.Controls.Settings
                 }
             };
         }
-
 
         public override void Update(GameTime gameTime)
         {
@@ -206,6 +212,12 @@ namespace Bound.Controls.Settings
             }
 
             return key;
+        }
+
+        public override void UpdatePosition(Vector2 position)
+        {
+            Position = position;
+            LoadContent(_game, _parentBackground, _allignment);
         }
     }
 }

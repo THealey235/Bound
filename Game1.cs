@@ -64,8 +64,7 @@ namespace Bound
 
         public bool UseDefaultMouse;
 
-        public Dictionary<int, Item> Items;
-        public Dictionary<string, int> ItemCodes;
+        public Dictionary<string, Item> Items;
 
         public int SaveIndex;
 
@@ -153,9 +152,7 @@ namespace Bound
 
             Textures = new Textures(Content, this);
 
-            var itemDicts = Textures.LoadItems();
-            Items = itemDicts.Item1;
-            ItemCodes = itemDicts.Item2;
+            Items = Textures.LoadItems();
 
             _currentState = new MainMenu(this, Content, _graphics);
             _currentState.LoadContent();
@@ -178,6 +175,7 @@ namespace Bound
 
             _previousKeys = _currentKeys;
             _currentKeys = Keyboard.GetState();
+            PlayerKeys.Update();
 
             //checks if F11 is pressed, if so: toggle fullscreen
             ChangeFullscreenMode();

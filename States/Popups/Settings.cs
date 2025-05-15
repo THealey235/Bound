@@ -16,7 +16,7 @@ namespace Bound.States.Popups
         #region Properties and Fields
 
         private List<Component> _components;
-        private List<MultiChoice> _multiBoxes;
+        private List<ChoiceBox> _multiBoxes;
         private List<KeyInput> _keyInputs;
         private BorderedBox _background;
         private KeyboardState _currentKeys;
@@ -102,7 +102,7 @@ namespace Bound.States.Popups
 
             };
 
-            _multiBoxes = new List<MultiChoice>()
+            _multiBoxes = new List<ChoiceBox>()
             {
                 new MultiChoiceBox(texture, _game.Textures.ArrowLeft, font, resBoxIndex)
                 {

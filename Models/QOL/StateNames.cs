@@ -5,19 +5,20 @@ namespace Bound.Models
     public struct Names
     {
         #region StateNames
-        public string Level0 = "levelzero";
-        public string Settings = "settings";
-        public string MainMenu = "mainmenu";
-        public string CharacterInit = "newgame";
-        public string Inventory = "inventory";
-        public string GameOptions = "gameoptions";
-        public string StatsWindow = "statswindow";
-        public string InventoryWindow = "invWindow";
+        public readonly string Level0 = "levelzero";
+        public readonly string Settings = "settings";
+        public readonly string MainMenu = "mainmenu";
+        public readonly string CharacterInit = "newgame";
+        public readonly string Inventory = "inventory";
+        public readonly string GameOptions = "gameoptions";
+        public readonly string StatsWindow = "statswindow";
+        public readonly string InventoryWindow = "invWindow";
+        public readonly string ItemFinder = "itemFinder";
         #endregion
 
         #region Misc IDs
-        public string ID_PlayerName = "PlayerName";
-        public string ID_CurrentLevel = "Level";
+        public readonly string ID_PlayerName = "PlayerName";
+        public readonly string ID_CurrentLevel = "Level";
         #endregion
 
         public Names()

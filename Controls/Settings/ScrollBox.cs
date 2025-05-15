@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Bound.Controls.Settings
 {
-    public class ScrollBox : MultiChoice
+    public class ScrollBox : ChoiceBox
     {
         #region Properties/Fields
 
@@ -28,8 +28,10 @@ namespace Bound.Controls.Settings
         private BorderedBox _cursor;
         private bool _isPressed;
         private string _symbol;
+        private BorderedBox _parentBackground;
+        private Game1 _game;
+        private float _allignment;
 
-        public string Name;
         public string Text;
         public Vector2 Position;
         public float Layer;
@@ -150,7 +152,15 @@ namespace Bound.Controls.Settings
 
 
         //Sets the position and values of all children.
-        public override void LoadContent(Game1 _game, BorderedBox background, float allignment)
+        public override void LoadContent(Game1 game, BorderedBox background, float allignment)
+        {
+            _parentBackground = background;
+            _game = game;
+            _allignment = allignment;
+            Load(background, allignment);
+        }
+
+        private void Load(BorderedBox background, float allignment)
         {
             var gap = 5f * Game1.ResScale;
             if (Game1.ScreenHeight == 720)
@@ -234,6 +244,12 @@ namespace Bound.Controls.Settings
                 _greenBar,
 
             };
+        }
+
+        public override void UpdatePosition(Vector2 position)
+        {
+            Position = position;
+            Load(_parentBackground, _allignment);
         }
 
         #endregion

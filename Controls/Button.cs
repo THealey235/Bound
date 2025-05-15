@@ -11,7 +11,7 @@ using SharpDX.DirectWrite;
 
 namespace Bound.Controls
 {
-    public class Button : Component
+    public class Button : ChoiceBox
     {
         #region Fields
 
@@ -170,7 +170,7 @@ namespace Bound.Controls
                 var x = (Position.X) + ((Rectangle.Width - (_font.MeasureString(Text).X)) / 2);
                 var y = (Position.Y) + ((Rectangle.Height - (_font.MeasureString(Text).Y)) / 2);
 
-                spriteBatch.DrawString(_font, Text, new Vector2(x, y), PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
+                spriteBatch.DrawString(_font, Text, new Vector2(x, y), PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.001f);
             }
         }
 
@@ -197,6 +197,16 @@ namespace Bound.Controls
                     Click?.Invoke(this, new EventArgs());
                 }
             }
+        }
+
+        public override void LoadContent(Game1 game, BorderedBox background, float allignment)
+        {
+            //No content to load
+        }
+
+        public override void UpdatePosition(Vector2 position)
+        {
+            _position = position;
         }
 
         #endregion
