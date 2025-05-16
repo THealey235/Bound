@@ -90,6 +90,14 @@ namespace Bound.Controls.Settings
             }
         }
 
+        public override Rectangle Rectangle
+        {
+            get
+            {
+                return new Rectangle((int)Position.X, (int)Position.Y, FullWidth, FullHeight);
+            }
+        }
+
         #endregion
 
         #region Constructor/Inherited Methods

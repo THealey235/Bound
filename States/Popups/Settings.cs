@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Bound.States.Popups
 {
-    public class Settings : State
+    public class Settings : Popup
     {
         #region Properties and Fields
 
@@ -29,7 +29,7 @@ namespace Bound.States.Popups
         #endregion
 
         #region Constructor / Inherited
-        public Settings(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content)
+        public Settings(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content, parent, graphics)
         {
             Parent = parent;
             _graphics = graphics;

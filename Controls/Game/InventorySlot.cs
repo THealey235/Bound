@@ -39,7 +39,7 @@ namespace Bound.Controls.Game
             set
             {
                 _containedItem = value;
-                _texture = _game.Textures.GetItemTexture(value, ItemType, Textures.ItemTextureType.Icon);
+                _texture = _game.Textures.GetItemTexture(value, ItemType);
             }
         }
 

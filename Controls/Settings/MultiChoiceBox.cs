@@ -44,6 +44,14 @@ namespace Bound.Controls.Settings
             }
         }
 
+        public override Rectangle Rectangle
+        {
+            get
+            {
+                return new Rectangle((int)Position.X, (int)Position.Y, FullWidth, FullHeight);
+            }
+        }
+
         public Vector2 _choicePosition
         {
             get

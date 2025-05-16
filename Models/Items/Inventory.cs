@@ -68,6 +68,7 @@ namespace Bound.Models
         public void Add(string name, int numberTaken = 1)
         {
             var item = _game.Items[name].Clone();
+            item.Ammount = numberTaken;
             var index = (int)item.Type;
             if (index >= _inventory.Count)
                 return;

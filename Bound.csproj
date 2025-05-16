@@ -41,4 +41,10 @@
     <Message Text="Restoring dotnet tools" Importance="High" />
     <Exec Command="dotnet tool restore" />
   </Target>
+  <Target Name="CopyContent" AfterTargets="Build">
+    <ItemGroup>
+        <BuiltContent Include="Content\bin\**\*.xnb" />
+	</ItemGroup>
+	<Copy SourceFiles="@(BuiltContent)" DestinationFolder="$(OutputPath)Content\%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
 </Project>

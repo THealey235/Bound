@@ -59,6 +59,14 @@ namespace Bound.Controls.Settings
             }
         }
 
+        public override Rectangle Rectangle
+        {
+            get
+            {
+                return new Rectangle((int)Position.X, (int)Position.Y, FullWidth, FullHeight);
+            }
+        }
+
         public KeyInput(SpriteFont font, KeyValuePair<string, string> key, int longestInput)
         {
             _font = font;

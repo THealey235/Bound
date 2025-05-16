@@ -107,7 +107,7 @@ namespace Bound.Controls
             }
         }
 
-        public Rectangle Rectangle
+        public override Rectangle Rectangle
         {
             get
             {

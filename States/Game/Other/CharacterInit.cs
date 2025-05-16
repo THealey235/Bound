@@ -188,8 +188,11 @@ namespace Bound.States.Game
         private void Heirloom_Apply(object sender, EventArgs e)
         {
             var box = _choiceBoxes[1];
-            _game.SavesManager.ActiveSave.Inventory.Add(box.Choices[box.CurIndex]);
-            _game.SavesManager.ActiveSave.Inventory.Add(box.Choices[2]);
+            _game.CurrentInventory.Add(box.Choices[box.CurIndex]);
+            _game.CurrentInventory.Add("Throwing Dagger", 10);
+            _game.CurrentInventory.Add(_game.Items[_game.Textures.GetItemName(5)].Name);
+            foreach (var item in new List<string>() { "Lesser Guinn", "Rock", "Healing Potion", "Golden Mibu Water Balloon", "Double Jump", "Magic Infused Potion", "Stamina Potion", "Stone Potion" })
+                _game.CurrentInventory.Add(item, 2);
         }
         private void Difficulty_Apply(object sender, EventArgs e)
         {

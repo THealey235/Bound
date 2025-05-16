@@ -79,6 +79,14 @@ namespace Bound
             }
         }
 
+        public Inventory CurrentInventory
+        {
+            get
+            {
+                return SavesManager.ActiveSave.Inventory;
+            }
+        }
+
 
         #endregion
 
@@ -118,7 +126,7 @@ namespace Bound
             //Scale used to change the size of textures based on the resolution. Defalut = 640x360.
             ResScale = (float)ScreenHeight / (float)DefaultHeight;
 
-            RecentSave = int.Parse(Settings.Settings.General["MostRecentSave"]);
+            RecentSave = SaveIndex = int.Parse(Settings.Settings.General["MostRecentSave"]);
 
             Random = new Random();
 

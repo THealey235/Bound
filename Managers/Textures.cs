@@ -65,15 +65,17 @@ namespace Bound.Managers
         public Texture2D HotbarSelectedSlot;
         public Texture2D EmptyBox;
 
-        public Dictionary<string, List<Texture2D>> HeadGear = new Dictionary<string, List<Texture2D>>();
-        public Dictionary<string, List<Texture2D>> ChestArmour = new Dictionary<string, List<Texture2D>>();
-        public Dictionary<string, List<Texture2D>> LegArmour = new Dictionary<string, List<Texture2D>>();
-        public Dictionary<string, List<Texture2D>> Footwear = new Dictionary<string, List<Texture2D>>();
+        public Dictionary<string, Texture2D> HeadGear = new Dictionary<string, Texture2D>();
+        public Dictionary<string, Texture2D> ChestArmour = new Dictionary<string, Texture2D>();
+        public Dictionary<string, Texture2D> LegArmour = new Dictionary<string, Texture2D>();
+        public Dictionary<string, Texture2D> Footwear= new Dictionary<string, Texture2D>();
         public Dictionary<string, Texture2D> Accessories = new Dictionary<string, Texture2D>();
         public Dictionary<string, Texture2D> Weapons = new Dictionary<string, Texture2D>();
         public Dictionary<string, Texture2D> Consumables = new Dictionary<string, Texture2D>();
         public Dictionary<string, Texture2D> Skills = new Dictionary<string, Texture2D>();
+
         public Dictionary<string, Texture2D> Items = new Dictionary<string, Texture2D>();
+        private Dictionary<int, string> IdToName = new Dictionary<int, string>();
 
         public Dictionary<string, Texture2D> Buttons;
 
@@ -150,20 +152,25 @@ namespace Bound.Managers
             LoadDirectory("Content/Items/Skills", Skills);
 
 
-            foreach (var dict in new List<Dictionary<string, Texture2D>>() { Accessories, Consumables})
+            foreach (var dict in new List<Dictionary<string, Texture2D>>() { HeadGear, ChestArmour, LegArmour, Footwear, Accessories, Consumables, Skills})
             {
                 foreach (var kvp in dict)
+                {
+                    if (kvp.Key == "Default") continue;
                     Items.Add(kvp.Key, kvp.Value);
-                dict.Add("Default", Blank);
+                }
+                if (!dict.ContainsKey("Default")) dict.Add("Default", Blank);
             }
 
             Items.Add("Default", Blank);
-            Skills.Add("Default", Blank);
 
             #endregion
 
         }
 
+        //was used for loading items with multiple sprites such as a chest piece with a worn sprite and a menu sprite
+        //but it is more efficient to keep it as one texture and use a source rectangle so this may be deprecated
+        //although this code may be useful in the future.
         private void LoadDirectory(string path, Dictionary<string, List<Texture2D>> outputList)
         {
             string x;
@@ -224,6 +231,8 @@ namespace Bound.Managers
                         items.Add(readItems[i][0], new Item(texture, i, readItems[i][0], readItems[i][2], StringToType(readItems[i][1])));
                     else
                         items.Add(readItems[i][0], new Item(texture, i, readItems[i][0], readItems[i][2], readItems[i][1], StringToType(readItems[i][3])));
+
+                    IdToName.Add(i, readItems[i][0]);
                 }
                 catch (Exception)
                 {
@@ -275,21 +284,20 @@ namespace Bound.Managers
             return newTexture;
         }
 
-        public Texture2D GetItemTexture(string itemName, ItemType itemType, ItemTextureType type = ItemTextureType.Icon)
+        public Texture2D GetItemTexture(string itemName, ItemType itemType)
         {
-            var index = (int)type;
             try
             {
                 switch (itemType)
                 {
                     case ItemType.HeadGear:
-                        return HeadGear[itemName][index];
+                        return HeadGear[itemName];
                     case ItemType.ChestArmour:
-                        return ChestArmour[itemName][index];
+                        return ChestArmour[itemName];
                     case ItemType.LegArmour:
-                        return LegArmour[itemName][index];
+                        return LegArmour[itemName];
                     case ItemType.Footwear:
-                        return Footwear[itemName][index];
+                        return Footwear[itemName];
                     case ItemType.Accessory:
                         return Accessories[itemName];
                     case ItemType.Weapon:
@@ -310,5 +318,21 @@ namespace Bound.Managers
                 return Null;
             }
         }
+
+        public Rectangle GetSourceRectangle(ItemType itemType, ItemTextureType textureType = ItemTextureType.Icon)
+        {
+            if ((int)(itemType) < 4)
+            {
+                return textureType switch
+                {
+                    ItemTextureType.PlayerModel => new Rectangle(32, 0, 32, 32),
+                    _ => new Rectangle(0, 0, 32, 32),
+                };
+            }
+
+            return new Rectangle(0, 0, 32, 32);
+        }
+
+        public string GetItemName(int ID) => (ID < IdToName.Count) ? IdToName[ID] : "Default";
     }
 }

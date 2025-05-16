@@ -13,6 +13,8 @@ namespace Bound.Controls
         public EventHandler OnApply;
         public string Name = string.Empty;
 
+        public abstract Rectangle Rectangle { get; }
+
         //Probably should be in children not here
         public abstract void LoadContent(Game1 game, BorderedBox background, float allignment = 0f);
 

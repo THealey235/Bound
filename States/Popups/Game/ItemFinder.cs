@@ -53,7 +53,7 @@ namespace Bound.States.Popups
             var bgPos = new Vector2(Game1.ScreenWidth / 2 + Game1.V2Transform.X - (eigthWidth * 3 / 2), eigthHeight + Game1.V2Transform.Y);
             var spacing = 5 * Game1.ResScale;
             var bgDimensions = new Vector2((int)(eigthWidth * 3), (int)(eigthHeight * 6));
-            var TextureScale = 1f;
+            var textureScale = 0.65f;
 
             var background = new BorderedBox
             (
@@ -67,28 +67,30 @@ namespace Bound.States.Popups
             );
 
 
-            var componentHeight = (int)(10 * Game1.ResScale * TextureScale);
-            var xOffset = bgDimensions.X / 8;
+            var xOffset = bgDimensions.X / 14;
             var yOffset = bgDimensions.Y / 10;
             var offsetForButtons = 5 * Game1.ResScale;
             var menuWidth = (int)(bgDimensions.X - 2 * xOffset);
             var menuHeight = (int)(bgDimensions.Y - 2 * yOffset - offsetForButtons);
             var menuPos = new Vector2(background.Position.X + xOffset, background.Position.Y + yOffset - offsetForButtons);
+            var componentHeight = (int)(menuHeight / 9);
 
-            _items = _game.SavesManager.ActiveSave.Inventory.GetParts(_filter);
+            _items = _game.CurrentInventory.GetParts(_filter);
 
             foreach (var item in _items)
             {
                 _itemBoxes.Add(
                     new ItemInfoBox(
-                        _game, 
+                        _game,
                         item,
                         Vector2.Zero,
                         (int)(menuWidth - 10 * Game1.ResScale),
-                        menuHeight / 6, Layer + 0.002f,
+                        componentHeight,
+                        Layer + 0.002f,
                         background,
                         new EventHandler(Button_ItemPressed)
                     )
+                    { TextureScale = textureScale}
                 );
             }
 
@@ -101,8 +103,12 @@ namespace Bound.States.Popups
                 menuHeight,
                 Layer + 0.001f,
                 _itemBoxes,
-                componentHeight
-            );
+                componentHeight,
+                (int)(background.Position.Y)
+            )
+            {
+                TextureScale = 0.8f,
+            };
 
             _components = new List<Component>()
             {
@@ -111,7 +117,7 @@ namespace Bound.States.Popups
                 {
                     Text = "Back",
                     Click = new EventHandler(Button_Discard_Clicked),
-                    Layer = Layer + 0.001f,
+                    Layer = Layer + 0.01f,
                     TextureScale = 0.75f,
                     RelativePosition = new Vector2(background.Width / 2 - (int)(_game.Textures.Button.Width * Game1.ResScale * 0.75f) - spacing / 2, (background.Height - _game.Textures.Button.Height * Game1.ResScale * 0.75f) - 5 * Game1.ResScale),
                     ToCenter = true,
@@ -122,7 +128,7 @@ namespace Bound.States.Popups
                 {
                     Text = "Equip",
                     Click = new EventHandler(Button_Equip_Clicked),
-                    Layer = Layer + 0.001f,
+                    Layer = Layer + 0.01f,
                     TextureScale = 0.75f,
                     RelativePosition = new Vector2(background.Width / 2 + spacing / 2, (background.Height - _game.Textures.Button.Height * Game1.ResScale * 0.75f) - 5 * Game1.ResScale),
                     ToCenter = true,
@@ -131,9 +137,6 @@ namespace Bound.States.Popups
                 },
                 _scrollingMenu,
             };
-
-            _components.AddRange(_itemBoxes);
-
 
             _scrollingMenu.LoadContent(_game, background, 0f);
         }
