@@ -1,4 +1,5 @@
-﻿using Bound.Models.Items;
+﻿using Bound.Managers;
+using Bound.Models.Items;
 using SharpDX.Direct3D9;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ namespace Bound.Models
             Weapon,
             Consumable,
             Skill,
+            HoldableItem,
             Item,
             Unrecognised,
         }*/
@@ -68,7 +70,7 @@ namespace Bound.Models
         public void Add(string name, int numberTaken = 1)
         {
             var item = _game.Items[name].Clone();
-            item.Ammount = numberTaken;
+            item.Quantity = numberTaken;
             var index = (int)item.Type;
             if (index >= _inventory.Count)
                 return;
@@ -76,7 +78,7 @@ namespace Bound.Models
             if (!_inventory[index].ContainsKey(name))
                 _inventory[index].Add(name, item);
             else
-                _inventory[index][item.Name].Ammount += numberTaken;
+                _inventory[index][item.Name].Quantity += numberTaken;
         }
 
         //For importing items from saves
@@ -91,7 +93,7 @@ namespace Bound.Models
             }
 
             var newItem = _game.Items[args["Name"]].Clone();
-            if (args.ContainsKey("Ammount")) newItem.Ammount = int.Parse(args["Ammount"]);
+            if (args.ContainsKey("Ammount")) newItem.Quantity = int.Parse(args["Ammount"]);
 
             var index = (int)newItem.Type;
             if (index >= _inventory.Count) //If the item type in Unrecognised it wont be added since it can't be sorted into a category
@@ -118,13 +120,22 @@ namespace Bound.Models
                 foreach (var item in dict.Values)
                 {
                     var str = $"Name: {item.Name}";
-                    if (item.Ammount > 1)
-                        str += $", Ammount: {item.Ammount}";
+                    if (item.Quantity > 1)
+                        str += $", Ammount: {item.Quantity}";
                     output.Add(str);
                 }
             }
 
             return output;
+        }
+
+        public Item GetItem(Textures.ItemType type, string name)
+        {
+            if ((int)type > _inventory.Count)
+                return null;
+            if (type == Textures.ItemType.HoldableItem)
+                return (_consumables.ContainsKey(name)) ? _consumables[name] : _weapons[name];
+            return _inventory[(int)type][name];
         }
     }
 }

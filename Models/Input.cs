@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,30 @@ namespace Bound.Models
         public KeyboardState CurrentKeyboardState;
         public MouseState PreviousMouseState;
         public MouseState CurrentMouseState;
+
+        public Rectangle MouseRectangle
+        {
+            get
+            {
+                return new Rectangle(CurrentMouseState.X, CurrentMouseState.Y, 1, 1);
+            }
+        }
+
+        public bool IsLeftClick
+        {
+            get
+            {
+                return (CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Released);
+            }
+        }
+
+        public bool LeftClickReleased
+        {
+            get
+            {
+                return (CurrentMouseState.LeftButton == ButtonState.Released && PreviousMouseState.LeftButton == ButtonState.Pressed);
+            }
+        }
 
         public Input(Dictionary<string, string> keys, Game1 game)
         {

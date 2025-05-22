@@ -17,7 +17,7 @@ namespace Bound.Controls
 
         private MouseState _currentMouse;
 
-        private SpriteFont _font;
+        protected SpriteFont _font;
 
         protected bool _isHovering;
 

@@ -32,6 +32,12 @@ namespace Bound.Controls.Game
         private float _extraItemsHeight;
         private int _parentTopEdge;
         private List<int> _itemBlacklist = new List<int>(); //indexes to not draw when drawing items
+        private float _cursorScaling = 1f;
+        private float _mouseInitialY;
+        private float _scrollInitialAmmount;
+        private float _scrollableHeight;
+        private bool _enableCursor = true;
+        private int _selectedItemIndex;
 
         // the "cover" is the Bordered Boxes used to cover the top and bottom of the items when they go out of range (declared in LoadContent())
         // this adds extra height to them so that you can't see the item boxes disappear when they go out of range
@@ -42,8 +48,12 @@ namespace Bound.Controls.Game
         public int MaxShown;
         public float Layer;
         public int BarWidth;
+       
 
-        
+        public List<int> ItemBlacklist
+        {
+            get { return _itemBlacklist; }
+        }      
 
         public float Scale
         {
@@ -74,7 +84,7 @@ namespace Bound.Controls.Game
             get
             {
                 var pos = new Vector2(_bar.Position.X, _bar.Position.Y + (_bar.Height * _scrollAmmount) - _cursor.Height / 2);
-                MathHelper.Clamp(pos.Y, _bar.Position.Y, _bar.Height);
+                pos.Y = MathHelper.Clamp(pos.Y, _bar.Position.Y, _bar.Position.Y + _bar.Height - _cursorHeight);
                 return pos;
             }
         }
@@ -85,6 +95,11 @@ namespace Bound.Controls.Game
             {
                 return new Rectangle((int)Position.X, (int)Position.Y, _width, _height);
             }
+        }
+
+        public int SelectedIndex
+        {
+            get { return _selectedItemIndex; }
         }
 
         #endregion
@@ -138,11 +153,16 @@ namespace Bound.Controls.Game
 
 
             //if it has just been clicked on or left click is still pressed
-            if (mouseRectangle.Intersects(_cursorRectangle) &&
+            if (_enableCursor && mouseRectangle.Intersects(_cursorRectangle) &&
                 _currentMouse.LeftButton == ButtonState.Pressed &&
                 _previousMouse.LeftButton == ButtonState.Released ||
                 _isPressed)
             {
+                if (_previousMouse.LeftButton == ButtonState.Released)
+                {
+                    _mouseInitialY = _currentMouse.Y;
+                    _scrollInitialAmmount = _scrollAmmount;
+                }
                 _isPressed = true;
             }
             if (_currentMouse.LeftButton == ButtonState.Released)
@@ -151,6 +171,8 @@ namespace Bound.Controls.Game
             if (_isPressed)
                 FollowCursor();
             
+            
+
         }
 
 
@@ -161,8 +183,24 @@ namespace Bound.Controls.Game
 
         private void Load(Game1 _game)
         {
+            var pos = new Vector2(Position.X, Position.Y + 5 * Game1.ResScale);
+            var ySpacing = _itemHeight + 5 * Game1.ResScale;
+            _itemPositions = new List<Vector2>();
+            for (int i = 0; i < _items.Count; i++)
+            {
+                _items[i].UpdatePosition(pos);
+                _itemPositions.Add(pos);
+                pos.Y += ySpacing;
+            }
+
+            var extraItems = _items.Count - _maxItemsInView;
+            _extraItemsHeight = extraItems > 0 ? extraItems * _itemHeight + (extraItems - 1) * ySpacing : 0;
+
             var defaultPos = new Vector2(Position.X + _width - BarWidth, Position.Y);
-            _cursorHeight = (int)(12 * Game1.ResScale);
+            _scrollableHeight = (_extraItemsHeight / _cursorScaling);
+            if (_scrollableHeight == 0) _enableCursor = false;
+
+            _cursorHeight = _height - (int)_scrollableHeight;
             _bar = new BorderedBox
             (
                 _game.Textures.BaseBackground,
@@ -188,8 +226,6 @@ namespace Bound.Controls.Game
 
             _components = new List<Component>
             {
-                _bar,
-                _cursor,
                 new BorderedBox
                 (
                     _game.Textures.BaseBackground,
@@ -212,18 +248,12 @@ namespace Bound.Controls.Game
                 ) { IsBordered = false},
             };
 
-            var pos = new Vector2(Position.X, Position.Y + 5 * Game1.ResScale);
-            var ySpacing = _itemHeight + 5 * Game1.ResScale;
-            _itemPositions = new List<Vector2>();
-            for (int i = 0; i < _items.Count; i++)
-            {
-                _items[i].UpdatePosition(pos);
-                _itemPositions.Add(pos);
-                pos.Y += ySpacing;
-            }
 
-            var extraItems = _items.Count - _maxItemsInView;
-            _extraItemsHeight = extraItems > 0 ? extraItems * _itemHeight + (extraItems - 1) * ySpacing : 0;
+            if (_enableCursor)
+            {
+                _components.Add(_bar);
+                _components.Add(_cursor);
+            }
 
             SetItemProperties();
 
@@ -241,24 +271,38 @@ namespace Bound.Controls.Game
 
         private void FollowCursor()
         {
-            var barY = _bar.Position.Y - Game1.V2Transform.Y;
-            var y = MathHelper.Clamp(_currentMouse.Y, barY + _cursor.Height / 2, barY + _bar.Height - _cursor.Height / 2);
-            y = (float)(y - barY) / _bar.Height;
-            y = y > 99f ? 100f : y;
-            _scrollAmmount = y;
+            var y = MathHelper.Clamp(_mouseInitialY - _currentMouse.Y, -1 * _scrollableHeight, _scrollableHeight);
+            y /= (_scrollableHeight);
+            _scrollAmmount = Math.Clamp(_scrollInitialAmmount - y, 0, 1);
             _cursor.Position = CursorPositon;
             SetItemProperties();
         }
 
         private void SetItemProperties()
         {
-            var translation = new Vector2(0, _scrollAmmount * _extraItemsHeight);
+            var translation = new Vector2(0, (_scrollAmmount) * _extraItemsHeight);
             _itemBlacklist.Clear();
             for (int i = 0; i < _items.Count; i++)
             {
                 _items[i].UpdatePosition(_itemPositions[i] - translation);
                 if (_items[i].Rectangle.Bottom < Position.Y - Game1.V2Transform.Y + _coverPadding || _items[i].Rectangle.Top > Position.Y + _height - Game1.V2Transform.Y - _coverPadding)
                     _itemBlacklist.Add(i);
+            }
+        }
+
+        public void ChangeSelected(int index, object sender)
+        {
+            _selectedItemIndex = index;
+            var x = sender.GetType();
+            var list = new List<ChoiceBox>(_items);
+            list.RemoveAt(index);
+
+            switch (x.Name)
+            {
+                case "ItemInfoBox":
+                    foreach (var i in list)
+                        ((ItemInfoBox)i).ResetColour();
+                    break;
             }
         }
 

@@ -40,6 +40,7 @@ namespace Bound.Managers
             Weapon,
             Consumable,
             Skill,
+            HoldableItem,
             Item,
             Unrecognised,
         }
@@ -284,33 +285,11 @@ namespace Bound.Managers
             return newTexture;
         }
 
-        public Texture2D GetItemTexture(string itemName, ItemType itemType)
+        public Texture2D GetItemTexture(string itemName)
         {
             try
             {
-                switch (itemType)
-                {
-                    case ItemType.HeadGear:
-                        return HeadGear[itemName];
-                    case ItemType.ChestArmour:
-                        return ChestArmour[itemName];
-                    case ItemType.LegArmour:
-                        return LegArmour[itemName];
-                    case ItemType.Footwear:
-                        return Footwear[itemName];
-                    case ItemType.Accessory:
-                        return Accessories[itemName];
-                    case ItemType.Weapon:
-                        return Items[itemName];
-                    case ItemType.Consumable:
-                        return Consumables[itemName];
-                    case ItemType.Skill:
-                        return Skills[itemName];
-                    case ItemType.Item:
-                        return Items[itemName];
-                    default:
-                        return Null;
-                }
+                return Items[itemName];
             }
             catch (Exception e)
             {

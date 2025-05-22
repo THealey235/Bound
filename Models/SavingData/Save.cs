@@ -20,14 +20,15 @@ namespace Bound.Models
         public int MaxStamina;
         public int MaxDashes;
         public Vector2 Position;
+        public int HotbarSlots;
+        public int SkillSlots;
 
         public Dictionary<string, Attribute> Attributes;
         public Inventory Inventory;
+        public Dictionary<string, List<string>> EquippedItems = new Dictionary<string, List<string>>();
 
         public override string ToString()
         {
-            //basic encryption, tough enough to prevent laymen from changing critical values but not enough to prevent modders.
-            //In other words: too lazy to do anything beter rn
             var str = EncryptKVP(Game1.Names.ID_PlayerName, PlayerName)+ "\n";
             str += EncryptKVP(Game1.Names.ID_CurrentLevel, Level) + "\n";
 
@@ -36,8 +37,13 @@ namespace Bound.Models
 
             if (Inventory.EntireInvetory.Count > 0)
                 str += EncryptKeyListPair("Inventory", Inventory.FormatForSave()) + "\n";
+            if (EquippedItems.Count > 0)
+                str += EncryptKeyListPair("EquippedItems", EquippedItems
+                    .Select(x => String.Join(';', x.Value
+                        .Select( y => $"{x.Key}: {y}").ToArray()))
+                    .ToList()) + "\n";
 
-            str += EncryptKeyListPair("Position", new List<string>() { Position.X.ToString(), Position.Y.ToString() });
+            str += EncryptKeyListPair("Position", new List<string>() { Position.X.ToString(), Position.Y.ToString() }) + "\n";
 
             return str;
         }
@@ -50,6 +56,27 @@ namespace Bound.Models
                 if (!save.Attributes.ContainsKey(key))
                     save.Attributes.Add(key, new Attribute(key, manager.DefaultAttributes[key]));
             }
+        }
+
+        public void SetEquippedItems(string input)
+        {
+            EquippedItems = new Dictionary<string, List<string>>();
+            var items = input.Split(';').Select(x => x.Split(": "));
+            foreach (var item in items)
+            {
+                if (EquippedItems.ContainsKey(item[0]))
+                    EquippedItems[item[0]].Add(item[1]);
+                else
+                    EquippedItems.Add(item[0], new List<string>() { item[1] });
+            }
+        }
+
+        public string GetEquippedItem(string id, int index = 0)
+        {
+            if (EquippedItems.ContainsKey(id))
+                return EquippedItems[id][index];
+            else
+                return "Default";
         }
 
         #region Encryption
@@ -212,25 +239,25 @@ namespace Bound.Models
 
                     if (AttributeKeys.Contains(kvp.Key))
                         save.Attributes.Add(kvp.Key, new Attribute(kvp.Key, int.Parse(kvp.Value)));
-                    else if (kvp.Key == "Inventory")
-                    {
-                        var inventory = kvp.Value.Split(';').ToList();
-                        foreach (var item in inventory)
-                            save.Inventory.Import(item);
-                    }
-                    else if (kvp.Key == "Position")
-                    {
-                        var pos = kvp.Value.Split(';');
-                        save.Position = new Vector2(float.Parse(pos[0]), float.Parse(pos[1]));
-                    }
                     else
                     {
                         switch (kvp.Key)
                         {
+                            case "Inventory":
+                                var inventory = kvp.Value.Split(';').ToList();
+                                foreach (var item in inventory)
+                                    save.Inventory.Import(item);
+                                break;
+                            case "Position":
+                                var pos = kvp.Value.Split(';');
+                                save.Position = new Vector2(float.Parse(pos[0]), float.Parse(pos[1]));
+                                break;
                             case "Level":
                                 save.Level = kvp.Value; break;
                             case "PlayerName":
                                 save.PlayerName = kvp.Value; break;
+                            case "EquippedItems":
+                                save.SetEquippedItems(kvp.Value); break;
 
                         }
                     }

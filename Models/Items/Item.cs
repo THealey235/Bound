@@ -20,7 +20,7 @@ namespace Bound.Models.Items
         public Textures.ItemType Type { get; }
         public Texture2D Texture { get { return _texture; } }
 
-        public int Ammount = 1;
+        public int Quantity = 1;
 
         public Item(Texture2D texture, int id, string name, string description, Textures.ItemType type)
         {
@@ -45,7 +45,7 @@ namespace Bound.Models.Items
         {
             var output = new Item(_texture, Id, Name, Description, Type);
             output.Attributes = Attributes;
-            output.Ammount = Ammount;
+            output.Quantity = Quantity;
 
             return output;
         }

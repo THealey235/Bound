@@ -8,6 +8,9 @@ using System;
 using Microsoft.Xna.Framework.Input;
 using Bound.Managers;
 using Bound.Models.Items;
+using System.ComponentModel.DataAnnotations;
+using Bound.States.Popups.Game;
+using System.Reflection;
 
 namespace Bound.States.Popups
 {
@@ -17,24 +20,30 @@ namespace Bound.States.Popups
         private List<Item> _items;
         private List<Textures.ItemType> _filter;
         private ScrollingMenu _scrollingMenu;
+        private object _creator;
+        private string _slotID;
 
         public float Layer;
         public Color PenColor = Game1.MenuColorPalette[2];
         private List<ChoiceBox> _itemBoxes = new List<ChoiceBox>();
 
-        public ItemFinder(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics, Textures.ItemType filter, float layer) : base(game, content, parent, graphics)
+        public ItemFinder(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics, Textures.ItemType filter, string slotID, float layer, object creator) : base(game, content, parent, graphics)
         {
             Name = Game1.Names.ItemFinder;
             Layer = layer;
             _filter = new List<Textures.ItemType>() { filter };
+            _creator = creator;
+            _slotID = slotID;
             LoadContent();
         }
 
-        public ItemFinder(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics, List<Textures.ItemType> filter, float layer) : base(game, content, parent, graphics)
+        public ItemFinder(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics, List<Textures.ItemType> filter, string slotID, float layer, object creator) : base(game, content, parent, graphics)
         {
             Name = Game1.Names.ItemFinder;
             Layer = layer;
             _filter = filter;
+            _creator = creator;
+            _slotID = slotID;
             LoadContent();
         }
 
@@ -50,10 +59,11 @@ namespace Bound.States.Popups
         {
             var eigthWidth = Game1.ScreenWidth / 8;
             var eigthHeight = Game1.ScreenHeight / 8;
-            var bgPos = new Vector2(Game1.ScreenWidth / 2 + Game1.V2Transform.X - (eigthWidth * 3 / 2), eigthHeight + Game1.V2Transform.Y);
+            var bgPos = new Vector2(Game1.ScreenWidth / 2 + Game1.V2Transform.X - (eigthWidth * 2), eigthHeight + Game1.V2Transform.Y);
             var spacing = 5 * Game1.ResScale;
-            var bgDimensions = new Vector2((int)(eigthWidth * 3), (int)(eigthHeight * 6));
+            var bgDimensions = new Vector2((int)(eigthWidth * 4), (int)(eigthHeight * 6));
             var textureScale = 0.65f;
+            var scale = Game1.ResScale * 0.75f;
 
             var background = new BorderedBox
             (
@@ -76,19 +86,27 @@ namespace Bound.States.Popups
             var componentHeight = (int)(menuHeight / 9);
 
             _items = _game.CurrentInventory.GetParts(_filter);
-
-            foreach (var item in _items)
+            var equipped = _game.SavesManager.ActiveSave.EquippedItems;
+            var equippedExists = equipped.ContainsKey(_slotID);
+            for (int i = 0; i < _items.Count; i++)
             {
+                if (equippedExists && equipped[_slotID].Contains(_items[i].Name))
+                {
+                    _items.RemoveAt(i);
+                    i--;
+                    continue;
+                }
                 _itemBoxes.Add(
                     new ItemInfoBox(
                         _game,
-                        item,
+                        _items[i],
                         Vector2.Zero,
                         (int)(menuWidth - 10 * Game1.ResScale),
                         componentHeight,
                         Layer + 0.002f,
                         background,
-                        new EventHandler(Button_ItemPressed)
+                        new EventHandler(Button_ItemPressed),
+                        i
                     )
                     { TextureScale = textureScale}
                 );
@@ -110,6 +128,8 @@ namespace Bound.States.Popups
                 TextureScale = 0.8f,
             };
 
+            foreach (var i in _itemBoxes) ((ItemInfoBox)i).Container = _scrollingMenu;
+
             _components = new List<Component>()
             {
                 background,
@@ -119,7 +139,7 @@ namespace Bound.States.Popups
                     Click = new EventHandler(Button_Discard_Clicked),
                     Layer = Layer + 0.01f,
                     TextureScale = 0.75f,
-                    RelativePosition = new Vector2(background.Width / 2 - (int)(_game.Textures.Button.Width * Game1.ResScale * 0.75f) - spacing / 2, (background.Height - _game.Textures.Button.Height * Game1.ResScale * 0.75f) - 5 * Game1.ResScale),
+                    RelativePosition = new Vector2(background.Width / 2 - (int)(_game.Textures.Button.Width * scale * 1.5) - spacing / 2, (background.Height - _game.Textures.Button.Height * scale) - 5 * Game1.ResScale),
                     ToCenter = true,
                     ButtonColour = Color.White,
                     Parent = background
@@ -130,7 +150,18 @@ namespace Bound.States.Popups
                     Click = new EventHandler(Button_Equip_Clicked),
                     Layer = Layer + 0.01f,
                     TextureScale = 0.75f,
-                    RelativePosition = new Vector2(background.Width / 2 + spacing / 2, (background.Height - _game.Textures.Button.Height * Game1.ResScale * 0.75f) - 5 * Game1.ResScale),
+                    RelativePosition = new Vector2(background.Width / 2 + spacing + (int)(_game.Textures.Button.Width * scale * 0.5f), (background.Height - _game.Textures.Button.Height * scale) - 5 * Game1.ResScale),
+                    ToCenter = true,
+                    ButtonColour = Color.White,
+                    Parent = background
+                },
+                new Button(_game.Textures.Button, _game.Textures.Font)
+                {
+                    Text = "Clear",
+                    Click = new EventHandler(Button_Clear_Clicked),
+                    Layer = Layer + 0.01f,
+                    TextureScale = 0.75f,
+                    RelativePosition = new Vector2(background.Width / 2 - (_game.Textures.Button.Width * scale ) / 2, (background.Height - _game.Textures.Button.Height * scale) - 5 * Game1.ResScale),
                     ToCenter = true,
                     ButtonColour = Color.White,
                     Parent = background
@@ -154,13 +185,29 @@ namespace Bound.States.Popups
 
         }
 
-        private void Button_Discard_Clicked(object v, EventArgs eventArgs)
+        private void Button_Discard_Clicked(object sender, EventArgs eventArgs)
         {
             Parent.Popups.Remove(this);
         }
-
-        private void Button_Equip_Clicked(object v, EventArgs eventArgs)
+        private void Button_Clear_Clicked(object sender, EventArgs e)
         {
+            switch (_creator.GetType().Name)
+            {
+                case "InventoryMenu":
+                    ((InventoryMenu)_creator).UpdateSlot(_filter[0], "Default"); break;
+            }
+            Parent.Popups.Remove(this);
+        }
+
+        private void Button_Equip_Clicked(object sender, EventArgs eventArgs)
+        {
+            var index = _scrollingMenu.SelectedIndex;
+            var equippedItem = _itemBoxes[index];
+            switch (_creator.GetType().Name)
+            {
+                case "InventoryMenu":
+                    ((InventoryMenu)_creator).UpdateSlot(_items[index].Type, _items[index].Name); break;
+            }
             Parent.Popups.Remove(this);
         }
 

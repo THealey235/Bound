@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Linq;
 
 namespace Bound.Controls.Game
@@ -29,12 +30,16 @@ namespace Bound.Controls.Game
         private Vector2 _ammountDim;
         private float _textureScale;
         private BorderedBox _parent;
+        private Color[] _bgColours;
+        private int _index;
 
         public float Layer;
         public int Width;
         public int Height;
         public Color BorderColor = Color.Black;
         public Color PenColor = Game1.MenuColorPalette[2];
+        public ScrollingMenu Container;
+
         public float FontScale
         {
             get { return _fontScale; }
@@ -70,7 +75,7 @@ namespace Bound.Controls.Game
             }
         }
 
-        public ItemInfoBox(Game1 game, Item item, Vector2 position, int width, int height, float layer, BorderedBox background, EventHandler onClick)
+        public ItemInfoBox(Game1 game, Item item, Vector2 position, int width, int height, float layer, BorderedBox background, EventHandler onClick, int index)
         {
             _item = item;
             _game = game;
@@ -85,7 +90,17 @@ namespace Bound.Controls.Game
             _itemName = new List<string>() { _item.Name };
             TextureScale = 0.75f;
 
+            _bgColours = new Color[] { Game1.MenuColorPalette[1], Game1.BlendColors(Game1.MenuColorPalette[1], Color.Gray, 125) };
+
+            _index = index;
+
             LoadContent(_game, background);
+        }
+
+        public ItemInfoBox(Game1 game, Item item, Vector2 position, int width, int height, float layer, BorderedBox background, EventHandler onClick, int index, ScrollingMenu container)
+            : this (game, item, position, width, height, layer, background, onClick, index)
+        { 
+            Container = container;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -96,14 +111,28 @@ namespace Bound.Controls.Game
             spriteBatch.Draw(_item.Texture, _itemTexturePos, _sourceRectangle, Color.White, 0f, Vector2.Zero, _scale, SpriteEffects.None, Layer + 0.0002f);
             for (int i = 0; i < _itemName.Count; i++)
                 spriteBatch.DrawString(_font, _itemName[i], _namePositions[i], Color.Black, 0f, Vector2.Zero, _fontScale, SpriteEffects.None, Layer + 0.0001f);
-            if (_item.Ammount > 1)
-                spriteBatch.DrawString(_font, $"x{_item.Ammount}", _ammountPos, Color.Black, 0f, Vector2.Zero, _fontScale, SpriteEffects.None, Layer + 0.0001f);
+            if (_item.Quantity > 1)
+                spriteBatch.DrawString(_font, $"x{_item.Quantity}", _ammountPos, Color.Black, 0f, Vector2.Zero, _fontScale, SpriteEffects.None, Layer + 0.0001f);
         }
 
         public override void Update(GameTime gameTime)
         {
             foreach (var c in _components)
                 c.Update(gameTime);
+
+            var keys = _game.PlayerKeys;
+            if (keys.MouseRectangle.Intersects(Rectangle) && keys.LeftClickReleased)
+            {
+                if (Container != null)
+                    if (!Container.ItemBlacklist.Contains(_index))
+                    {
+                        _background.Colour = (_background.Colour == _bgColours[0]) ? _bgColours[1] : _bgColours[0];
+
+                        Container.ChangeSelected(_index, this);
+                    }
+                    else
+                        _background.Colour = (_background.Colour == _bgColours[0]) ? _bgColours[1] : _bgColours[0];
+            }
         }
         
         public override void LoadContent(Game1 game, BorderedBox background, float allignment = 0f)
@@ -121,7 +150,7 @@ namespace Bound.Controls.Game
                 Height
             );
 
-            _ammountDim = _font.MeasureString($"x{_item.Ammount}");
+            _ammountDim = _font.MeasureString($"x{_item.Quantity}");
             var nameDim = _font.MeasureString($"{_item.Name}");
             _itemTexturePos = new Vector2(_position.X + 5 * Game1.ResScale, _position.Y + (Height - itemTextureDimension * _scale) / 2);
             var maxTextWidth = Width - (5 * Game1.ResScale + itemTextureDimension * _scale) - (5 * Game1.ResScale + 2 * Game1.ResScale);
@@ -135,7 +164,7 @@ namespace Bound.Controls.Game
             }
 
             _namePositions = new List<Vector2>() { new Vector2(_itemTexturePos.X + 32 * _scale + 5 * Game1.ResScale, _position.Y + (int)((Height - _font.MeasureString("T").Y) / 2)) };
-            _ammountPos = new Vector2(_position.X + Width - _ammountDim.X - 1 * Game1.ResScale, _position.Y + Height  - _ammountDim.Y);
+            _ammountPos = new Vector2(_position.X + Width - _ammountDim.X - 1 * Game1.ResScale, _position.Y + Height);
             _multiLineNameYSpacing = nameDim.Y;
             if (_itemName.Count > 1)
                 _namePositions.Add(new Vector2(_namePositions[0].X + (_font.MeasureString(_itemName[0]).X * _fontScale - _font.MeasureString(_itemName[1]).X * _fontScale) / 2, _namePositions[0].Y + _multiLineNameYSpacing));
@@ -169,9 +198,12 @@ namespace Bound.Controls.Game
             if (_itemName.Count > 1)
                 _namePositions.Add(new Vector2(_namePositions[0].X + (_font.MeasureString(_itemName[0]).X * _fontScale - _font.MeasureString(_itemName[1]).X * _fontScale) / 2, _namePositions[0].Y + _multiLineNameYSpacing));
             var nameDim = _font.MeasureString($"{_item.Name}");
-            _ammountPos = new Vector2(_position.X + Width - _ammountDim.X - 1 * Game1.ResScale, _position.Y + Height - _ammountDim.Y + 3 * Game1.ResScale);
+            _ammountPos = new Vector2(_position.X + Width - _ammountDim.X - 1 * Game1.ResScale, _position.Y + Height - _ammountDim.Y);
         }
 
-
+        public void ResetColour()
+        {
+            _background.Colour = _bgColours[0];
+        }
     }
 }

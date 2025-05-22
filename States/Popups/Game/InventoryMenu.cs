@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 using Bound.Managers;
 using Bound.Controls.Game;
+using Bound.Models.Items;
 
 namespace Bound.States.Popups.Game
 {
@@ -19,8 +20,10 @@ namespace Bound.States.Popups.Game
         private List<InventorySlot> _hotbar;
         private List<InventorySlot> _skills;
         private List<(string Text, Vector2 Position)> _headings;
+        private List<InventorySlot> _allSlots;
         private Vector2 _playerPosition;
-
+        private int _selectedBoxIndex;
+      
         public float Layer;
 
         public InventoryMenu(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content, parent, graphics)
@@ -104,10 +107,10 @@ namespace Bound.States.Popups.Game
 
             var armourIDs = new Dictionary<string, Textures.ItemType>() 
             { 
-                {"headSlot", Textures.ItemType.HeadGear },
-                {"chestSlot", Textures.ItemType.ChestArmour },
-                {"legSlot", Textures.ItemType.LegArmour },
-                {"feetSlot", Textures.ItemType.Footwear },
+                {"headgear", Textures.ItemType.HeadGear },
+                {"chestarmour", Textures.ItemType.ChestArmour },
+                {"legarmour", Textures.ItemType.LegArmour },
+                {"footwear", Textures.ItemType.Footwear },
             };
 
             _playerPosition = new Vector2(background.Position.X + (x + Game1.ResScale * 40), background.Position.Y + (y + Game1.ResScale * 25));
@@ -115,7 +118,7 @@ namespace Bound.States.Popups.Game
             var acc = 0;
             foreach (var kvp in armourIDs)
             {
-                _armour.Add(new InventorySlot(_game, font, kvp.Key, "Default", kvp.Value)
+                _armour.Add(new InventorySlot(_game, font, kvp.Key, _game.SavesManager.ActiveSave.GetEquippedItem(kvp.Key), kvp.Value, 0)
                 {
                     Click = new EventHandler(Button_Armour_Clicked),
                     Layer = layer,
@@ -135,7 +138,7 @@ namespace Bound.States.Popups.Game
             {
                 if (i == 4) { acc = 0; x += xSpacing; }
 
-                _accessories.Add(new InventorySlot(_game, font, "accessory", "Default", Textures.ItemType.Accessory)
+                _accessories.Add(new InventorySlot(_game, font, "accessory", _game.SavesManager.ActiveSave.GetEquippedItem("accessory", i), Textures.ItemType.Accessory, i)
                 {
                     Click = new EventHandler(Button_Accessory_Clicked),
                     Layer = layer,
@@ -155,7 +158,7 @@ namespace Bound.States.Popups.Game
             _hotbar = new List<InventorySlot>();
             for (int i = 0; i < hbSlots; i++)
             {
-                _hotbar.Add(new InventorySlot(_game, font, "hotbar", "Default", Textures.ItemType.Item)
+                _hotbar.Add(new InventorySlot(_game, font, "hotbar", _game.SavesManager.ActiveSave.GetEquippedItem("hotbar", i), Textures.ItemType.HoldableItem, i)
                 {
                     Click = new EventHandler(Button_Hotbar_Clicked),
                     Layer = layer,
@@ -173,7 +176,7 @@ namespace Bound.States.Popups.Game
             y = (int)(background.Height * (4f / 5f) - 10 * Game1.ResScale);
             for (int i = 0; i < skillSlots; i++)
             {
-                _skills.Add(new InventorySlot(_game, font, "skill", "Default", Textures.ItemType.Skill)
+                _skills.Add(new InventorySlot(_game, font, "skill", _game.SavesManager.ActiveSave.GetEquippedItem("skill", i), Textures.ItemType.Skill, i)
                 {
                     Click = new EventHandler(Button_Skills_Clicked),
                     Layer = layer,
@@ -189,9 +192,16 @@ namespace Bound.States.Popups.Game
             _components.AddRange(_accessories);
             _components.AddRange(_hotbar);
             _components.AddRange(_skills);
+
+            _allSlots = new List<InventorySlot>();
+            _allSlots.AddRange(_armour);
+            _allSlots.AddRange(_accessories);
+            _allSlots.AddRange(_hotbar);
+            _allSlots.AddRange(_skills);
+
         }
 
-        
+
         public override void Update(GameTime gameTime)
         {
             foreach (var component in _components)
@@ -208,6 +218,41 @@ namespace Bound.States.Popups.Game
 
         }
 
+        public void UpdateSlot(Textures.ItemType type, string item)
+        {
+            switch (type)
+            {
+                case Textures.ItemType.HeadGear:
+                    _armour[0].ContainedItem = item; break;
+                case Textures.ItemType.ChestArmour:
+                    _armour[1].ContainedItem = item; break;
+                case Textures.ItemType.LegArmour:
+                    _armour[2].ContainedItem = item; break;
+                case Textures.ItemType.Footwear:
+                    _armour[3].ContainedItem = item; break;
+                case Textures.ItemType.Accessory:
+                    _accessories[_selectedBoxIndex].ContainedItem = item; break;
+                case Textures.ItemType.Weapon:
+                case Textures.ItemType.Consumable:
+                    _hotbar[_selectedBoxIndex].ContainedItem = item; break;
+                case Textures.ItemType.Skill:
+                    _skills[_selectedBoxIndex].ContainedItem = item; break;
+            }
+            _selectedBoxIndex = 0;
+
+            _game.SavesManager.ActiveSave.SetEquippedItems(GetSlotStates());
+        }
+
+        public string GetSlotStates()
+        {
+            var output = new List<string>();
+
+            foreach (var slot in _allSlots)
+                output.Add($"{slot.ID}: {slot.ContainedItem}");
+
+            return String.Join(';', output);
+        }
+
         #region Clicked Handlers
         private void Button_Discard_Clicked(object sender, EventArgs eventArgs)
         {
@@ -217,23 +262,28 @@ namespace Bound.States.Popups.Game
         private void Button_Armour_Clicked(object sender, EventArgs eventArgs)
         {
             var button = sender as InventorySlot;
-            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, _graphics, button.ItemType, Layer + 0.01f));
+            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, _graphics, button.ItemType, button.ID,  Layer + 0.01f, this));
+            _selectedBoxIndex = button.Index;
         }
 
         private void Button_Accessory_Clicked(object sender, EventArgs e)
         {
             var button = sender as InventorySlot;
-            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, _graphics, button.ItemType, Layer + 0.01f));
+            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, _graphics, button.ItemType, button.ID, Layer + 0.01f, this));
+            _selectedBoxIndex = button.Index;
         }
         private void Button_Hotbar_Clicked(object sender, EventArgs e)
         {
             var button = sender as InventorySlot;
-            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, _graphics, new List<Textures.ItemType>() { Textures.ItemType.Weapon, Textures.ItemType.Consumable }, Layer + 0.01f));
+            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, _graphics, new List<Textures.ItemType>() { Textures.ItemType.Weapon, Textures.ItemType.Consumable }, button.ID, Layer + 0.01f, this));
+            _selectedBoxIndex = button.Index;
         }
+
         private void Button_Skills_Clicked(object sender, EventArgs e)
         {
             var button = sender as InventorySlot;
-            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, _graphics, button.ItemType, Layer + 0.01f));
+            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, _graphics, button.ItemType, button.ID, Layer + 0.01f, this));
+            _selectedBoxIndex = button.Index;
         }
 
         #endregion
