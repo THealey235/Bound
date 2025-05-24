@@ -188,16 +188,13 @@ namespace Bound.States.Popups.Game
                 });
             }
 
-            _components.AddRange(_armour);
-            _components.AddRange(_accessories);
-            _components.AddRange(_hotbar);
-            _components.AddRange(_skills);
-
             _allSlots = new List<InventorySlot>();
             _allSlots.AddRange(_armour);
             _allSlots.AddRange(_accessories);
             _allSlots.AddRange(_hotbar);
             _allSlots.AddRange(_skills);
+
+            _components.AddRange(_allSlots);
 
         }
 
@@ -220,6 +217,7 @@ namespace Bound.States.Popups.Game
 
         public void UpdateSlot(Textures.ItemType type, string item)
         {
+            var isHotbar = false;
             switch (type)
             {
                 case Textures.ItemType.HeadGear:
@@ -234,13 +232,20 @@ namespace Bound.States.Popups.Game
                     _accessories[_selectedBoxIndex].ContainedItem = item; break;
                 case Textures.ItemType.Weapon:
                 case Textures.ItemType.Consumable:
-                    _hotbar[_selectedBoxIndex].ContainedItem = item; break;
+                    _hotbar[_selectedBoxIndex].ContainedItem = item; isHotbar = true; break;
                 case Textures.ItemType.Skill:
                     _skills[_selectedBoxIndex].ContainedItem = item; break;
             }
-            _selectedBoxIndex = 0;
 
             _game.SavesManager.ActiveSave.SetEquippedItems(GetSlotStates());
+            
+            if (isHotbar)
+            {
+                var level = (Level)(_game.CurrentState);
+                level.UpdateHotbarSlot(_game.CurrentInventory.GetItem(type, item), _selectedBoxIndex);
+            }
+
+            _selectedBoxIndex = 0;
         }
 
         public string GetSlotStates()

@@ -10,28 +10,29 @@ When downloading this repository and opening it in Visual Studio 2022, make sure
 
 *ROADMAP / TODO BOARD*
 
+Prorities: Urgent (U), High (H), Medium (M), Low (L)
 
 Inventory:
-	> HP, MP, Stamina bars on HUD
-	> Levelling System: xp or money
-	> Ability to acquire ability points
-	> Ability to spend ability points
+(H)	> HP, MP, Stamina bars on HUD
+(L)	> Levelling System: xp or money
+(L)	> Ability to acquire ability points
+(L)	> Ability to spend ability points
 
 Items:
-	> Item hitboxes
-	> Item stat bonuses => need to give player attributes.
+(M)	> Item hitboxes
+(M)	> Item stat bonuses => need to give player attributes.
 
 Other Sprites:
-	>Enemies:
+(M)	>Enemies:
 		- Typical mob should have auto attacks with 1/2 abilities
 		- Basic Path finding
 		- Spawning conditions/set spawn locations
-	> NPCs:
+(L)	> NPCs:
 		- interactive text blocks
 		- shops	
 
 General:
-	> Level State:
-		- fix whatever that mess is: requires a second level to determine what is essential to each one	
-	> Clamp Player Position
-	> Add respawn points similar to DS.
+(H)	> Level State:
+		- fix whatever that mess is: requires a second level to determine what is truly essential to each one	
+(M)	> Clamp Player Position
+(L)	> Add respawn points similar to DS.

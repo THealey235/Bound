@@ -1,4 +1,6 @@
 ﻿using Bound.Controls.Game;
+using Bound.Managers;
+using Bound.Models.Items;
 using Bound.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -7,7 +9,7 @@ using System;
 using System.Collections.Generic;
 
 
-namespace Bound.States.Game
+namespace Bound.States
 {
     public class Level : State
     {
@@ -51,16 +53,20 @@ namespace Bound.States.Game
             var hotbarBG = _game.Textures.HotbarBG;
             _hotbarSlots = new List<HotbarSlot>();
             var hotbarScale = 0.5f;
+            var save = _game.SavesManager.ActiveSave;
             for (int i = 0; i < 3; i++)
             {
                 _hotbarSlots.Add(
                     new HotbarSlot(
                         hotbarBG,
+                        _game.Textures.HotbarSelectedSlot,
                         new Vector2((20 + (hotbarBG.Width + 10) * i * hotbarScale) * Game1.ResScale, 10 * Game1.ResScale),
                         _game,
                         _game.Player.Layer + 0.001f,
-                        hotbarScale
-                    ));
+                        hotbarScale,
+                        save.Inventory.GetItem(Textures.ItemType.HoldableItem, save.EquippedItems["hotbar"][i])
+                    )
+                );
             }
         }
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -75,18 +81,6 @@ namespace Bound.States.Game
 
             foreach (var slot in _hotbarSlots)
                 slot.Draw(gameTime, spriteBatch);
-
-            var hbSlot = _hotbarSlots[_game.Player.HotbarSlot - 1];
-            spriteBatch.Draw(
-                _game.Textures.HotbarSelectedSlot,
-                hbSlot.Position + Game1.V2Transform,
-                null, Color.White, 0f, Vector2.Zero,
-                Game1.ResScale * hbSlot.Scale,
-                SpriteEffects.None,
-                hbSlot.Layer
-            );
-
-
 
             if (Game1.InDebug)
             {
@@ -123,6 +117,14 @@ namespace Bound.States.Game
                 }
             }
             _player.Update(gameTime, _blockRects);
+
+            for (int i = 0; i < _hotbarSlots.Count; i++)
+            {
+                var hbSlot = _hotbarSlots[i];
+                if (i == _game.Player.HotbarSlot - 1)
+                    hbSlot.IsSelected = true;
+                else hbSlot.IsSelected = false;
+            }
         }
 
         public override void PostUpdate(GameTime gameTime)
@@ -140,6 +142,13 @@ namespace Bound.States.Game
                 rects.Add(block.Rectangle);
             }
             return rects;
+        }
+
+        public void UpdateHotbarSlot(Item item, int index)
+        {
+            if (index > _hotbarSlots.Count)
+                return;
+            _hotbarSlots[index].Item = item;
         }
     }
 }

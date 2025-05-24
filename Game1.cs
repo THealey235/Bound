@@ -68,6 +68,11 @@ namespace Bound
 
         public int SaveIndex;
 
+        public State CurrentState
+        {
+            get { return _currentState; }
+        }
+
         //Holds all textures to be used
         public Textures Textures;
 
@@ -319,7 +324,7 @@ namespace Bound
                 
                 Player.Reset();
                 Camera.Follow(Player);
-                if (_currentState.Popups.Count > 0)
+                if (_currentState.Popups.Count > 0 && _currentState.Popups[^1].Name == Names.Settings )
                 {
                     var settings = (_currentState.Popups[^1] as Settings);
                     settings.LoadContent();

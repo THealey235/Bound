@@ -83,7 +83,7 @@ namespace Bound.Controls.Game
         {
             get
             {
-                var pos = new Vector2(_bar.Position.X, _bar.Position.Y + (_bar.Height * _scrollAmmount) - _cursor.Height / 2);
+                var pos = new Vector2(_bar.Position.X, _bar.Position.Y + (_scrollAmmount * _scrollableHeight));
                 pos.Y = MathHelper.Clamp(pos.Y, _bar.Position.Y, _bar.Position.Y + _bar.Height - _cursorHeight);
                 return pos;
             }
@@ -280,7 +280,7 @@ namespace Bound.Controls.Game
 
         private void SetItemProperties()
         {
-            var translation = new Vector2(0, (_scrollAmmount) * _extraItemsHeight);
+            var translation = new Vector2(0, _scrollAmmount * _scrollableHeight);
             _itemBlacklist.Clear();
             for (int i = 0; i < _items.Count; i++)
             {

@@ -142,7 +142,7 @@ namespace Bound.Managers
             BlockAtlas = content.Load<Texture2D>("Atlases/BlockAtlas");
             Block = content.Load<Texture2D>("Atlases/DirtBlock");
             HotbarBG = content.Load<Texture2D>("Backgrounds/HotbarBG1");
-            HotbarSelectedSlot = content.Load<Texture2D>("Overlays/HotbarSelectedSlot1");
+            HotbarSelectedSlot = content.Load<Texture2D>("Overlays/HotbarSelectedSlot");
 
             LoadDirectory("Content/Items/HeadGear", HeadGear);
             LoadDirectory("Content/Items/ChestArmour", ChestArmour);

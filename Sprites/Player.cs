@@ -74,7 +74,6 @@ namespace Bound.Sprites
         {
             base.Update(gameTime);
             _dTime = gameTime.ElapsedGameTime.TotalMilliseconds;
-            _keys.Update();
 
             DoPhysics(surfaces);
 
@@ -172,7 +171,6 @@ namespace Bound.Sprites
 
         public void UpdateWhileStatic(GameTime gameTime)
         {
-            _keys.Update();
             _dTime = gameTime.ElapsedGameTime.TotalMilliseconds;
         }
 

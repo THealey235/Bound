@@ -37,10 +37,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
-    <Message Text="Restoring dotnet tools" Importance="High" />
-    <Exec Command="dotnet tool restore" />
-  </Target>
+	<Target Name="RestoreDotnetTools" BeforeTargets="Restore">
+		<Message Text="Restoring dotnet tools" Importance="High" />
+		<Exec Command="dotnet tool restore" />
+	</Target>
   <Target Name="CopyContent" AfterTargets="Build">
     <ItemGroup>
         <BuiltContent Include="Content\bin\**\*.xnb" />

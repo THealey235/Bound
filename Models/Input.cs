@@ -102,11 +102,10 @@ namespace Bound.Models
             {
                 var inputMode = GetKey(key);
 
-                if (IsHoldable && CurrentKeyboardState.IsKeyDown(inputMode))
-                    return true;
-                else if (PreviousKeyboardState.IsKeyUp(inputMode) && CurrentKeyboardState.IsKeyDown(inputMode))
-                    return true;
-                else return false;
+                if (CurrentKeyboardState.IsKeyDown(inputMode))
+                    if (IsHoldable || !PreviousKeyboardState.IsKeyDown(inputMode)) return true;
+
+                return false;
                 
             }
         }
@@ -118,6 +117,10 @@ namespace Bound.Models
 
             PreviousKeyboardState = CurrentKeyboardState;
             CurrentKeyboardState = Keyboard.GetState();
+            if (PreviousKeyboardState.GetPressedKeyCount() == CurrentKeyboardState.GetPressedKeyCount())
+                return;
+            if (PreviousKeyboardState.GetPressedKeyCount() > CurrentKeyboardState.GetPressedKeyCount())
+                return;
         }
 
         public Keys GetKey(string key)

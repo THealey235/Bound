@@ -1,9 +1,4 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Bound.Managers;
 using Microsoft.Xna.Framework;
 using Bound.Models.Items;
@@ -122,7 +117,7 @@ namespace Bound.Controls.Game
             }
 
             _background.Colour = colour;
-            //doing this is stupid and but this is the issue with setting values by public and not by constructor
+            //runing this every draw is stupid and but this is the cascading issue with setting values by public and not by constructor
             //and to fix this i would have to refactor a ton of code so this is a problem for later
             _background.Position = new Vector2(Position.X - 1 * Game1.ResScale, Position.Y - 1 * Game1.ResScale); 
             _background.Draw(gameTime, spriteBatch);
@@ -133,8 +128,8 @@ namespace Bound.Controls.Game
                 {
                     var qDims = _font.MeasureString(_quantity) * _quantityScale;
                     _quantityPosition = new Vector2(
-                        _background.Position.X + _background.Width - qDims.X - 0.1f * Game1.ResScale,
-                        _background.Position.Y + _background.Height - qDims.Y
+                        _background.Position.X + _background.Width - qDims.X + 1f * Game1.ResScale,
+                        _background.Position.Y + _background.Height - qDims.Y + 2f * Game1.ResScale
                     );
                 }
                 spriteBatch.DrawString(_font, _quantity, (Vector2)_quantityPosition, Color.Black, 0f, Origin, _quantityScale, SpriteEffects.None, Layer + 0.0002f);
