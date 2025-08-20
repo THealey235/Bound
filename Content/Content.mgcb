@@ -85,7 +85,7 @@
 /processorParam:TextureFormat=Color
 /build:Backgrounds/HotbarBG.png
 
-#begin Backgrounds/HotbarBG1.png
+#begin Backgrounds/HotbarSelectedBG.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -95,7 +95,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Backgrounds/HotbarBG1.png
+/build:Backgrounds/HotbarSelectedBG.png
 
 #begin Controls/Buttons/Button.png
 /importer:TextureImporter
@@ -444,6 +444,18 @@
 /processorParam:TextureFormat=Color
 /build:Items/LegArmour/Default.png
 
+#begin Items/Skills/Default.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Items/Skills/Default.png
+
 #begin MissingTexture.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -479,18 +491,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Mouse/MouseOutline.png
-
-#begin Overlays/HotbarSelectedSlot.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Overlays/HotbarSelectedSlot.png
 
 #begin Player/Player1Static.png
 /importer:TextureImporter

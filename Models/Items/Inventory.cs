@@ -133,9 +133,18 @@ namespace Bound.Models
         {
             if ((int)type > _inventory.Count)
                 return null;
-            if (type == Textures.ItemType.HoldableItem)
-                return (_consumables.ContainsKey(name)) ? _consumables[name] : _weapons[name];
-            return _inventory[(int)type][name];
+            else if (type == Textures.ItemType.HoldableItem)
+            {
+                if (_consumables.ContainsKey(name))
+                    return _consumables[name]; 
+                else if (_weapons.ContainsKey(name))
+                    return _weapons[name]; 
+            }
+            else if (_inventory[(int)type].ContainsKey(name))
+                return _inventory[(int)type][name];
+
+            return null;//TODO: return a blank item
+            
         }
     }
 }

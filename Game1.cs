@@ -30,10 +30,10 @@ namespace Bound
         {
             Names.MainMenu, Names.CharacterInit
         };
+        public int DefaultHeight = 360;
 
 
         //can be accessed without having by a state/component without a game object accessible
-        public int DefaultHeight = 360;
         public static int ScreenHeight;
         public static int ScreenWidth;
         public static float ResScale;
@@ -92,6 +92,13 @@ namespace Bound
             }
         }
 
+        public Save ActiveSave
+        {
+            get
+            {
+                return SavesManager.ActiveSave;
+            }
+        }
 
         #endregion
 
@@ -233,7 +240,7 @@ namespace Bound
         //Draws the textures on to the screen.
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.MidnightBlue);
 
             //Front to back means that textures with a lower Layer value will be drawn behind textures with higher Layer values.
             //By setting sampler state to PointClamp, no interpolation occurs when accessing Texture2D files, this was especially bad

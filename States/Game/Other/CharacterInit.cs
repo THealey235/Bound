@@ -77,12 +77,11 @@ namespace Bound.States.Game
             {
                 "Name : ",
                 "Heirloom : ",
-                " ",
-                "HP : ",
-                "MP : ",
-                "Stamina : ",
                 "Season Attunement : ",
                 " ",
+                "Vigor : ",
+                "Mind : ",
+                "Endurance : ",
                 "Strength : ",
                 "Dexterity : ",
                 "Ammo Handling : ",
@@ -164,10 +163,10 @@ namespace Bound.States.Game
         {
             _game.SavesManager.Saves[SaveIndex].PlayerName = (_components[0] as TextInput).Text;
 
-
             foreach (var mcb in _choiceBoxes)
                 mcb.OnApply?.Invoke(mcb, new EventArgs());
 
+            _game.SavesManager.ActiveSave.ResetAttrs();
             _game.SavesManager.ActiveSave.Level = "levelzero";
             _game.ChangeState(new Level0(_game, _content, _game.Player));
 
@@ -191,8 +190,9 @@ namespace Bound.States.Game
             _game.CurrentInventory.Add(box.Choices[box.CurIndex]);
             _game.CurrentInventory.Add("Throwing Dagger", 10);
             _game.CurrentInventory.Add(_game.Items[_game.Textures.GetItemName(5)].Name);
-            foreach (var item in new List<string>() { "Lesser Guinn", "Rock", "Healing Potion", "Golden Mibu Water Balloon", "Double Jump", "Magic Infused Potion", "Stamina Potion", "Stone Potion" })
+            foreach (var item in new List<string>() { "Lesser Guinn", "Rock", "Golden Mibu Water Balloon", "Double Jump", "Magic Infused Potion", "Stamina Potion", "Stone Potion" })
                 _game.CurrentInventory.Add(item, 2);
+            _game.CurrentInventory.Add("Healing Potion");
         }
         private void Difficulty_Apply(object sender, EventArgs e)
         {
@@ -238,11 +238,11 @@ namespace Bound.States.Game
             };
         }
 
-        private void ChangeAttrs(int hp, int mp, int stam, int str, int dex, int ammo, int prec, int arc, int skill)
+        private void ChangeAttrs(int vigor, int mind, int endurance, int str, int dex, int ammo, int prec, int arc, int skill)
         {
-            _attributes["HP"] = hp;
-            _attributes["MP"] = mp;
-            _attributes["Stamina"] = stam;
+            _attributes["Vigor"] = vigor;
+            _attributes["Mind"] = mind;
+            _attributes["Endurance"] = endurance;
             _attributes["Strength"] = str;
             _attributes["Dexterity"] = dex;
             _attributes["Ammo Handling"] = ammo;
@@ -257,16 +257,16 @@ namespace Bound.States.Game
             switch (role)
             {
                 case "Warrior":
-                    ChangeAttrs(150, 50, 100, 12, 12, 7, 8, 5, 10);
+                    ChangeAttrs(10, 2, 5, 12, 12, 7, 8, 5, 10);
                     break;
                 case "Beserker":
-                    ChangeAttrs(200, 25, 150, 15, 8, 5, 5, 5, 10);
+                    ChangeAttrs(10, 8, 7, 15, 8, 5, 5, 5, 10);
                     break;
                 case "Mage":
-                    ChangeAttrs(100, 150, 75, 5, 7, 5, 5, 15, 10);
+                    ChangeAttrs(5, 10, 4, 5, 7, 5, 5, 15, 10);
                     break;
                 case "Vagabond":
-                    ChangeAttrs(100, 75, 75, 8, 8, 8, 8, 8, 8);
+                    ChangeAttrs(8, 8, 8, 8, 8, 8, 8, 8, 8);
                     break;
             }
         }

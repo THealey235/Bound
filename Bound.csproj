@@ -25,7 +25,6 @@
   <ItemGroup>
     <Folder Include="Content\Items\LegArmour\" />
     <Folder Include="Content\Items\Footwear\" />
-    <Folder Include="Content\Items\Skills\" />
     <Folder Include="Content\Levels\" />
     <Folder Include="States\Game\Levels\" />
   </ItemGroup>
@@ -37,10 +36,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-	<Target Name="RestoreDotnetTools" BeforeTargets="Restore">
-		<Message Text="Restoring dotnet tools" Importance="High" />
-		<Exec Command="dotnet tool restore" />
-	</Target>
   <Target Name="CopyContent" AfterTargets="Build">
     <ItemGroup>
         <BuiltContent Include="Content\bin\**\*.xnb" />

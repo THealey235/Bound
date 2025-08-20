@@ -2,6 +2,7 @@
 using Bound.Managers;
 using Bound.Models.Items;
 using Bound.Sprites;
+using Bound.States.Popups.Game;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,7 +16,12 @@ namespace Bound.States
     {
         protected List<Block> _blocks;
         protected List<Rectangle> _blockRects;
-        protected List<HotbarSlot> _hotbarSlots;
+        protected HeadsUpDisplay _HUD;
+
+        public HeadsUpDisplay HUD
+        {
+            get { return _HUD; }
+        }
 
         public Level(Game1 game, ContentManager content, Player player, int levelNum) : base(game, content)
         {
@@ -50,24 +56,8 @@ namespace Bound.States
             }
             _blockRects = UpdateBlockRects();
 
-            var hotbarBG = _game.Textures.HotbarBG;
-            _hotbarSlots = new List<HotbarSlot>();
-            var hotbarScale = 0.5f;
-            var save = _game.SavesManager.ActiveSave;
-            for (int i = 0; i < 3; i++)
-            {
-                _hotbarSlots.Add(
-                    new HotbarSlot(
-                        hotbarBG,
-                        _game.Textures.HotbarSelectedSlot,
-                        new Vector2((20 + (hotbarBG.Width + 10) * i * hotbarScale) * Game1.ResScale, 10 * Game1.ResScale),
-                        _game,
-                        _game.Player.Layer + 0.001f,
-                        hotbarScale,
-                        save.Inventory.GetItem(Textures.ItemType.HoldableItem, save.EquippedItems["hotbar"][i])
-                    )
-                );
-            }
+            _HUD = new HeadsUpDisplay(_game, _content);
+            _HUD.LoadContent();
         }
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
@@ -79,8 +69,7 @@ namespace Bound.States
 
             _player.Draw(gameTime, spriteBatch);
 
-            foreach (var slot in _hotbarSlots)
-                slot.Draw(gameTime, spriteBatch);
+            _HUD.Draw(gameTime, spriteBatch);
 
             if (Game1.InDebug)
             {
@@ -117,14 +106,7 @@ namespace Bound.States
                 }
             }
             _player.Update(gameTime, _blockRects);
-
-            for (int i = 0; i < _hotbarSlots.Count; i++)
-            {
-                var hbSlot = _hotbarSlots[i];
-                if (i == _game.Player.HotbarSlot - 1)
-                    hbSlot.IsSelected = true;
-                else hbSlot.IsSelected = false;
-            }
+            _HUD.Update(gameTime);
         }
 
         public override void PostUpdate(GameTime gameTime)
@@ -142,13 +124,6 @@ namespace Bound.States
                 rects.Add(block.Rectangle);
             }
             return rects;
-        }
-
-        public void UpdateHotbarSlot(Item item, int index)
-        {
-            if (index > _hotbarSlots.Count)
-                return;
-            _hotbarSlots[index].Item = item;
         }
     }
 }

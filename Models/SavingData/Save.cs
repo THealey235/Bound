@@ -9,15 +9,26 @@ namespace Bound.Models
     
     public class Save
     {
-        public SaveManager Manager;
+        #region
 
+        private static List<int> _defaultLevels = new List<int>()
+        {
+            5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 4, 4, 4, 4, 3, 2
+        };
+
+
+        #endregion
+
+        private float _health;
+        private float _mana;
+        private float _stamina;
+
+        //consider making these all private with a getter property
+        public SaveManager Manager;
         public string Level;
         public string PlayerName;
 
-        public int MaxHealth;
         public int MoveSpeed;
-        public int MaxMana;
-        public int MaxStamina;
         public int MaxDashes;
         public Vector2 Position;
         public int HotbarSlots;
@@ -27,23 +38,70 @@ namespace Bound.Models
         public Inventory Inventory;
         public Dictionary<string, List<string>> EquippedItems = new Dictionary<string, List<string>>();
 
+        public float Health
+        {
+            get { return _health; }
+            set { _health = (value < 0) ? 0 : value; }
+        }
+
+        public float Mana
+        {
+            get { return _mana; }
+            set { _mana = (value < 0) ? 0 : value; }
+        }
+
+        public float Stamina
+        {
+            get { return _stamina; }
+            set { _stamina = (value < 0) ? 0 : value; }
+        }
+
+        public int MaxHealth
+        {
+            get
+            {
+                return GetMaxAttribute("Vigor", _defaultLevels);
+            }
+        }
+
+        public int MaxMana
+        {
+            get { return GetMaxAttribute("Mind", _defaultLevels); }
+        }
+
+        public int MaxStamina
+        {
+            get { return GetMaxAttribute("Endurance", _defaultLevels); }
+        }
+
+        public void ResetAttrs()
+        {
+            _health = MaxHealth;
+            _mana = MaxMana;
+            _stamina = MaxStamina;
+        }
+
         public override string ToString()
         {
-            var str = EncryptKVP(Game1.Names.ID_PlayerName, PlayerName)+ "\n";
-            str += EncryptKVP(Game1.Names.ID_CurrentLevel, Level) + "\n";
+            var str = EncryptKVP(Game1.Names.ID_PlayerName, PlayerName);
+            str += EncryptKVP(Game1.Names.ID_CurrentLevel, Level);
 
             foreach (var item in Attributes)
-                str += EncryptKVP(item.Key, item.Value.Value.ToString()) + "\n";
+                str += EncryptKVP(item.Key, item.Value.Value.ToString());
+
+            str += EncryptKVP("Health", _health.ToString());
+            str += EncryptKVP("Mana", _mana.ToString());
+            str += EncryptKVP("Stamina", _stamina.ToString());
 
             if (Inventory.EntireInvetory.Count > 0)
-                str += EncryptKeyListPair("Inventory", Inventory.FormatForSave()) + "\n";
+                str += EncryptKeyListPair("Inventory", Inventory.FormatForSave());
             if (EquippedItems.Count > 0)
                 str += EncryptKeyListPair("EquippedItems", EquippedItems
                     .Select(x => String.Join(';', x.Value
                         .Select( y => $"{x.Key}: {y}").ToArray()))
-                    .ToList()) + "\n";
+                    .ToList());
 
-            str += EncryptKeyListPair("Position", new List<string>() { Position.X.ToString(), Position.Y.ToString() }) + "\n";
+            str += EncryptKeyListPair("Position", new List<string>() { Position.X.ToString(), Position.Y.ToString() });
 
             return str;
         }
@@ -56,6 +114,8 @@ namespace Bound.Models
                 if (!save.Attributes.ContainsKey(key))
                     save.Attributes.Add(key, new Attribute(key, manager.DefaultAttributes[key]));
             }
+
+            save.EquippedItems.Add("hotbar", Enumerable.Repeat("Default", 3).ToList());
         }
 
         public void SetEquippedItems(string input)
@@ -77,6 +137,16 @@ namespace Bound.Models
                 return EquippedItems[id][index];
             else
                 return "Default";
+        }
+
+        private int GetMaxAttribute(string attrKey, List<int> levelAdditions)
+        {
+            var value = 0;
+            var limit = Attributes[attrKey].Value;
+            int overflow = (limit > levelAdditions.Count) ? limit - levelAdditions.Count : 0;
+            for (int i = 0; i < limit - overflow; i++)
+                value += levelAdditions[i];
+            return value + (overflow * levelAdditions[^1]);
         }
 
         #region Encryption
@@ -180,11 +250,11 @@ namespace Bound.Models
         };
         private static readonly string SEPERATOR = "Zxy,&)F! suKCjxa0umo/sJ&#CN!nOwvW~OB/oN+@[?|Xr0~0=xbInhmrtNKdIDM";
         private static readonly Dictionary<string, char> _decryptionTable = _encryptionTable.ToDictionary(x => x.Value, x => x.Key);
-        private static readonly int _encryptedCharLength = 64;
+        private static readonly int _encryptedCharLength = 64; //maybe decrease this in the future as save files become larger
 
         private static string Encrypt(string s) => String.Join(String.Empty, s.Select(c => _encryptionTable[c]));
-        private static string EncryptKVP(string id, string value) => Encrypt(id) + SEPERATOR + Encrypt(value);
-        private static string EncryptKeyListPair(string id, List<string> list) => Encrypt(id) + SEPERATOR + String.Join(SEPERATOR, list.Select(x => Encrypt(x)));
+        private static string EncryptKVP(string id, string value) => Encrypt(id) + SEPERATOR + Encrypt(value) + "\n";
+        private static string EncryptKeyListPair(string id, List<string> list) => Encrypt(id) + SEPERATOR + String.Join(SEPERATOR, list.Select(x => Encrypt(x))) + "\n";
 
         private static string Decrypt(string s) => String.Join(String.Empty, s.Chunk(_encryptedCharLength).ToList().Select(x => _decryptionTable[new string(x)]));
         private static (string Key, string Value) DecryptLine(string line)
@@ -258,6 +328,13 @@ namespace Bound.Models
                                 save.PlayerName = kvp.Value; break;
                             case "EquippedItems":
                                 save.SetEquippedItems(kvp.Value); break;
+                            case "Health":
+                                save.Health = save.FloatTryParse(kvp.Value); break;
+                            case "Mana":
+                                save.Mana = save.FloatTryParse(kvp.Value); break;
+                            case "Stamina":
+                                save.Stamina = save.FloatTryParse(kvp.Value); break;
+                                
 
                         }
                     }
@@ -272,6 +349,14 @@ namespace Bound.Models
             }
         }
 
+
+        private float FloatTryParse(string input)
+        {
+            float output;
+            if (float.TryParse(input, out output))
+                return output;
+            return 0f;
+        }
         #endregion
 
     }

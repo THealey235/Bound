@@ -82,6 +82,9 @@ namespace Bound.Sprites
                 if (_keys.IsPressed($"Hotbar {i}", false))
                     HotbarSlot = i;
             }
+
+            if (Save.Health == 0)
+                Die();
         }
 
         private void DoPhysics(List<Rectangle> surfaces)
@@ -152,6 +155,7 @@ namespace Bound.Sprites
             {
                 Position = new Vector2(100, 0);
                 gravity = 0;
+                Save.Health -= 5;
             }
 
             return inFreefall;
@@ -167,6 +171,12 @@ namespace Bound.Sprites
                 , Layer + 0.01f,
                 Scale
             );
+        }
+
+        public void Die()
+        {
+            Save.ResetAttrs();
+            Position = new Vector2(0, 0);
         }
 
         public void UpdateWhileStatic(GameTime gameTime)

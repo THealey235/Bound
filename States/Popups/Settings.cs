@@ -21,10 +21,7 @@ namespace Bound.States.Popups
         private BorderedBox _background;
         private KeyboardState _currentKeys;
         private KeyboardState _previousKeys;
-        private GraphicsDeviceManager _graphics;
         private bool _enableEscape;
-
-        public State Parent;
 
         #endregion
 

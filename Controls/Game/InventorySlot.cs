@@ -126,10 +126,19 @@ namespace Bound.Controls.Game
             {
                 if (_quantityPosition == null)
                 {
+                    var offset = Game1.ScreenHeight switch
+                    {
+                        720 => -2f,
+                        900 => -2f,
+                        1080 => -1.45f,
+                        1440 => -1f,
+                        _ => 0f,
+                    };
+
                     var qDims = _font.MeasureString(_quantity) * _quantityScale;
                     _quantityPosition = new Vector2(
-                        _background.Position.X + _background.Width - qDims.X + 1f * Game1.ResScale,
-                        _background.Position.Y + _background.Height - qDims.Y + 2f * Game1.ResScale
+                        _background.Position.X + _background.Width - qDims.X - offset * Game1.ResScale,
+                        _background.Position.Y + _background.Height - qDims.Y - offset * Game1.ResScale
                     );
                 }
                 spriteBatch.DrawString(_font, _quantity, (Vector2)_quantityPosition, Color.Black, 0f, Origin, _quantityScale, SpriteEffects.None, Layer + 0.0002f);

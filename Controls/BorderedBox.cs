@@ -12,6 +12,7 @@ namespace Bound.Controls
         public List<Texture2D> _borderTextures;
         private int _width;
         private GraphicsDevice _graphics;
+        private Vector2 _position;
 
         private int _barWidth
         {
@@ -47,7 +48,22 @@ namespace Bound.Controls
         public int Height;
         public bool IsBordered;
         public Color BorderColor;
-        public Vector2 Position;
+        public bool ToCenter = false;
+
+
+        public Vector2 Position
+        {
+            get
+            {
+                if (ToCenter)
+                    return _position + Game1.V2Transform;
+                return _position;
+            }
+            set
+            {
+                _position = value;
+            }
+        }
 
         public Texture2D Texture
         {
@@ -61,7 +77,7 @@ namespace Bound.Controls
         {
             _texture = texture;
             Colour = color;
-            Position = position;
+            _position = position;
             Layer = layer;
             _width = width;
             Height = height;

@@ -11,12 +11,10 @@ namespace Bound.Controls.Game
     public class ItemInfoBox : ChoiceBox
     {
         private List<Component> _components;
-        private List<Component> _infoBoxComponents;
         private SpriteFont _font;
         private BorderedBox _background;
         private Vector2 _position;
         private Game1 _game;
-        private string _text;
         private Item _item;
         private Vector2 _itemTexturePos;
         private List<Vector2> _namePositions;
@@ -128,7 +126,10 @@ namespace Bound.Controls.Game
                     {
                         _background.Colour = (_background.Colour == _bgColours[0]) ? _bgColours[1] : _bgColours[0];
 
-                        Container.ChangeSelected(_index, this);
+                        if (_background.Colour == _bgColours[1])
+                            Container.ChangeSelected(_index, this);
+                        else
+                            Container.ChangeSelected(-1, this);
                     }
                     else
                         _background.Colour = (_background.Colour == _bgColours[0]) ? _bgColours[1] : _bgColours[0];
@@ -173,21 +174,6 @@ namespace Bound.Controls.Game
             {
                 _background,
             };
-
-            if (Game1.InDebug)
-            {
-                //Draws a rectangle around the text in the info box to double check for centering and other stuff
-                _components.Add(new BorderedBox
-                (
-                    game.Textures.BaseBackground,
-                    game.GraphicsDevice,
-                    new Color(Color.Red, 20),
-                    _namePositions[0],
-                    Layer + 0.00001f,
-                    (int)(_font.MeasureString(_itemName[0]).X * _fontScale),
-                    (int)(_namePositions[1].Y + nameDim.Y - _namePositions[0].Y)
-                ));
-            }
         }
 
         public override void UpdatePosition(Vector2 position)

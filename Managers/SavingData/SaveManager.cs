@@ -23,12 +23,12 @@ namespace Bound.Managers
             { "Arcane", 5 },
             { "Dexterity" , 5 },
             { "Focus", 0 },
-            { "HP", 75},
+            { "Vigor", 8},
             { "MoveSpeed", 10 },
-            { "MP", 50 },
+            { "Mind", 8 },
             { "Precision", 5 },
             { "Season Attunement", 0 },
-            { "Stamina", 100 },
+            { "Endurance", 8 },
             { "Strength", 5 },
         };
 

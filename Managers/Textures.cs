@@ -141,8 +141,8 @@ namespace Bound.Managers
             PlayerStatic = content.Load<Texture2D>("Player/Player1Static");
             BlockAtlas = content.Load<Texture2D>("Atlases/BlockAtlas");
             Block = content.Load<Texture2D>("Atlases/DirtBlock");
-            HotbarBG = content.Load<Texture2D>("Backgrounds/HotbarBG1");
-            HotbarSelectedSlot = content.Load<Texture2D>("Overlays/HotbarSelectedSlot");
+            HotbarBG = content.Load<Texture2D>("Backgrounds/HotbarBG");
+            HotbarSelectedSlot = content.Load<Texture2D>("Backgrounds/HotbarSelectedBG");
 
             LoadDirectory("Content/Items/HeadGear", HeadGear);
             LoadDirectory("Content/Items/ChestArmour", ChestArmour);
