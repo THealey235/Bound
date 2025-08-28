@@ -1,10 +1,12 @@
 ﻿using Bound.Controls.Game;
+using Bound.Managers;
 using Bound.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 
 namespace Bound.States.Game
@@ -13,6 +15,19 @@ namespace Bound.States.Game
     {
         public Level0(Game1 game, ContentManager content, Player player) : base(game, content, player, 0)
         {
+            Name = "level0";
+        }
+
+        public override void LoadContent()
+        {
+            base.LoadContent();
+
+            var rows = new List<(Textures.Blocks, Color)>()
+            {
+                (Textures.Blocks.DirtGradient, Color.White),
+            };
+            rows.AddRange(Enumerable.Repeat((Textures.Blocks.BlankTile, Color.Black), 5));
+            PadBottom(rows);
         }
     }
 }

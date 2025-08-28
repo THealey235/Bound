@@ -28,4 +28,4 @@ namespace CameraFollowingSprite.Core
             Game1.V2Transform = V2Transform;
         }
     }
-    }
+}

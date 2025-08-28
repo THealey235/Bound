@@ -1,12 +1,11 @@
 ﻿using Bound.Models.Items;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security;
 namespace Bound.Managers
 {
     public class Textures
@@ -17,13 +16,14 @@ namespace Bound.Managers
 
         public enum Blocks
         {
-            Grass, Path, OakPlank, OakLog, Glass, DoorA, DoorB, OakSlab
+            Grass, Path, OakPlank, OakLog, Glass, DoorA, DoorB, OakSlab, BlankTile, DirtGradient
         }
 
-        public List<int> GhostBlocks = new List<int>() //contains blocks that you can walk through
+        public List<int> GhostBlocks = new List<int>() //contains blocks that you can walk through (no hitbox)
         {
-            (int)Blocks.DoorA, (int)Blocks.DoorB
+            (int)Blocks.DoorA, (int)Blocks.DoorB, (int)Blocks.BlankTile, (int)Blocks.DirtGradient
         };
+
         public enum ItemTextureType
         {
             Icon,

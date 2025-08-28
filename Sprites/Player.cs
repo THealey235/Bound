@@ -37,7 +37,6 @@ namespace Bound.Sprites
             }
         }
 
-
         public Player(Texture2D texture, Input Keys, Game1 game) : base(texture, game)
         {
             _keys = Keys;
@@ -88,13 +87,14 @@ namespace Bound.Sprites
             }
 
             if (Save.Health == 0)
-                Die();
+                Kill();
         }
 
         private void DoPhysics(List<Rectangle> surfaces)
         {
             Velocity = new Vector2(0, 0);
             var inFreefall = true;
+            var toTruncate = false;
 
             HandleKeys(ref inFreefall);
 
@@ -115,6 +115,7 @@ namespace Bound.Sprites
                     if (gravity > 0)
                     {//snaps them to the ground so that you velocity doesn't suddenly decrease when close to ground
                         Velocity.Y = surface.Top - Rectangle.Bottom;
+                        toTruncate = true;
                     }
                     else
                     {
@@ -133,6 +134,9 @@ namespace Bound.Sprites
             }
 
             Position += Velocity;
+            if (toTruncate)
+                Position = new Vector2(Position.X, (int)Position.Y);
+
             if (_animationManager != null)
                 _animationManager.Position = ScaledPosition;
 
@@ -177,7 +181,7 @@ namespace Bound.Sprites
             );
         }
 
-        public void Die()
+        public void Kill()
         {
             Save.ResetAttrs();
             Position = new Vector2(0, 0);

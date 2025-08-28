@@ -23,6 +23,7 @@ namespace Bound.Sprites
         public Color Colour = Color.White;
         public int Index;
         public Vector2 Position { get; set; }
+
         public Rectangle Rectangle
         {
             get
@@ -70,9 +71,10 @@ namespace Bound.Sprites
 
             _blockWidth = _textures.BlockWidth;
             if (!_textures.GhostBlocks.Contains(Index))
-                _debugRectangle = new DebugRectangle(ScaledRectangle, graphics, layer + 0.1f, scale);
+                _debugRectangle = new DebugRectangle(ScaledRectangle, graphics, layer + 0.1f, Scale);
 
         }
+
         public Block(Textures textures, GraphicsDevice graphics, int index, Vector2 position, Color colour, float rotation, Vector2 origin, float scale, SpriteEffects spriteEffects, float layer)
         {
             _textures = textures;
@@ -102,7 +104,6 @@ namespace Bound.Sprites
 
             if (!_textures.GhostBlocks.Contains(Index))
                 _debugRectangle = new DebugRectangle(ScaledRectangle, graphics, layer + 0.1f, Scale);
-
         }
 
         public void Update(GameTime gameTime)

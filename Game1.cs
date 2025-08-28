@@ -1,16 +1,16 @@
-﻿using System;
+﻿using Bound.Managers;
 using Bound.Models;
-using Bound.States;
-using Bound.Managers;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
-using System.Linq;
-using Bound.States.Popups;
 using Bound.Models.Items;
 using Bound.Sprites;
+using Bound.States;
+using Bound.States.Popups;
 using CameraFollowingSprite.Core;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 //A "State" is the current level of the game this can be the main menu, character creation or even a boss arena
 //A "Component" is the abstract class of all objects which will be drawn/updated
@@ -197,10 +197,11 @@ namespace Bound
             _currentKeys = Keyboard.GetState();
             PlayerKeys.Update();
 
-            //checks if F11 is pressed, if so: toggle fullscreen
             ChangeFullscreenMode();
-            //check debug
             ChangeDebugMode();
+
+            _currentState.Update(gameTime);
+            _currentState.PostUpdate(gameTime);
 
             //if you aren't in the main menu you may press escape to access settings and return to the main menu
             if (_currentState.Popups.Count == 0 && _currentState.Name != Names.MainMenu)
@@ -221,15 +222,24 @@ namespace Bound
                 }
             }
 
-            _currentState.Update(gameTime);
-            _currentState.PostUpdate(gameTime);
-
-            Camera.Follow(Player);
-
-            if (_statesWithoutPlayer.Contains(_currentState.Name))
-                V2Transform = Vector2.Zero;
+            CenterCamera();
 
             base.Update(gameTime);
+        }
+
+        private void CenterCamera()
+        {
+            Camera.Follow(Player);
+            if (_currentState.Name.Contains("level"))
+            {
+                var cameraBounds = ((Level)_currentState).CameraBounds;
+                if (Player.ScaledPosition.X <= cameraBounds.Min.X)
+                    V2Transform.X = 0;
+                else if (Player.ScaledPosition.X >= cameraBounds.Max.X)
+                    V2Transform.X = cameraBounds.Max.X - 0.5f * ScreenWidth;
+            }
+            if (_statesWithoutPlayer.Contains(_currentState.Name))
+                V2Transform = Vector2.Zero;
         }
 
         public void ChangeState(State state)
@@ -246,8 +256,8 @@ namespace Bound
             //By setting sampler state to PointClamp, no interpolation occurs when accessing Texture2D files, this was especially bad
             //when using my texture atlases as they would be prone to texture bleeding due to interpolation.
             //Transform matrix is to keep the character at the center of the screen.
-            if (_currentState.Name[0] == 'l')
-                _spriteBatch.Begin(SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp, transformMatrix: Camera.Transform);
+            if (_currentState.Name.Contains(""))
+                _spriteBatch.Begin(SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp, transformMatrix: Matrix.CreateTranslation(-V2Transform.X, -V2Transform.Y, 0));
             else
                 _spriteBatch.Begin(SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
 
@@ -266,6 +276,7 @@ namespace Bound
         {
 
         }
+
         private void ChangeFullscreenMode()
         {
 
@@ -318,7 +329,7 @@ namespace Bound
             ResScale = (float)ScreenHeight / (float)DefaultHeight;
 
             if (!_statesWithoutPlayer.Contains(_currentState.Name))
-                Camera.Follow(Player);
+                CenterCamera();
 
             _currentState.LoadContent();
 
@@ -328,9 +339,7 @@ namespace Bound
             //if it is the main menu remove the "quit" button from settings to return to the main menu
             if (_currentState.Name != Names.MainMenu && _currentState.Popups.Count > 0)
             {
-                
                 Player.Reset();
-                Camera.Follow(Player);
                 if (_currentState.Popups.Count > 0 && _currentState.Popups[^1].Name == Names.Settings )
                 {
                     var settings = (_currentState.Popups[^1] as Settings);
