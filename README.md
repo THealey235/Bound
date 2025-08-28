@@ -33,7 +33,5 @@ Other Sprites:
 		- shops	
 
 General:
-(H)	> Level State:
-		- fix whatever that mess is: requires a second level to determine what is truly essential to each one	
-(M)	> Clamp Player Position
+(H)	> Level Mechanics (define everything a level should handle)
 (L)	> Add respawn points similar to DS.
