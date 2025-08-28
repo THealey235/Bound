@@ -49,8 +49,12 @@ namespace Bound.Sprites
                 , Layer + 0.01f,
                 Scale
             );
-            Save = _game.SavesManager.Saves[_game.SaveIndex];
-            
+
+            if (_game.SaveIndex != -1)
+                Save = _game.SavesManager.Saves[_game.SaveIndex];
+            else
+                Save = null;
+
             if (Save != null)
                 _attributes = Save.Attributes;
         }

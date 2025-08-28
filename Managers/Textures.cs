@@ -212,7 +212,7 @@ namespace Bound.Managers
             using (var reader = new StreamReader(new FileStream("Content/Items.csv", FileMode.Open)))
             {
                 readItems = reader.ReadToEnd()
-                        .Split("\r\n")
+                        .Split("\n")
                         .Select(x => x.Split(";")
                             .ToList())
                         .ToList();

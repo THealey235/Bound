@@ -262,6 +262,7 @@ namespace Bound.Controls
         private void RemoveSave()
         {
             _game.SavesManager.Saves[_index] = null;
+            _game.Settings.Settings.General["MostRecentSave"] = "-1";
             _game.SavesManager.UploadSave(_index);
             IsEmpty = true;
             MouseLock = true;

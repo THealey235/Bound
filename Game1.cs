@@ -347,7 +347,7 @@ namespace Bound
             List<List<int>> map;
             using (var reader = new System.IO.StreamReader($"Content/Levels/Level{level}.txt"))
             {
-                map = reader.ReadToEnd().Split("\r\n").Select(x => x.Split(',').Select(y => ProcessIndex(y)).ToList()).ToList();
+                map = reader.ReadToEnd().Split("\n").Select(x => x.Split(',').Select(y => ProcessIndex(y)).ToList()).ToList();
             }
             return map;
         }

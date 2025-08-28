@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Bound.Managers.Textures;
 
+//This is more of a manager but so I may move this there in the future
 namespace Bound.Models
 {
     public class Inventory
