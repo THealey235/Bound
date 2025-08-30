@@ -14,14 +14,15 @@ namespace Bound.Managers
 
         public int BlockWidth = 16;
 
+        //Name corresponding to the index of a texture in the block atlas
         public enum Blocks
         {
-            Grass, Path, OakPlank, OakLog, Glass, DoorA, DoorB, OakSlab, BlankTile, DirtGradient
+            Grass, Path, OakPlank, OakLog, Glass, DoorA, DoorB, OakSlab, BlankTile, DirtGradient0, DirtGradient1, DirtGradient2
         }
 
         public List<int> GhostBlocks = new List<int>() //contains blocks that you can walk through (no hitbox)
         {
-            (int)Blocks.DoorA, (int)Blocks.DoorB, (int)Blocks.BlankTile, (int)Blocks.DirtGradient
+            (int)Blocks.DoorA, (int)Blocks.DoorB, (int)Blocks.BlankTile, (int)Blocks.DirtGradient0, (int)Blocks.DirtGradient1, (int)Blocks.DirtGradient2
         };
 
         public enum ItemTextureType
@@ -227,15 +228,14 @@ namespace Bound.Managers
                 try
                 {
                     texture = (Items.ContainsKey(readItems[i][0])) ? Items[readItems[i][0]] : Null;
-                    //If it has attributes
-                    if (readItems[i].Count > 2)
+                    if (readItems[i].Count == 3) //means it has no attributes
                         items.Add(readItems[i][0], new Item(texture, i, readItems[i][0], readItems[i][2], StringToType(readItems[i][1])));
                     else
-                        items.Add(readItems[i][0], new Item(texture, i, readItems[i][0], readItems[i][2], readItems[i][1], StringToType(readItems[i][3])));
+                        items.Add(readItems[i][0], new Item(texture, i, readItems[i][0], readItems[i][2], readItems[i][3], StringToType(readItems[i][1])));
 
                     IdToName.Add(i, readItems[i][0]);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     continue;
                 }

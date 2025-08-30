@@ -334,8 +334,6 @@ namespace Bound.Models
                                 save.Mana = save.FloatTryParse(kvp.Value); break;
                             case "Stamina":
                                 save.Stamina = save.FloatTryParse(kvp.Value); break;
-                                
-
                         }
                     }
                 }

@@ -5,7 +5,7 @@ Fast Feet;Accessory;Null;MVMS 5
 Throwing Dagger;Consumable;Throw to deal a minimal ammount of damage;PATK 10
 Super Cool Epic Chest Piece;ChestArmour;Amazing piece of chest armour definitely not just a long ass name for debugging purposes >:);PDEF 10000000
 Healing Potion;Consumable;Heals for 15HP;HEAL 15
-Stamina Potion;Consumable;Regens 15 Stamina; STAMINA 15
+Stamina Potion;Consumable;Regens 15 Stamina;STAMINA 15
 Golden Mibu Water Balloon;Consumable;Increases Gold gathered by 1.5x;MONEYMULT 5
 Stone Potion;Consumable;Adds 15 Physical Defence;PDEF 15
 Magic Infused Potion;Consumable;Bewitched by the old people of the mountains;ARCANE+ 15

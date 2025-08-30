@@ -339,6 +339,7 @@ namespace Bound
             //if it is the main menu remove the "quit" button from settings to return to the main menu
             if (_currentState.Name != Names.MainMenu && _currentState.Popups.Count > 0)
             {
+                CenterCamera(); //This may seem redundant but when changing up resolution, without this, the settings menu becomes off center (to the right)
                 Player.Reset();
                 if (_currentState.Popups.Count > 0 && _currentState.Popups[^1].Name == Names.Settings )
                 {
@@ -366,7 +367,7 @@ namespace Bound
         public List<Rectangle> GenerateSurfaces(List<List<int>> levelMap, int scale)
         {
             var surfaces = new List<Rectangle>();
-            var sideLength = Textures.BlockWidth * scale; //they are squares => height = width
+            var sideLength = Textures.BlockWidth * scale;
             for (int i = 0; i < levelMap.Count; i++)
             {
                 for (int j = 0; j < levelMap[i].Count; j++)

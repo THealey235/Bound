@@ -97,7 +97,7 @@ namespace Bound.Models
             if (args.ContainsKey("Ammount")) newItem.Quantity = int.Parse(args["Ammount"]);
 
             var index = (int)newItem.Type;
-            if (index >= _inventory.Count) //If the item type in Unrecognised it wont be added since it can't be sorted into a category
+            if (index >= _inventory.Count) //If the item type is unrecognised it wont be added since it can't be sorted into a category
                 return;
 
             _inventory[index].Add(newItem.Name, newItem);

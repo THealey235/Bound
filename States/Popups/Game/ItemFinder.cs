@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Input;
 using Bound.Managers;
 using Bound.Models.Items;
 using Bound.States.Popups.Game;
+using System.Linq;
 
 namespace Bound.States.Popups
 {
@@ -20,20 +21,11 @@ namespace Bound.States.Popups
         private ScrollingMenu _scrollingMenu;
         private object _creator;
         private string _slotID;
-        private List<ChoiceBox> _itemBoxes = new List<ChoiceBox>();
+        private List<ItemInfoBox> _itemBoxes = new List<ItemInfoBox>();
         private BorderedBox _itemInfoBG;
-        private Vector2 _itemInfoPicutrePos;
 
         public float Layer;
         public Color PenColor = Game1.MenuColorPalette[2];
-
-        public BorderedBox ItemDescriptionBG
-        {
-            get
-            {
-                return _itemInfoBG;
-            }
-        }
 
         public ItemFinder(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics, Textures.ItemType filter, string slotID, float layer, object creator) : base(game, content, parent, graphics)
         {
@@ -60,6 +52,9 @@ namespace Bound.States.Popups
         {
             foreach (var component in _components)
                 component.Draw(gameTime, spriteBatch);
+
+            if (_scrollingMenu.SelectedIndex != -1)
+                _itemBoxes[_scrollingMenu.SelectedIndex].DrawInfo(gameTime, spriteBatch);
 
         }
 
@@ -93,6 +88,17 @@ namespace Bound.States.Popups
             var menuPos = new Vector2(background.Position.X + xOffset, background.Position.Y + yOffset - offsetForButtons);
             var componentHeight = (int)(menuHeight / 9);
 
+            _itemInfoBG = new BorderedBox
+            (
+                _game.Textures.BaseBackground,
+                _game.GraphicsDevice,
+                Game1.MenuColorPalette[1],
+                new Vector2(bgPos.X + background.Width + 2 * Game1.ResScale, bgPos.Y),
+                Layer,
+                (int)(eigthWidth * 1.5f),
+                (int)(eigthHeight * 3.5f)
+            );
+
             _items = _game.CurrentInventory.GetParts(_filter);
             var equipped = _game.SavesManager.ActiveSave.EquippedItems;
             var equippedExists = equipped.ContainsKey(_slotID);
@@ -109,6 +115,7 @@ namespace Bound.States.Popups
                         _game,
                         _items[i],
                         Vector2.Zero,
+                        _itemInfoBG,
                         (int)(menuWidth - 10 * Game1.ResScale),
                         componentHeight,
                         Layer + 0.002f,
@@ -116,7 +123,7 @@ namespace Bound.States.Popups
                         new EventHandler(Button_ItemPressed),
                         i
                     )
-                    { TextureScale = textureScale}
+                    { TextureScale = textureScale }
                 );
             }
 
@@ -128,7 +135,7 @@ namespace Bound.States.Popups
                 menuWidth,
                 menuHeight,
                 Layer + 0.001f,
-                _itemBoxes,
+                _itemBoxes.Select(x => x as ChoiceBox).ToList(),
                 componentHeight,
                 (int)(background.Position.Y)
             )
@@ -136,7 +143,8 @@ namespace Bound.States.Popups
                 TextureScale = 0.8f,
             };
 
-            foreach (var i in _itemBoxes) ((ItemInfoBox)i).Container = _scrollingMenu;
+            foreach (var i in _itemBoxes) 
+                i.Container = _scrollingMenu;
 
             _components = new List<Component>()
             {
@@ -178,17 +186,6 @@ namespace Bound.States.Popups
             };
 
             _scrollingMenu.LoadContent(_game, background, 0f);
-
-            _itemInfoBG = new BorderedBox
-            (
-                _game.Textures.BaseBackground,
-                _game.GraphicsDevice,
-                Game1.MenuColorPalette[1],
-                new Vector2(bgPos.X + background.Width + 2 * Game1.ResScale, bgPos.Y),
-                Layer,
-                (int)(eigthWidth * 1.5f),
-                (int)(eigthHeight * 3.5f)
-            );
         }
 
 
@@ -196,7 +193,6 @@ namespace Bound.States.Popups
         {
             foreach (var component in _components)
                 component.Update(gameTime);
-
 
             if (_game.PlayerKeys.CurrentKeyboardState.IsKeyUp(Keys.Escape)
                 && _game.PlayerKeys.PreviousKeyboardState.IsKeyDown(Keys.Escape))

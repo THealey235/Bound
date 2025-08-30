@@ -41,9 +41,7 @@ namespace Bound.Controls.Game
         private int _selectedItemIndex = -1; //nothing selected as default
         private Item _selectedItem;
         private string _childType = string.Empty;
-        private List<Component> _itemDescriptionComponents;
-        private List<(string Text, Vector2 Position)> _itemDescription = new List<(string Text, Vector2 Position)>();
-        private float _descriptionTextScale = 0.5f;
+        
 
         // the "cover" is the Bordered Boxes used to cover the top and bottom of the items when they go out of range (declared in LoadContent())
         // this adds extra height to them so that you can't see the item boxes disappear when they go out of range
@@ -142,19 +140,6 @@ namespace Bound.Controls.Game
                 if (_itemBlacklist.Contains(i))
                     continue;
                 _items[i].Draw(gameTime, spriteBatch);
-            }
-
-            if (SelectedIndex != -1 && _childType == "ItemInfoBox")
-            {
-                var frame = _itemDescriptionComponents[1] as BorderedBox;
-
-                foreach (var c in _itemDescriptionComponents)
-                    c.Draw(gameTime, spriteBatch);
-
-                foreach (var line in _itemDescription)
-                    spriteBatch.DrawString(_font, line.Text, line.Position, Color.Black, 0f, Vector2.Zero, _descriptionTextScale, SpriteEffects.None, frame.Layer);
-
-                spriteBatch.Draw(_selectedItem.Texture, new Vector2(frame.Position.X + 0.125f * Game1.ResScale, frame.Position.Y + 0.125f * Game1.ResScale), null, Color.White, 0f, Vector2.Zero, Game1.ResScale, SpriteEffects.None, frame.Layer);
             }
         }
 
@@ -324,58 +309,6 @@ namespace Bound.Controls.Game
                     break;
             }
 
-            ChangeDescription();
-        }
-
-        private void ChangeDescription()
-        {
-            if (SelectedIndex != -1 && _childType == "ItemInfoBox")
-            {
-                //this is a bit goofy
-                var bg = (_game.CurrentState.Popups[^1] as ItemFinder).ItemDescriptionBG;
-                var item = _selectedItem = (_items[SelectedIndex] as ItemInfoBox).HeldItem;
-
-                var border = 2 * Game1.ResScale;
-                var layer = bg.Layer + 0.00001f;
-                var frame = new BorderedBox(
-                    _game.Textures.BaseBackground,
-                    _game.GraphicsDevice,
-                    bg.Colour,
-                    new Vector2(bg.Position.X + border, bg.Position.Y + border),
-                    layer,
-                    (int)((item.Texture.Width + 0.25f) * Game1.ResScale),
-                    (int)((item.Texture.Height + 0.25f) * Game1.ResScale)
-                );
-
-                _itemDescriptionComponents = new List<Component>
-                {
-                    bg,
-                    frame,
-                };
-
-                var description = item.Description.Split(' ');
-                var unit = _font.MeasureString("X") * _descriptionTextScale;
-                var maxUnits = (int)((bg.Width - 2 * border) / unit.X);
-                var topTextPos = new Vector2(frame.Position.X, frame.Position.Y + frame.Height + border * 3);
-
-                var chunks = new List<string>() { "" };
-                foreach (var word in description)
-                { 
-                    if (chunks[^1].Length + word.Length + 1 > maxUnits) //+1 to account for the space between words
-                        chunks.Add("");
-
-                    if (chunks[^1] == "")
-                        chunks[^1] += word;
-                    else
-                        chunks[^1] += (" " + word);
-                }
-
-                _itemDescription.Clear();
-                for (int i = 0; i < chunks.Count; i++)
-                    _itemDescription.Add((chunks[i], new Vector2(topTextPos.X, topTextPos.Y + (unit.Y + 2 * Game1.ResScale) * i)));
-
-                
-            }
         }
         #endregion
     }

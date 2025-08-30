@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Linq;
 
 namespace Bound.Controls.Game
@@ -30,6 +29,12 @@ namespace Bound.Controls.Game
         private BorderedBox _parent;
         private Color[] _bgColours;
         private int _index;
+
+        private BorderedBox _informationBackground;
+        private List<Component> _itemDescriptionComponents = new List<Component>();
+        private List<(string Text, Vector2 Position)> _itemDescription = new List<(string Text, Vector2 Position)>();
+        private float _descriptionTextScale = 0.5f;
+        private Vector2 _descriptionImagePos;
 
         public float Layer;
         public int Width;
@@ -73,7 +78,7 @@ namespace Bound.Controls.Game
             }
         }
 
-        public ItemInfoBox(Game1 game, Item item, Vector2 position, int width, int height, float layer, BorderedBox background, EventHandler onClick, int index)
+        public ItemInfoBox(Game1 game, Item item, Vector2 position, BorderedBox infoBackground, int width, int height, float layer, BorderedBox background, EventHandler onClick, int index)
         {
             _item = item;
             _game = game;
@@ -83,6 +88,7 @@ namespace Bound.Controls.Game
             Layer = layer;
             _parent = background;
             _position = position;
+            _informationBackground = infoBackground;
             _font = game.Textures.Font;
             _sourceRectangle = game.Textures.GetSourceRectangle(item.Type, Bound.Managers.Textures.ItemTextureType.Icon);
             _itemName = new List<string>() { _item.Name };
@@ -95,8 +101,8 @@ namespace Bound.Controls.Game
             LoadContent(_game, background);
         }
 
-        public ItemInfoBox(Game1 game, Item item, Vector2 position, int width, int height, float layer, BorderedBox background, EventHandler onClick, int index, ScrollingMenu container)
-            : this (game, item, position, width, height, layer, background, onClick, index)
+        public ItemInfoBox(Game1 game, Item item, Vector2 position, BorderedBox infoBackground, int width, int height, float layer, BorderedBox background, EventHandler onClick, int index, ScrollingMenu container)
+            : this (game, item, position, infoBackground, width, height, layer, background, onClick, index)
         { 
             Container = container;
         }
@@ -174,6 +180,54 @@ namespace Bound.Controls.Game
             {
                 _background,
             };
+
+            var bg = _informationBackground;
+            var border = 2 * Game1.ResScale;
+            var layer = bg.Layer + 0.00001f;
+            var frame = new BorderedBox(
+                _game.Textures.BaseBackground,
+                _game.GraphicsDevice,
+                bg.Colour,
+                new Vector2(bg.Position.X + border, bg.Position.Y + border),
+                layer,
+                (int)((_sourceRectangle.Width + 0.25f) * Game1.ResScale),
+                (int)((_sourceRectangle.Height + 0.25f) * Game1.ResScale)
+            );
+
+            _itemDescriptionComponents = new List<Component>
+            {
+                bg,
+                frame,
+            };
+
+            var description = _item.Description.Split(' ');
+            var unit = _font.MeasureString("X") * _descriptionTextScale;
+            var maxUnits = (int)((bg.Width - 2 * border) / unit.X);
+            var topTextPos = new Vector2(frame.Position.X, frame.Position.Y + frame.Height + border * 3);
+
+            var chunks = new List<string>() { "" };
+            foreach (var word in description)
+            {
+                if (chunks[^1].Length + word.Length + 1 > maxUnits) //+1 to account for the space between words
+                    chunks.Add("");
+
+                if (chunks[^1] == "")
+                    chunks[^1] += word;
+                else
+                    chunks[^1] += (" " + word);
+            }
+
+            for (int i = 0; i < chunks.Count; i++)
+                _itemDescription.Add((chunks[i], new Vector2(topTextPos.X, topTextPos.Y + (unit.Y + 2 * Game1.ResScale) * i)));
+
+            if (_item.Attributes != null && _item.Attributes.Count > 0)
+            {
+                var attrs = _item.Attributes.Values.ToList();
+                for (int i = 0; i < _item.Attributes.Count; i++)
+                    _itemDescription.Add((attrs[i].ToString(), new Vector2(topTextPos.X, topTextPos.Y + (unit.Y + 2 * Game1.ResScale) * ( chunks.Count + 1 + i))));
+            }
+
+            _descriptionImagePos = new Vector2(frame.Position.X + 0.125f * Game1.ResScale, frame.Position.Y + 0.125f * Game1.ResScale);
         }
 
         public override void UpdatePosition(Vector2 position)
@@ -190,6 +244,20 @@ namespace Bound.Controls.Game
         public void ResetColour()
         {
             _background.Colour = _bgColours[0];
+        }
+
+        public void DrawInfo(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            var frame = _itemDescriptionComponents[1] as BorderedBox;
+
+            foreach (var c in _itemDescriptionComponents)
+                c.Draw(gameTime, spriteBatch);
+
+            foreach (var line in _itemDescription)
+                spriteBatch.DrawString(_font, line.Text, line.Position, Color.Black, 0f, Vector2.Zero, _descriptionTextScale, SpriteEffects.None, frame.Layer);
+
+            spriteBatch.Draw(_item.Texture, _descriptionImagePos, _sourceRectangle, Color.White, 0f, Vector2.Zero, Game1.ResScale, SpriteEffects.None, frame.Layer + 0.001f);
+
         }
     }
 }

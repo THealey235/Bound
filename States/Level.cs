@@ -89,16 +89,22 @@ namespace Bound.States
         }
 
         //pad bottom with rows of tiles so that it looks nice.
-        protected void PadBottom(List<(Textures.Blocks Block, Color Colour)> rows)
+        protected void PadBottom(List<(List<Textures.Blocks> Block, Color Colour)> rows)
         {
+            var index = 0;
             for (int row = 0; row < rows.Count; row++)
             {
                 for (int i = 0; i < _levelMap[^1].Count; i++)
                 {
+                    if (rows[row].Block.Count == 1)
+                        index = 0;
+                    else
+                        index = Game1.Random.Next(0, rows[row].Block.Count - 1);
+
                     _blocks.Add(new Block(
                         _game.Textures,
                         _game.GraphicsDevice,
-                        (int)rows[row].Block,
+                        (int)rows[row].Block[index],
                         new Vector2(_game.Textures.BlockWidth * i * _scale, _game.Textures.BlockWidth * (_levelMap.Count + row) * _scale),
                         rows[row].Colour,
                         0f,
