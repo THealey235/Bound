@@ -19,7 +19,7 @@ namespace Bound.Models
 
         public Texture2D Texture { get; private set; }
 
-        public Animation(Texture2D texture, int frameCount)
+        public Animation(Texture2D texture, int frameCount, float frameSpeed = 0.2f)
         {
             Texture = texture;
 
@@ -27,7 +27,7 @@ namespace Bound.Models
 
             IsLooping = true;
 
-            FrameSpeed = 0.2f;
+            FrameSpeed = frameSpeed;
         }
 
         public object Clone()

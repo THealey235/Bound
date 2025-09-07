@@ -492,7 +492,7 @@
 /processorParam:TextureFormat=Color
 /build:Mouse/MouseOutline.png
 
-#begin Player/Player1Static.png
+#begin Sprites/Player/Standing.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -502,5 +502,17 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Player/Player1Static.png
+/build:Sprites/Player/Standing.png
+
+#begin Sprites/Player/Walking-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Player/Walking-Sheet.png
 

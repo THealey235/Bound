@@ -46,9 +46,11 @@
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/MissingTexture.png</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Mouse/MouseFill.png</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Mouse/MouseOutline.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Player/Player1Static.png</File>
+    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Player/Standing.png</File>
+    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Player/Walking-Sheet.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

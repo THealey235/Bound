@@ -11,6 +11,25 @@ namespace Bound.Models
     public class Attribute
     {
 
+        private enum Type
+        {
+            Stat, Effect
+        };
+
+        public enum Attributes
+        {
+            Vigor, Mind, Endurance, Strength, Dexterity, AmmoHandling, Precision, Arcane,
+            Focus, MovementSpeed, PhysicalAttack, PhysicalDefence, Stamina, Health, MoneyMultiplier,
+
+            DoubleJump
+        };//Vigor is max HP, Health is current HP
+
+        public enum AttributeAbreviations
+        {
+            HP, MP, END, STR, DEX, AMMH, PRC, ARC, FOC, MVMS, PATK, PDEF, STAM, HEAL, MONEYMULT,
+            DJMP
+        }
+
         public string Name;
         public int Value;
 
@@ -18,12 +37,12 @@ namespace Bound.Models
         {
             Name = name;
             Value = value;
+            var x = Attributes.AmmoHandling.ToString();
         }
 
         public override string ToString()
         {
             return $"{Name} {Value.ToString()}";
         }
-
     }
 }

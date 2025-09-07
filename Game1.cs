@@ -152,7 +152,7 @@ namespace Bound
             }
 
             PlayerKeys = new Input(Settings.Settings.InputValues, this);
-            Player = new Player(Textures.PlayerStatic, PlayerKeys, this)
+            Player = new Player(Textures.Sprites["Player"].Statics["Standing"], PlayerKeys, this)
             {
                 Layer = 0.75f,
                 Position = new Vector2(100, 0),

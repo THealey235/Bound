@@ -39,8 +39,6 @@ namespace Bound.Controls.Game
         private float _scrollableHeight;
         private bool _enableCursor = true;
         private int _selectedItemIndex = -1; //nothing selected as default
-        private Item _selectedItem;
-        private string _childType = string.Empty;
         
 
         // the "cover" is the Bordered Boxes used to cover the top and bottom of the items when they go out of range (declared in LoadContent())
@@ -305,7 +303,6 @@ namespace Bound.Controls.Game
                 case "ItemInfoBox":
                     foreach (var i in list)
                         ((ItemInfoBox)i).ResetColour();
-                    _childType = "ItemInfoBox";
                     break;
             }
 

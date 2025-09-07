@@ -12,7 +12,6 @@ namespace Bound.Sprites
     public class Sprite : Component, ICloneable
     {
         #region Fields
-
         protected Dictionary<string, Animation> _animations;
 
         protected AnimationManager _animationManager;
@@ -25,14 +24,18 @@ namespace Bound.Sprites
 
         protected float _rotation { get; set; }
 
-        protected float _scale { get; set; }
+        private Color _colour;
+
+        private float _scale { get; set; }
+
+        private SpriteEffects _spriteEffects;
 
         protected Texture2D _texture;
 
         protected float g = 0.09f;
         protected float _terminalVelocity = 2;
 
-        protected float gravity = 0;
+        protected float Gravity = 0;
 
         #endregion
 
@@ -41,7 +44,31 @@ namespace Bound.Sprites
 
         public List<Sprite> Children { get; set; }
 
-        public Color Colour { get; set; }
+        public Color Colour
+        {
+            get { return _colour; }
+            set
+            {
+                _colour = value;
+                if (_animationManager != null)
+                    _animationManager.Colour = value;
+            }
+        }
+
+        protected SpriteEffects SpriteEffects
+        {
+            get
+            {
+                return _spriteEffects;
+            }
+            set
+            {
+                _spriteEffects = value;
+                if (_animationManager != null)
+                    _animationManager.Effects = value;
+
+            }
+        }
 
         public bool IsRemoved { get; set; }
 
@@ -58,11 +85,22 @@ namespace Bound.Sprites
             }
         }
 
-        public float Scale
+        protected float Scale
+        {
+            get { return _scale; }
+            set
+            {
+                _scale = value;
+                if (_animationManager != null)
+                    _animationManager.Scale = FullScale;
+            }
+        }
+
+        public float FullScale
         {
             get
             {
-                return _scale * Game1.ResScale;
+                return Scale * Game1.ResScale;
             }
         }
 
@@ -89,7 +127,7 @@ namespace Bound.Sprites
                 _position = value;
 
                 if (_animationManager != null)
-                    _animationManager.Position = _position;
+                    _animationManager.Position = ScaledPosition;
             }
         }
 
@@ -110,7 +148,7 @@ namespace Bound.Sprites
                     return new Rectangle((int)(Position.X), (int)(Position.Y), (int)(_texture.Width * _scale), (int)(_texture.Height * _scale));
                 }
 
-                if (_animationManager != null)
+                else if (_animationManager != null)
                 {
                     var animation = _animations.FirstOrDefault().Value;
 
@@ -135,26 +173,7 @@ namespace Bound.Sprites
 
         public readonly Color[] TextureData;
 
-        public Matrix Transform
-        {
-            get
-            {
-                return Matrix.CreateTranslation(new Vector3(-Origin, 0)) *
-                  Matrix.CreateRotationZ(_rotation) *
-                  Matrix.CreateTranslation(new Vector3(Position, 0));
-            }
-        }
-
         public Sprite Parent;
-
-        /// The area of the sprite that could "potentially" be collided with
-        public Rectangle CollisionArea
-        {
-            get
-            {
-                return new Rectangle(Rectangle.X, Rectangle.Y, MathHelper.Max(Rectangle.Width, Rectangle.Height), MathHelper.Max(Rectangle.Width, Rectangle.Height));
-            }
-        }
 
         #endregion
 
@@ -191,7 +210,7 @@ namespace Bound.Sprites
 
             var animation = _animations.FirstOrDefault().Value;
 
-            _animationManager = new AnimationManager(animation);
+            _animationManager = new AnimationManager();
 
             Origin = new Vector2(animation.FrameWidth / 2, animation.FrameHeight / 2);
 
@@ -202,84 +221,17 @@ namespace Bound.Sprites
 
         public override void Update(GameTime gameTime)
         {
-
+            if (_animationManager != null)
+                _animationManager.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            if (_texture != null)
-                spriteBatch.Draw(_texture, Position, null, Colour, _rotation, Origin, Game1.ResScale * Scale, SpriteEffects.None, Layer);
-            else if (_animationManager != null)
+            if (_animationManager != null && _animationManager.IsPlaying == true)
                 _animationManager.Draw(spriteBatch);
+            else if (_texture != null)
+                spriteBatch.Draw(_texture, Position, null, Colour, _rotation, Origin, FullScale, SpriteEffects, Layer);
         }
-
-        #region Collision
-        //per pixel collision detection is not implemented for animated sprites, not my code
-        //this will more than likey be never be used
-        public bool Intersects(Sprite sprite)
-        {
-            if (this.TextureData == null)
-                return false;
-
-            if (sprite.TextureData == null)
-                return false;
-
-            // Calculate a matrix which transforms from A's local space into
-            // world space and then into B's local space
-            var transformAToB = this.Transform * Matrix.Invert(sprite.Transform);
-
-            // When a point moves in A's local space, it moves in B's local space with a
-            // fixed direction and distance proportional to the movement in A.
-            // This algorithm steps through A one pixel at a time along A's X and Y axes
-            // Calculate the analogous steps in B:
-            var stepX = Vector2.TransformNormal(Vector2.UnitX, transformAToB);
-            var stepY = Vector2.TransformNormal(Vector2.UnitY, transformAToB);
-
-            // Calculate the top left corner of A in B's local space
-            // This variable will be reused to keep track of the start of each row
-            var yPosInB = Vector2.Transform(Vector2.Zero, transformAToB);
-
-            for (int yA = 0; yA < this.Rectangle.Height; yA++)
-            {
-                // Start at the beginning of the row
-                var posInB = yPosInB;
-
-                for (int xA = 0; xA < this.Rectangle.Width; xA++)
-                {
-                    // Round to the nearest pixel
-                    var xB = (int)Math.Round(posInB.X);
-                    var yB = (int)Math.Round(posInB.Y);
-
-                    if (0 <= xB && xB < sprite.Rectangle.Width &&
-                        0 <= yB && yB < sprite.Rectangle.Height)
-                    {
-                        // Get the colors of the overlapping pixels
-                        var colourA = this.TextureData[xA + yA * this.Rectangle.Width];
-                        var colourB = sprite.TextureData[xB + yB * sprite.Rectangle.Width];
-
-                        // If both pixel are not completely transparent
-                        if (colourA.A != 0 && colourB.A != 0)
-                        {
-                            return true;
-                        }
-                    }
-
-                    // Move to the next pixel in the row
-                    posInB += stepX;
-                }
-
-                // Move to the next row
-                yPosInB += stepY;
-            }
-
-            // No intersection found
-            return false;
-        }
-
-        //public virtual void OnCollide(Sprite sprite)
-        //{
-
-        //}
 
         #region Sprite Collision
         protected bool IsTouchingLeft(Sprite sprite)
@@ -350,7 +302,6 @@ namespace Bound.Sprites
 
         #endregion
 
-        #endregion
 
         public object Clone()
         {

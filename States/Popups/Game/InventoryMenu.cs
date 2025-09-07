@@ -49,7 +49,7 @@ namespace Bound.States.Popups.Game
            foreach (var pair in _headings)
                 spriteBatch.DrawString(_game.Textures.Font, pair.Text, pair.Position + _background.Position, Game1.MenuColorPalette[2], 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.001f);
 
-            spriteBatch.Draw(_game.Textures.PlayerStatic, _playerPosition, null, Color.White, 0f, Vector2.Zero, 1.5f * Game1.ResScale, SpriteEffects.FlipHorizontally, Layer + 0.001f);
+            spriteBatch.Draw(_game.Textures.Sprites["Player"].Statics["Standing"], _playerPosition, null, Color.White, 0f, Vector2.Zero, 1.5f * Game1.ResScale, SpriteEffects.None, Layer + 0.001f);
         }
 
         public override void LoadContent()

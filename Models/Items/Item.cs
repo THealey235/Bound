@@ -49,5 +49,10 @@ namespace Bound.Models.Items
 
             return output;
         }
+
+        public void Use()
+        {
+            return;
+        }
     }
 }

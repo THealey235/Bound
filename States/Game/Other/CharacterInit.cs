@@ -245,7 +245,7 @@ namespace Bound.States.Game
             _attributes["Endurance"] = endurance;
             _attributes["Strength"] = str;
             _attributes["Dexterity"] = dex;
-            _attributes["Ammo Handling"] = ammo;
+            _attributes["AmmoHandling"] = ammo;
             _attributes["Precision"] = prec;
             _attributes["Arcane"] = arc;
             _attributes["Focus"] = skill;

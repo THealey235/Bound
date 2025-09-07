@@ -1,4 +1,5 @@
-﻿using Bound.Models.Items;
+﻿using Bound.Models;
+using Bound.Models.Items;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+
 namespace Bound.Managers
 {
     public class Textures
@@ -61,7 +63,6 @@ namespace Bound.Managers
         public Texture2D TrashCan;
         public Texture2D Null;
         public Texture2D Blank;
-        public Texture2D PlayerStatic;
         public Texture2D Block;
         public Texture2D HotbarBG;
         public Texture2D HotbarSelectedSlot;
@@ -75,6 +76,7 @@ namespace Bound.Managers
         public Dictionary<string, Texture2D> Weapons = new Dictionary<string, Texture2D>();
         public Dictionary<string, Texture2D> Consumables = new Dictionary<string, Texture2D>();
         public Dictionary<string, Texture2D> Skills = new Dictionary<string, Texture2D>();
+        public Dictionary<string, SpriteTextures> Sprites = new Dictionary<string, SpriteTextures>();
 
         public Dictionary<string, Texture2D> Items = new Dictionary<string, Texture2D>();
         private Dictionary<int, string> IdToName = new Dictionary<int, string>();
@@ -139,7 +141,7 @@ namespace Bound.Managers
             #endregion
 
             #region Game Elements
-            PlayerStatic = content.Load<Texture2D>("Player/Player1Static");
+
             BlockAtlas = content.Load<Texture2D>("Atlases/BlockAtlas");
             Block = content.Load<Texture2D>("Atlases/DirtBlock");
             HotbarBG = content.Load<Texture2D>("Backgrounds/HotbarBG");
@@ -165,6 +167,8 @@ namespace Bound.Managers
             }
 
             Items.Add("Default", Blank);
+
+            LoadSprites();
 
             #endregion
 
@@ -237,6 +241,7 @@ namespace Bound.Managers
                 }
                 catch (Exception e)
                 {
+                    Console.Write(e.Message);
                     continue;
                 }
             }
@@ -244,6 +249,24 @@ namespace Bound.Managers
             return items;
 
         }
+
+        public void LoadSprites()
+        {
+            var path = "Content/Sprites";
+            var sprites = Directory.GetDirectories(path);
+            foreach(var sprite in sprites)
+            {
+                var textures = Directory.GetFiles(sprite).Select(x => x.Replace("Content/", string.Empty).Replace(".xnb", string.Empty));
+                Sprites.Add(
+                    sprite.Replace(path + "\\", string.Empty),
+                    new SpriteTextures(
+                        _content,
+                        textures.Where(x => !x.Contains("-Sheet")).ToList(),
+                        textures.Where(x => x.Contains("-Sheet")).ToList()
+                    )
+                );
+            }
+        }            
 
         private ItemType StringToType(string input)
         {

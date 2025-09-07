@@ -11,6 +11,8 @@ namespace Bound.Managers
 
         private float _timer;
 
+        public bool IsPlaying { get; private set; }
+
         public Animation CurrentAnimation
         {
             get
@@ -21,19 +23,24 @@ namespace Bound.Managers
 
         public float Layer { get; set; }
 
+        public Color Colour { get; set; }
+
         public Vector2 Origin { get; set; }
 
         public Vector2 Position { get; set; }
 
         public float Rotation { get; set; }
 
+        public SpriteEffects Effects { get; set; }
+
         public float Scale { get; set; }
 
         #region Methods
-        public AnimationManager(Animation animation)
+      
+        public AnimationManager()
         {
-            _animation = animation;
-
+            IsPlaying = false;
+            Colour = Color.White;
             Scale = 1f;
         }
 
@@ -49,18 +56,18 @@ namespace Bound.Managers
                     _animation.FrameWidth,
                     _animation.FrameHeight
                 ),
-                Color.White,
+                Colour,
                 Rotation,
                 Origin,
                 Scale,
-                SpriteEffects.None,
+                Effects,
                 Layer
             );
         }
 
         public void Play(Animation animation)
         {
-            if (_animation == animation)
+            if (_animation == animation && IsPlaying)
                 return;
 
             _animation = animation;
@@ -68,17 +75,25 @@ namespace Bound.Managers
             _animation.CurrentFrame = 0;
 
             _timer = 0;
+
+            IsPlaying = true;
         }
 
         public void Stop()
         {
             _timer = 0f;
+            
+            if (_animation != null)
+                _animation.CurrentFrame = 0;
 
-            _animation.CurrentFrame = 0;
+            IsPlaying = false;
         }
 
         public void Update(GameTime gameTime)
         {
+            if (IsPlaying == false)
+                return;
+
             _timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             if (_timer > _animation.FrameSpeed)

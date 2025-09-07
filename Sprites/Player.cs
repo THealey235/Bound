@@ -10,10 +10,9 @@ namespace Bound.Sprites
 {
     public class Player : Sprite
     {
-        private float _speed = 0.09f;
+        private float _speed = 0.19f;
         private Input _keys;
         private double _dTime;
-        private SpriteEffects _spriteEffect;
         private DebugRectangle _debugRectangle;
         private Dictionary<string, Attribute> _attributes;
 
@@ -40,14 +39,16 @@ namespace Bound.Sprites
         public Player(Texture2D texture, Input Keys, Game1 game) : base(texture, game)
         {
             _keys = Keys;
-            _scale = 0.8f;
+            Scale = 0.8f;
             _debugRectangle = new DebugRectangle
             (
                 new Rectangle((int)Position.X, (int)Position.Y, _texture.Width, _texture.Height)
                 , game.GraphicsDevice
                 , Layer + 0.01f,
-                Scale
+                FullScale
             );
+
+            Origin = Vector2.Zero;
 
             if (_game.SaveIndex != -1)
                 Save = _game.SavesManager.Saves[_game.SaveIndex];
@@ -56,18 +57,36 @@ namespace Bound.Sprites
 
             if (Save != null)
                 _attributes = Save.Attributes;
-        }
 
-        public Player(Dictionary<string, Animation> animations, Input Keys, Game1 game) : base(animations, game)
-        {
+            if (_game.Textures.Sprites.ContainsKey("Player"))
+            {
+                _animations = new Dictionary<string, Animation>();
+                var textures = _game.Textures.Sprites["Player"];
+                foreach(var sheet in textures.Sheets)
+                {
+                    _animations.Add(sheet.Key, new Animation(sheet.Value, textures.FrameCount(sheet.Key), 0.15f));
+                }
+
+                _animationManager = new Managers.AnimationManager()
+                {
+                    Scale = FullScale,
+                };
+            }
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            if (_texture != null)
-                spriteBatch.Draw(_texture, ScaledPosition, null, Colour, _rotation, Vector2.Zero, Game1.ResScale * _scale, _spriteEffect, Layer);
-            else if (_animationManager != null)
-                _animationManager.Draw(spriteBatch);
+            if (_animationManager != null)
+            {
+                if (_animationManager.IsPlaying == true)
+                    _animationManager.Draw(spriteBatch);
+                else if (Gravity != 0)
+                    spriteBatch.Draw(_animations["Walking"].Texture, ScaledPosition, new Rectangle(0, 0, _texture.Width, _texture.Height), Colour, _rotation, Origin, FullScale, SpriteEffects, Layer);
+                else
+                    spriteBatch.Draw(_texture, ScaledPosition, null, Colour, _rotation, Origin, FullScale, SpriteEffects, Layer);
+            }
+            else if (_texture != null)
+                spriteBatch.Draw(_texture, ScaledPosition, null, Colour, _rotation, Origin, FullScale, SpriteEffects, Layer);
 
             if (Game1.InDebug)
                 _debugRectangle.Draw(gameTime, spriteBatch);
@@ -88,6 +107,17 @@ namespace Bound.Sprites
 
             if (Save.Health == 0)
                 Kill();
+            
+            if (_animationManager != null)
+                SetAnimation();
+        }
+
+        private void SetAnimation()
+        {
+            if (Velocity.X != 0 && Gravity == 0)
+                _animationManager.Play(_animations["Walking"]);
+            else
+                _animationManager.Stop();
         }
 
         private void DoPhysics(List<Rectangle> surfaces)
@@ -100,8 +130,8 @@ namespace Bound.Sprites
 
             if (inFreefall)
             {
-                gravity += SimulateGravity(g, 0, 60);
-                Velocity += new Vector2(0, gravity);
+                Gravity += SimulateGravity(g, 0, 60);
+                Velocity += new Vector2(0, Gravity);
             }
 
             foreach (var surface in surfaces)
@@ -112,7 +142,7 @@ namespace Bound.Sprites
                 if ((Velocity.Y > 0 && IsTouchingTop(surface)) ||
                      (Velocity.Y < 0 && IsTouchingBottom(surface)))
                 {
-                    if (gravity > 0)
+                    if (Gravity > 0)
                     {//snaps them to the ground so that you velocity doesn't suddenly decrease when close to ground
                         Velocity.Y = surface.Top - Rectangle.Bottom;
                         toTruncate = true;
@@ -122,7 +152,7 @@ namespace Bound.Sprites
                         Velocity.Y = 0;
                     }
                     inFreefall = false;
-                    gravity = 0;
+                    Gravity = 0;
                     break;
                 }
             }
@@ -130,15 +160,12 @@ namespace Bound.Sprites
 
             if (!inFreefall && _keys.IsPressed("Jump", true))
             {
-                gravity = -4;
+                Gravity = -4;
             }
 
             Position += Velocity;
             if (toTruncate)
                 Position = new Vector2(Position.X, (int)Position.Y);
-
-            if (_animationManager != null)
-                _animationManager.Position = ScaledPosition;
 
             _debugRectangle.Position = ScaledPosition;
         }
@@ -152,17 +179,17 @@ namespace Bound.Sprites
             if (_keys.IsPressed("Left", true))
             {
                 Velocity += new Vector2(-Speed, 0);
-                _spriteEffect = SpriteEffects.None;
+                SpriteEffects = SpriteEffects.FlipHorizontally;
             }
             if (_keys.IsPressed("Right", true))
             {
                 Velocity += new Vector2(Speed, 0);
-                _spriteEffect = SpriteEffects.FlipHorizontally;
+                SpriteEffects = SpriteEffects.None;
             }
             if (_keys.IsPressed("Reset", true))
             {
                 Position = new Vector2(100, 0);
-                gravity = 0;
+                Gravity = 0;
                 Save.Health -= 5;
             }
 
@@ -177,7 +204,7 @@ namespace Bound.Sprites
                 new Rectangle((int)ScaledPosition.X, (int)ScaledPosition.Y, (int)(_texture.Width), (int)(_texture.Height))
                 , _game.GraphicsDevice
                 , Layer + 0.01f,
-                Scale
+                FullScale
             );
         }
 

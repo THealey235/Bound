@@ -12,20 +12,11 @@ namespace Bound.States
     // or unuseful comments such as: TODO: Fix this
     public abstract class State
     {
-        //protected means that children can access it
-
-        //holds the game class which there is only 1 of ever created (unless i add multiple windows)
         protected Game1 _game;
-
-        //used to load content but is actually fairly redundant now as i have moved all textures to the Texture.cs handler
-        //however i cba to refact rn: future me issue
-        //TODO: remove _content from state
+        //TODO: remove _content from state since all textures should be handled be Textures.cs
         protected ContentManager _content;
 
-        //all "substates" known as popups. i.e. Settings or SavesMenu
         public List<State> Popups;
-
-        //i.e. "mainMenu"
         public string Name;
 
         protected Player _player;
@@ -42,9 +33,6 @@ namespace Bound.States
             Popups = new List<State>();
         }
 
-        //all states much have these methods
-
-        //loads controls or sprites as components (typically)
         public abstract void LoadContent();
 
         public abstract void Update(GameTime gameTime);
