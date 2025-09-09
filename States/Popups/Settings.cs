@@ -1,10 +1,12 @@
 ﻿using Bound.Controls;
+using Bound.Controls.Game;
 using Bound.Controls.Settings;
 using Bound.Managers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +23,7 @@ namespace Bound.States.Popups
         private BorderedBox _background;
         private KeyboardState _currentKeys;
         private KeyboardState _previousKeys;
+        private ScrollingMenu _scrollingKeyInputs;
         private bool _enableEscape;
 
         #endregion
@@ -42,6 +45,7 @@ namespace Bound.States.Popups
             var bbWidth = (int)(eigthWidth * 6);
             var bbHeight = (int)(eigthHeight * 6);
             var font = _game.Textures.Font;
+            var layer = 0.79f;
 
             var volumeOffset = 40;
 
@@ -62,7 +66,7 @@ namespace Bound.States.Popups
                     _game.GraphicsDevice,
                     Game1.MenuColorPalette[0],
                     new Vector2(eigthWidth + Game1.V2Transform.X, eigthHeight + Game1.V2Transform.Y),
-                    0.79f,
+                    layer,
                     bbWidth,
                     bbHeight
                 );
@@ -79,21 +83,21 @@ namespace Bound.States.Popups
                 {
                     Text = "Back",
                     Click = new EventHandler(Button_Discard_Clicked),
-                    Layer = 0.8f,
+                    Layer = layer + 0.001f,
                     TextureScale = 0.6f,
                 },
                 new Button(_game.Textures.Button, font, _background)
                 {
                     Text = "Apply",
                     Click = new EventHandler(Button_Apply_Clicked),
-                    Layer = 0.8f,
+                    Layer = layer + 0.001f,
                     TextureScale = 0.6f,
                 },
                 new Button(_game.Textures.Button, font, _background)
                 {
                     Text = "Reset",
                     Click = new EventHandler(Button_Reset_Clicked),
-                    Layer = 0.8f,
+                    Layer = layer + 0.001f,
                     TextureScale = 0.6f,
                 }
 
@@ -112,7 +116,7 @@ namespace Bound.States.Popups
                         "2560x1440",
                         "3840x2160"
                     },
-                    Layer = 0.81f,
+                    Layer = layer + 0.001f,
                     OnApply = new EventHandler(Resolution_Apply),
                     Order = 0,
                     Type = "Video",
@@ -125,7 +129,7 @@ namespace Bound.States.Popups
                         "Yes",
                         "No"
                     },
-                    Layer = 0.81f,
+                    Layer = layer + 0.01f,
                     OnApply = new EventHandler(Fullscreen_Apply),
                     Order = 1,
                     Type = "Video"
@@ -133,7 +137,7 @@ namespace Bound.States.Popups
                 new ScrollBox(font, "MasterVolume", 100f, "%", _game)
                 {
                     Text = "Master Volume",
-                    Layer = 0.81f,
+                    Layer = layer + 0.09f,
                     OnApply = new EventHandler(Volume_Apply),
                     Order = 2,
                     yOffset = volumeOffset,
@@ -141,7 +145,7 @@ namespace Bound.States.Popups
                 new ScrollBox(font, "MusicVolume", 100f, "%", _game)
                 {
                     Text = "Music Volume",
-                    Layer = 0.81f,
+                    Layer = layer + 0.09f,
                     OnApply = new EventHandler(Volume_Apply),
                     Order = 3,
                     yOffset = volumeOffset,
@@ -149,7 +153,7 @@ namespace Bound.States.Popups
                 new ScrollBox(font, "EnemyVolume", 100f, "%", _game)
                 {
                     Text = "Enemy Volume",
-                    Layer = 0.81f,
+                    Layer = layer + 0.09f,
                     OnApply = new EventHandler(Volume_Apply),
                     Order = 4,
                     yOffset = volumeOffset,
@@ -157,7 +161,7 @@ namespace Bound.States.Popups
                 new ScrollBox(font, "PlayerVolume", 100f, "%", _game)
                 {
                     Text = "Player Volume",
-                    Layer = 0.81f,
+                    Layer = layer + 0.09f,
                     OnApply = new EventHandler(Volume_Apply),
                     Order = 5,
                     yOffset = volumeOffset,
@@ -169,20 +173,40 @@ namespace Bound.States.Popups
 
             var longestInput = (int)(_game.Settings.Settings.InputValues.Keys.Aggregate(0f, (a, c) => (a >= font.MeasureString(c).X) ? a : font.MeasureString(c).X));
 
-            int acc = 0;
+            var acc = 0;
             foreach (var kvp in _game.Settings.Settings.InputValues)
             {
                 _keyInputs.Add
                 (
                      new KeyInput(font, kvp, longestInput)
                      {
-                         Layer = 0.81f,
+                         Layer = layer + 0.0001f,
                          Order = acc,
                          OnApply = new EventHandler(Key_Apply)
                      }
-                ); 
+                );
                 acc++;
             }
+
+            var scrollingMenuPosition = new Vector2
+            (
+                _background.Position.X + allignments[1],
+                _background.Position.Y + _background.Height * 0.05f
+            );
+
+            var gap = 5f * Game1.ResScale;
+
+            _scrollingKeyInputs = new ScrollingMenu(
+                _game,
+                "keyInputs",
+                scrollingMenuPosition,
+                (int)(5 * Game1.ResScale + longestInput + gap + _game.Textures.Button.Width * _keyInputs[0].Scale + gap + 6f * Game1.ResScale),
+                (int)(_background.Height * 0.8f),
+                layer + 0.0001f,
+                _keyInputs.Select(x => x as ChoiceBox).ToList(),
+                (int)(_game.Textures.Button.Height * _keyInputs[0].Scale + 10 * _keyInputs[0].Scale + 5 * Game1.ResScale),
+                (int)_background.Position.Y
+            );
 
             LoadNestedContent(bbWidth, bbHeight, _background, allignments);
         }
@@ -197,8 +221,16 @@ namespace Bound.States.Popups
                 _multiBoxes[i].LoadContent(_game, background, allignments[0]);
             }
 
+            var acc = 0;
             foreach (var key in _keyInputs)
+            {
+                //in all honesty this is spaghetti
                 key.LoadContent(_game, background, allignments[1]);
+                acc++;
+            }
+
+            //This also invokes ScrollingMenu.Load()
+            _scrollingKeyInputs.ElementYSpacing = _keyInputs[0].FullHeight + 2.5f * Game1.ResScale;
         }
 
         public override void Update(GameTime gameTime)
@@ -209,8 +241,7 @@ namespace Bound.States.Popups
             foreach (var box in _multiBoxes)
                 box.Update(gameTime);
 
-            foreach(var key in _keyInputs)
-                key.Update(gameTime);
+            _scrollingKeyInputs.Update(gameTime);
 
             _previousKeys = _currentKeys;
             _currentKeys = Keyboard.GetState();
@@ -237,8 +268,7 @@ namespace Bound.States.Popups
             foreach (var box in _multiBoxes)
                 box.Draw(gameTime, spriteBatch);
 
-            foreach (var key in _keyInputs)
-                key.Draw(gameTime, spriteBatch);
+            _scrollingKeyInputs.Draw(gameTime, spriteBatch);
         }
 
         #endregion

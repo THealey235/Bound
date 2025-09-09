@@ -26,9 +26,6 @@ namespace Bound.Controls.Settings
         private KeyboardState _currentKey;
         private MouseState _previousMouse;
         private MouseState _currentMouse;
-        private BorderedBox _parentBackground;
-        private Game1 _game;
-        private float _allignment;
 
         public KeyValuePair<string, string> Keys;
         public Color PenColour;
@@ -89,19 +86,11 @@ namespace Bound.Controls.Settings
 
             if (!string.IsNullOrEmpty(Keys.Key))
             {
-                spriteBatch.DrawString(_font, Keys.Key, _textPosition, PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
+                spriteBatch.DrawString(_font, Keys.Key, _textPosition, PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.0001f);
             }
         }
 
         public override void LoadContent(Game1 game, BorderedBox background, float allignment)
-        {
-            _parentBackground = background;
-            _game = game;
-            _allignment = allignment;
-            Load(game, background, allignment);
-        }
-
-        private void Load(Game1 game, BorderedBox background, float allignment)
         {
             var gap = 5f * Game1.ResScale;
 
@@ -109,12 +98,6 @@ namespace Bound.Controls.Settings
 
             FullWidth = (int)(5 * Game1.ResScale + _longestInput + gap + game.Textures.Button.Width * Scale + gap);
             FullHeight = (int)(game.Textures.Button.Height * Scale + 10 * Scale);
-
-            Position = new Vector2
-            (
-                background.Position.X + allignment,
-                background.Position.Y + background.Height / 6 - FullHeight / 2 + (FullHeight + 10 * Scale) * Order
-            );
 
             var boxHeight = (int)(game.Textures.Button.Height * Scale);
 
@@ -138,7 +121,7 @@ namespace Bound.Controls.Settings
                 {
                     Text = Key,
                     Click = new EventHandler(Clicked),
-                    Layer = Layer + 0.1f,
+                    Layer = Layer + 0.0001f,
                     RelativePosition = new Vector2(10 * Game1.ResScale + _longestInput, (FullHeight - boxHeight) / 2),
                     TextureScale = TextureScale,
                     PenColour = Color.DarkRed,
@@ -210,7 +193,7 @@ namespace Bound.Controls.Settings
             if ((from item in _blackList
                 where key.Contains(item)
                 select item).ToArray().Length > 0) //if the key contains any blacklisted phrase stop it
-                //this is not efficient. TO DO: Fix this.
+                //it works
             {
                 return "invalid";
             }
@@ -225,7 +208,8 @@ namespace Bound.Controls.Settings
         public override void UpdatePosition(Vector2 position)
         {
             Position = position;
-            LoadContent(_game, _parentBackground, _allignment);
+            _textPosition = new Vector2(Position.X + 5 * Game1.ResScale, Position.Y + FullHeight / 2 - (_font.MeasureString("Y").Y / 2));
+            _borderedBox.Position = position;
         }
     }
 }

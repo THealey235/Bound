@@ -191,7 +191,7 @@ namespace Bound.Sprites
             TextureData = new Color[_texture.Width * _texture.Height];
             _texture.GetData(TextureData);
 
-            _scale = 1f;
+            Scale = 1f;
 
             _game = game;
         }
@@ -214,7 +214,7 @@ namespace Bound.Sprites
 
             Origin = new Vector2(animation.FrameWidth / 2, animation.FrameHeight / 2);
 
-            _scale = 1f;
+            Scale = 1f;
 
             _game = game;
         }

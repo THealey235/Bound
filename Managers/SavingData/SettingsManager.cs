@@ -23,14 +23,19 @@ namespace Bound.Managers
             {"Left", "A" },
             {"Right", "D" },
             {"Jump", "SPACE" },
+            {"Use", "M1" },
+            {"Dash", "LSHFT" },
             {"Reset", "R" },
             {"Menu", "TAB"},
             {"Hotbar 1", "1"},
             {"Hotbar 2", "2"},
             {"Hotbar 3", "3"},
+            {"Hotbar 4", "4"},
+            {"Hotbar 5", "5"},
+            {"Hotbar 6", "6"},
         };
 
-    public SettingsManager()
+        public SettingsManager()
         {
             Init();
         }
@@ -61,6 +66,12 @@ namespace Bound.Managers
                         break;
                     }
                     Settings.InputValues.Add(kvp[0], kvp[1]);
+                }
+
+                foreach (var kvp in DefaultInputValues)
+                {
+                    if (!Settings.InputValues.ContainsKey(kvp.Key))
+                        Settings.InputValues.Add(kvp.Key, kvp.Value);
                 }
             }
             catch (Exception)

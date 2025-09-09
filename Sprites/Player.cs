@@ -10,7 +10,7 @@ namespace Bound.Sprites
 {
     public class Player : Sprite
     {
-        private float _speed = 0.19f;
+        private float _speed = 0.1f;
         private Input _keys;
         private double _dTime;
         private DebugRectangle _debugRectangle;
@@ -196,7 +196,7 @@ namespace Bound.Sprites
             return inFreefall;
         }
 
-        
+        //Runs when each state is reset due to a change in resolution
         public void Reset()
         {
             _debugRectangle = new DebugRectangle
@@ -206,6 +206,7 @@ namespace Bound.Sprites
                 , Layer + 0.01f,
                 FullScale
             );
+            _animationManager.Scale = FullScale;
         }
 
         public void Kill()

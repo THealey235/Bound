@@ -74,6 +74,14 @@ namespace Bound.Controls.Game
         {
             get
             {
+                return new Rectangle((int)(_position.X), (int)(_position.Y), Width, Height);
+            }
+        }
+
+        public Rectangle StaticRectangle
+        {
+            get
+            {
                 return new Rectangle((int)(_position.X - Game1.V2Transform.X), (int)(_position.Y - Game1.V2Transform.Y), Width, Height);
             }
         }
@@ -125,7 +133,7 @@ namespace Bound.Controls.Game
                 c.Update(gameTime);
 
             var keys = _game.PlayerKeys;
-            if (keys.MouseRectangle.Intersects(Rectangle) && keys.LeftClickReleased)
+            if (keys.MouseRectangle.Intersects(StaticRectangle) && keys.LeftClickReleased)
             {
                 if (Container != null)
                     if (!Container.ItemBlacklist.Contains(_index))

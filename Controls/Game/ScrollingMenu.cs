@@ -16,7 +16,6 @@ namespace Bound.Controls.Game
         private Vector2 _position;
 
         private MouseState _currentMouse;
-        private SpriteFont _font;
         private MouseState _previousMouse;
         private BorderedBox _bar;
         private BorderedBox _cursor;
@@ -39,6 +38,8 @@ namespace Bound.Controls.Game
         private float _scrollableHeight;
         private bool _enableCursor = true;
         private int _selectedItemIndex = -1; //nothing selected as default
+        private float _elementYSpacing;
+        private float _minimumCursorHeight = 15f * Game1.ResScale;
         
 
         // the "cover" is the Bordered Boxes used to cover the top and bottom of the items when they go out of range (declared in LoadContent())
@@ -50,6 +51,17 @@ namespace Bound.Controls.Game
         public int MaxShown;
         public float Layer;
         public int BarWidth;
+
+        public float ElementYSpacing
+        {
+            get { return _elementYSpacing; }
+            set
+            {
+                _elementYSpacing = value;
+                Load(_game);
+            }
+
+        }
        
 
         public List<int> ItemBlacklist
@@ -121,11 +133,9 @@ namespace Bound.Controls.Game
             _items = items;
             _itemHeight = componentHeight;
             _position = position;
-            _maxItemsInView = ((height - 10) / componentHeight) - 1;
             _parentTopEdge = topEdgeY;
-            _coverPadding = 1 * Game1.ResScale;
+            _coverPadding = 3 * Game1.ResScale;
             BarWidth = (int)(5 * Game1.ResScale);
-            _font = _game.Textures.Font;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -176,35 +186,47 @@ namespace Bound.Controls.Game
         }
 
 
-        public override void LoadContent(Game1 game, BorderedBox background, float allignment)
-        {
-            Load(_game);
-        }
+        public override void LoadContent(Game1 game, BorderedBox background, float allignment) => Load(game);
 
-        private void Load(Game1 _game)
+        private void Load(Game1 game)
         {
-            var pos = new Vector2(Position.X, Position.Y + 5 * Game1.ResScale);
-            var ySpacing = _itemHeight + 5 * Game1.ResScale;
+            var elementGap = 5 * Game1.ResScale;
+            var pos = new Vector2(Position.X, Position.Y + elementGap);
+            if (_elementYSpacing == 0)
+                _elementYSpacing = _itemHeight + elementGap;
+
             _itemPositions = new List<Vector2>();
             for (int i = 0; i < _items.Count; i++)
             {
                 _items[i].UpdatePosition(pos);
                 _itemPositions.Add(pos);
-                pos.Y += ySpacing;
+                pos.Y += _elementYSpacing;
             }
 
+            _maxItemsInView =  Math.Abs((int)((_height - (_items.Count - 1) * (_elementYSpacing - _itemHeight)) / _itemHeight));
             var extraItems = _items.Count - _maxItemsInView;
-            _extraItemsHeight = extraItems > 0 ? extraItems * _itemHeight + (extraItems - 1) * ySpacing : 0;
+            _extraItemsHeight = extraItems > 0 ? (extraItems) * _elementYSpacing + elementGap : 0;
 
             var defaultPos = new Vector2(Position.X + _width - BarWidth, Position.Y);
-            _scrollableHeight = (_extraItemsHeight / _cursorScaling);
-            if (_scrollableHeight == 0) _enableCursor = false;
 
-            _cursorHeight = _height - (int)_scrollableHeight;
+            _cursorHeight = (int)_minimumCursorHeight;
+            if (_extraItemsHeight == 0)
+                _enableCursor = false;
+            else if (_extraItemsHeight > _height - _minimumCursorHeight)
+            {
+                _scrollableHeight = (_height - _minimumCursorHeight);
+                _cursorScaling = _extraItemsHeight / _scrollableHeight;
+            }
+            else
+            {
+                _scrollableHeight = _extraItemsHeight;
+                _cursorHeight = _height - (int)_scrollableHeight;
+            }
+
             _bar = new BorderedBox
             (
-                _game.Textures.BaseBackground,
-                _game.GraphicsDevice,
+                game.Textures.BaseBackground,
+                game.GraphicsDevice,
                 Color.White,
                 defaultPos,
                 Layer,
@@ -214,8 +236,8 @@ namespace Bound.Controls.Game
 
             _cursor = new BorderedBox
             (
-                _game.Textures.BaseBackground,
-                _game.GraphicsDevice,
+                game.Textures.BaseBackground,
+                game.GraphicsDevice,
                 Color.Black,
                 new Vector2(Position.X + _width - BarWidth, Position.Y),
                 Layer + 0.0001f,
@@ -226,27 +248,43 @@ namespace Bound.Controls.Game
 
             _components = new List<Component>
             {
+                //Top cover
                 new BorderedBox
                 (
-                    _game.Textures.BaseBackground,
-                    _game.GraphicsDevice,
+                    game.Textures.BaseBackground,
+                    game.GraphicsDevice,
                     Game1.MenuColorPalette[0],
                     new Vector2(Position.X, _parentTopEdge + (int)(1.5 * Game1.ResScale)),
                     Layer + 0.003f,
                     _width,
                     (int)(Position.Y - _parentTopEdge + _coverPadding)
                 ) { IsBordered = false},
+                //Bottom cover
                 new BorderedBox
                 (
-                    _game.Textures.BaseBackground,
-                    _game.GraphicsDevice,
+                    game.Textures.BaseBackground,
+                    game.GraphicsDevice,
                     Game1.MenuColorPalette[0],
-                    new Vector2(Position.X, Position.Y + _height - _coverPadding),
+                    new Vector2(Position.X, Position.Y + _height - _coverPadding - 2),
                     Layer + 0.003f,
                     _width,
                     (int)(Position.Y - _parentTopEdge + _coverPadding)
                 ) { IsBordered = false},
             };
+
+            if (Game1.InDebug)
+            {
+                _components.Add(new BorderedBox
+                (
+                    game.Textures.BaseBackground,
+                    game.GraphicsDevice,
+                    Color.Red,
+                    Position,
+                    Layer - 0.000001f,
+                    _width,
+                    _height
+                ));
+            }
 
 
             if (_enableCursor)
@@ -256,7 +294,6 @@ namespace Bound.Controls.Game
             }
 
             SetItemProperties();
-
         }
 
         public override void UpdatePosition(Vector2 position)
@@ -285,7 +322,7 @@ namespace Bound.Controls.Game
             for (int i = 0; i < _items.Count; i++)
             {
                 _items[i].UpdatePosition(_itemPositions[i] - translation);
-                if (_items[i].Rectangle.Bottom < Position.Y - Game1.V2Transform.Y + _coverPadding || _items[i].Rectangle.Top > Position.Y + _height - Game1.V2Transform.Y - _coverPadding)
+                if (_items[i].Rectangle.Bottom < Position.Y + _coverPadding || _items[i].Rectangle.Top > Position.Y + _height - _coverPadding)
                     _itemBlacklist.Add(i);
             }
         }

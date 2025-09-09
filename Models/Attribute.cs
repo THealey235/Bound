@@ -16,7 +16,7 @@ namespace Bound.Models
             Stat, Effect
         };
 
-        public enum Attributes
+        public enum AllAttributes
         {
             Vigor, Mind, Endurance, Strength, Dexterity, AmmoHandling, Precision, Arcane,
             Focus, MovementSpeed, PhysicalAttack, PhysicalDefence, Stamina, Health, MoneyMultiplier,
@@ -24,7 +24,7 @@ namespace Bound.Models
             DoubleJump
         };//Vigor is max HP, Health is current HP
 
-        public enum AttributeAbreviations
+        public enum AllAttributeAbreviations
         {
             HP, MP, END, STR, DEX, AMMH, PRC, ARC, FOC, MVMS, PATK, PDEF, STAM, HEAL, MONEYMULT,
             DJMP
@@ -37,7 +37,6 @@ namespace Bound.Models
         {
             Name = name;
             Value = value;
-            var x = Attributes.AmmoHandling.ToString();
         }
 
         public override string ToString()
