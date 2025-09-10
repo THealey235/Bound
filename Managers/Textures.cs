@@ -3,14 +3,16 @@ using Bound.Models.Items;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using SharpDX.WIC;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
 namespace Bound.Managers
 {
-    public class Textures
+    public class TextureManager
     {
         #region PreDefined
 
@@ -68,17 +70,18 @@ namespace Bound.Managers
         public Texture2D HotbarSelectedSlot;
         public Texture2D EmptyBox;
 
-        public Dictionary<string, Texture2D> HeadGear = new Dictionary<string, Texture2D>();
-        public Dictionary<string, Texture2D> ChestArmour = new Dictionary<string, Texture2D>();
-        public Dictionary<string, Texture2D> LegArmour = new Dictionary<string, Texture2D>();
-        public Dictionary<string, Texture2D> Footwear= new Dictionary<string, Texture2D>();
-        public Dictionary<string, Texture2D> Accessories = new Dictionary<string, Texture2D>();
-        public Dictionary<string, Texture2D> Weapons = new Dictionary<string, Texture2D>();
-        public Dictionary<string, Texture2D> Consumables = new Dictionary<string, Texture2D>();
-        public Dictionary<string, Texture2D> Skills = new Dictionary<string, Texture2D>();
-        public Dictionary<string, SpriteTextures> Sprites = new Dictionary<string, SpriteTextures>();
+        public Dictionary<string, Models.TextureCollection> HeadGear = new Dictionary<string, Models.TextureCollection>();
+        public Dictionary<string, Models.TextureCollection> ChestArmour = new Dictionary<string, Models.TextureCollection>();
+        public Dictionary<string, Models.TextureCollection> LegArmour = new Dictionary<string, Models.TextureCollection>();
+        public Dictionary<string, Models.TextureCollection> Footwear= new Dictionary<string, Models.TextureCollection>();
+        public Dictionary<string, Models.TextureCollection> Accessories = new Dictionary<string, Models.TextureCollection>();
+        public Dictionary<string, Models.TextureCollection> Weapons = new Dictionary<string, Models.TextureCollection>();
+        public Dictionary<string, Models.TextureCollection> Consumables = new Dictionary<string, Models.TextureCollection>();
+        public Dictionary<string, Models.TextureCollection> Skills = new Dictionary<string, Models.TextureCollection>();
+        public Dictionary<string, Models.TextureCollection> Sprites = new Dictionary<string, Models.TextureCollection>();
 
-        public Dictionary<string, Texture2D> Items = new Dictionary<string, Texture2D>();
+        public Dictionary<string, Models.TextureCollection> Items = new Dictionary<string, Models.TextureCollection>();
+        public Dictionary<ItemType, Dictionary<string, Models.TextureCollection>> SortedItems = new Dictionary<ItemType, Dictionary<string, Models.TextureCollection>>();
         private Dictionary<int, string> IdToName = new Dictionary<int, string>();
 
         public Dictionary<string, Texture2D> Buttons;
@@ -103,13 +106,13 @@ namespace Bound.Managers
             }
         }
 
-        public Textures(ContentManager content, Game1 game)
+        public TextureManager(ContentManager content, Game1 game)
         {
 
             _content = content;
             _game = game;
 
-            Null = content.Load<Texture2D>("MissingTexture");
+            Null = Models.TextureCollection.MissingItemTexture = content.Load<Texture2D>("MissingTexture");
             Blank = new Texture2D(game.GraphicsDevice, 32, 32);
             Blank.SetData(Enumerable.Repeat(Color.Transparent, 32 * 32).ToArray());
             Fonts = new List<SpriteFont>()
@@ -154,19 +157,21 @@ namespace Bound.Managers
             LoadDirectory("Content/Items/Accessories", Accessories);
             LoadDirectory("Content/Items/Consumables", Consumables);
             LoadDirectory("Content/Items/Skills", Skills);
+            LoadDirectory("Content/Items/Weapons", Weapons);
 
 
-            foreach (var dict in new List<Dictionary<string, Texture2D>>() { HeadGear, ChestArmour, LegArmour, Footwear, Accessories, Consumables, Skills})
+            foreach (var dict in new List<Dictionary<string, Models.TextureCollection>>() { HeadGear, ChestArmour, LegArmour, Footwear, Accessories, Consumables, Skills, Weapons})
             {
                 foreach (var kvp in dict)
                 {
                     if (kvp.Key == "Default") continue;
                     Items.Add(kvp.Key, kvp.Value);
                 }
-                if (!dict.ContainsKey("Default")) dict.Add("Default", Blank);
+                if (!dict.ContainsKey("Default")) dict.Add("Default", new Models.TextureCollection());
             }
 
-            Items.Add("Default", Blank);
+            Items.Add("Default", new Models.TextureCollection());
+            Items["Default"].Statics.Add("Icon", Blank);
 
             LoadSprites();
 
@@ -174,42 +179,53 @@ namespace Bound.Managers
 
         }
 
-        //was used for loading items with multiple sprites such as a chest piece with a worn sprite and a menu sprite
-        //but it is more efficient to keep it as one texture and use a source rectangle so this may be deprecated
-        //although this code may be useful in the future.
-        private void LoadDirectory(string path, Dictionary<string, List<Texture2D>> outputList)
-        {
-            string x;
-            string name;
-            Texture2D texture;
 
-            foreach (var file in System.IO.Directory.GetFiles(path))
+        private void LoadDirectory (string masterPath, Dictionary<string, Models.TextureCollection> outputList)
+        {
+            var paths = new List<string>();
+            try
+            { 
+                paths.AddRange(Directory.GetFiles(masterPath + "/Statics"));
+                paths.AddRange(Directory.GetFiles(masterPath + "/Sheets"));
+            }
+            catch (Exception e) { }
+
+            var files = new Dictionary<string, Dictionary<string, List<string>>>();
+            foreach (var path in paths)
             {
-                x = string.Join('/', file.Replace('\\', '/').Split('/').Skip(1)).Replace(".xnb", String.Empty);
-                name = x.Split('/')[^1];
-                texture = _content.Load<Texture2D>(x);
+                var file = path.Replace("\\", "/").Replace(".xnb", string.Empty);
+                var itemName = file.Split('/')[^1].Split('-')[^2];
+                if (!files.ContainsKey(itemName))
+                {
+                    files.Add(
+                        itemName,
+                        new Dictionary<string, List<string>>() { { "Statics", new List<string>() }, { "Sheets", new List<string>() } }
+                    );
+                }
+                    
+                files[itemName][file.Split('/')[^2]].Add(file);
+            }
+
+            foreach (var file in files)
+            {
                 outputList.Add(
-                    name,
-                    new List<Texture2D> {
-                        CreateSubTexture(_game.GraphicsDevice, texture, new Rectangle(0, 0, 32, 32)),
-                        CreateSubTexture(_game.GraphicsDevice, texture, new Rectangle(32, 0, 32, 32))
-                    }
+                    file.Key,
+                    new Models.TextureCollection(
+                        _content,
+                        file.Value["Statics"].ToDictionary(x => x.Split('/')[^1].Split('-')[^1], x => x),
+                        file.Value["Sheets"].ToDictionary(x => x.Split('/')[^1].Split("-")[^1], x => x)
+                    )
                 );
             }
-        }
 
-        private void LoadDirectory (string path, Dictionary<string, Texture2D> outputList)
-        {
-            string x;
+            if (outputList.ContainsKey("Default"))
+                foreach (var item in outputList)
+                    item.Value.BlankItemTexture = outputList["Default"].GetIcon();
 
-            foreach (var file in System.IO.Directory.GetFiles(path))
-            {
-                x = string.Join('/', file.Replace('\\', '/').Split('/').Skip(1)).Replace(".xnb", String.Empty);
-                outputList.Add(
-                    x.Split('/')[^1],
-                    _content.Load<Texture2D>(x)
-                );
-            }
+            var type = StringToType(masterPath.Split('/')[^1].ToLower());
+            if (type != ItemType.Unrecognised)
+                SortedItems.Add(type, outputList);
+
         }
         public Dictionary<string, Item> LoadItems()
         {
@@ -226,12 +242,12 @@ namespace Bound.Managers
             var items = new Dictionary<string, Item>();
 
             // 0: Name, 1: ItemType, 2: Description, 3: Attributes
-            Texture2D texture;
+            Models.TextureCollection texture;
             for (int i = 0; i < readItems.Count; i++)
             {
                 try
                 {
-                    texture = (Items.ContainsKey(readItems[i][0])) ? Items[readItems[i][0]] : Null;
+                    texture = (Items.ContainsKey(readItems[i][0])) ? Items[readItems[i][0]] : new Models.TextureCollection();
                     if (readItems[i].Count == 3) //means it has no attributes
                         items.Add(readItems[i][0], new Item(texture, i, readItems[i][0], readItems[i][2], StringToType(readItems[i][1])));
                     else
@@ -256,13 +272,16 @@ namespace Bound.Managers
             var sprites = Directory.GetDirectories(path);
             foreach(var sprite in sprites)
             {
-                var textures = Directory.GetFiles(sprite).Select(x => x.Replace("Content/", string.Empty).Replace(".xnb", string.Empty));
+                var textures = Directory.GetFiles(sprite)
+                    .Select(x => x.Replace("Content/", string.Empty).Replace(".xnb", string.Empty))
+                    .ToDictionary(x => x.Split('\\')[^1].Split('-')[0], x => x);
+                    
                 Sprites.Add(
-                    sprite.Replace(path + "\\", string.Empty),
-                    new SpriteTextures(
+                    sprite.Split("\\")[1],
+                    new Models.TextureCollection(
                         _content,
-                        textures.Where(x => !x.Contains("-Sheet")).ToList(),
-                        textures.Where(x => x.Contains("-Sheet")).ToList()
+                        textures.Where(x => !x.Value.Contains("-Sheet")).ToDictionary(x => x.Key, x => x.Value),
+                        textures.Where(x => x.Value.Contains("-Sheet")).ToDictionary(x => x.Key, x => x.Value)
                     )
                 );
             }
@@ -308,16 +327,23 @@ namespace Bound.Managers
             return newTexture;
         }
 
-        public Texture2D GetItemTexture(string itemName)
+        public Texture2D GetItemIcon(string itemName, bool nullAsMissing = true, ItemType type = ItemType.Item)
         {
             try
             {
-                return Items[itemName];
+                var texture = Items[itemName].GetIcon(nullAsMissing);
+                if (texture.Name == null && !nullAsMissing)
+                {
+                    type = (itemName == "Default") ? type : _game.Items[itemName].Type;
+                    texture = SortedItems[type].ToList()[0].Value.GetIcon(nullAsMissing);
+                }
+                return texture;
+                
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                return Null;
+                return nullAsMissing ? Null : Blank;
             }
         }
 

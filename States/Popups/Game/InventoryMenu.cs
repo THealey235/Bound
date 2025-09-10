@@ -105,12 +105,12 @@ namespace Bound.States.Popups.Game
 
             _armour = new List<InventorySlot>();
 
-            var armourIDs = new Dictionary<string, Textures.ItemType>() 
+            var armourIDs = new Dictionary<string, TextureManager.ItemType>() 
             { 
-                {"headgear", Textures.ItemType.HeadGear },
-                {"chestarmour", Textures.ItemType.ChestArmour },
-                {"legarmour", Textures.ItemType.LegArmour },
-                {"footwear", Textures.ItemType.Footwear },
+                {"headgear", TextureManager.ItemType.HeadGear },
+                {"chestarmour", TextureManager.ItemType.ChestArmour },
+                {"legarmour", TextureManager.ItemType.LegArmour },
+                {"footwear", TextureManager.ItemType.Footwear },
             };
 
             _playerPosition = new Vector2(background.Position.X + (x + Game1.ResScale * 40), background.Position.Y + (y + Game1.ResScale * 25));
@@ -138,7 +138,7 @@ namespace Bound.States.Popups.Game
             {
                 if (i == 4) { acc = 0; x += xSpacing; }
 
-                _accessories.Add(new InventorySlot(_game, font, "accessory", _game.SavesManager.ActiveSave.GetEquippedItem("accessory", i), Textures.ItemType.Accessory, i)
+                _accessories.Add(new InventorySlot(_game, font, "accessory", _game.SavesManager.ActiveSave.GetEquippedItem("accessory", i), TextureManager.ItemType.Accessory, i)
                 {
                     Click = new EventHandler(Button_Accessory_Clicked),
                     Layer = layer,
@@ -158,7 +158,7 @@ namespace Bound.States.Popups.Game
             _hotbar = new List<InventorySlot>();
             for (int i = 0; i < hbSlots; i++)
             {
-                _hotbar.Add(new InventorySlot(_game, font, "hotbar", _game.SavesManager.ActiveSave.GetEquippedItem("hotbar", i), Textures.ItemType.HoldableItem, i)
+                _hotbar.Add(new InventorySlot(_game, font, "hotbar", _game.SavesManager.ActiveSave.GetEquippedItem("hotbar", i), TextureManager.ItemType.HoldableItem, i)
                 {
                     Click = new EventHandler(Button_Hotbar_Clicked),
                     Layer = layer,
@@ -176,7 +176,7 @@ namespace Bound.States.Popups.Game
             y = (int)(background.Height * (4f / 5f) - 10 * Game1.ResScale);
             for (int i = 0; i < skillSlots; i++)
             {
-                _skills.Add(new InventorySlot(_game, font, "skill", _game.SavesManager.ActiveSave.GetEquippedItem("skill", i), Textures.ItemType.Skill, i)
+                _skills.Add(new InventorySlot(_game, font, "skill", _game.SavesManager.ActiveSave.GetEquippedItem("skill", i), TextureManager.ItemType.Skill, i)
                 {
                     Click = new EventHandler(Button_Skills_Clicked),
                     Layer = layer,
@@ -215,25 +215,25 @@ namespace Bound.States.Popups.Game
 
         }
 
-        public void UpdateSlot(Textures.ItemType type, string item)
+        public void UpdateSlot(TextureManager.ItemType type, string item)
         {
             var isHotbar = false;
             switch (type)
             {
-                case Textures.ItemType.HeadGear:
+                case TextureManager.ItemType.HeadGear:
                     _armour[0].ContainedItem = item; break;
-                case Textures.ItemType.ChestArmour:
+                case TextureManager.ItemType.ChestArmour:
                     _armour[1].ContainedItem = item; break;
-                case Textures.ItemType.LegArmour:
+                case TextureManager.ItemType.LegArmour:
                     _armour[2].ContainedItem = item; break;
-                case Textures.ItemType.Footwear:
+                case TextureManager.ItemType.Footwear:
                     _armour[3].ContainedItem = item; break;
-                case Textures.ItemType.Accessory:
+                case TextureManager.ItemType.Accessory:
                     _accessories[_selectedBoxIndex].ContainedItem = item; break;
-                case Textures.ItemType.Weapon:
-                case Textures.ItemType.Consumable:
+                case TextureManager.ItemType.Weapon:
+                case TextureManager.ItemType.Consumable:
                     _hotbar[_selectedBoxIndex].ContainedItem = item; isHotbar = true; break;
-                case Textures.ItemType.Skill:
+                case TextureManager.ItemType.Skill:
                     _skills[_selectedBoxIndex].ContainedItem = item; break;
             }
 
@@ -280,7 +280,7 @@ namespace Bound.States.Popups.Game
         private void Button_Hotbar_Clicked(object sender, EventArgs e)
         {
             var button = sender as InventorySlot;
-            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, _graphics, new List<Textures.ItemType>() { Textures.ItemType.Weapon, Textures.ItemType.Consumable }, button.ID, Layer + 0.01f, this));
+            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, _graphics, new List<TextureManager.ItemType>() { TextureManager.ItemType.Weapon, TextureManager.ItemType.Consumable }, button.ID, Layer + 0.01f, this));
             _selectedBoxIndex = button.Index;
         }
 

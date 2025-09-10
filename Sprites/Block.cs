@@ -10,7 +10,7 @@ namespace Bound.Sprites
     {
         #region Fields & Properties
 
-        private Textures _textures;
+        private TextureManager _textures;
         private Rectangle _sourceRectangle;
         private SpriteEffects _spriteEffects;
         private Vector2 _origin = Vector2.Zero;
@@ -57,7 +57,7 @@ namespace Bound.Sprites
         }
 
         #endregion
-        public Block(Textures textures, int index, Rectangle source, Vector2 position, float scale, float layer, GraphicsDevice graphics)
+        public Block(TextureManager textures, int index, Rectangle source, Vector2 position, float scale, float layer, GraphicsDevice graphics)
         {
             _sourceRectangle = source;
 
@@ -75,7 +75,7 @@ namespace Bound.Sprites
 
         }
 
-        public Block(Textures textures, GraphicsDevice graphics, int index, Vector2 position, Color colour, float rotation, Vector2 origin, float scale, SpriteEffects spriteEffects, float layer)
+        public Block(TextureManager textures, GraphicsDevice graphics, int index, Vector2 position, Color colour, float rotation, Vector2 origin, float scale, SpriteEffects spriteEffects, float layer)
         {
             _textures = textures;
             var rowLength = _textures.BlockAtlas.Width / _textures.BlockWidth;

@@ -240,7 +240,7 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/JX-900.spritefont
 
-#begin Items/Accessories/Crimson Blessing.png
+#begin Items/Accessories/Statics/Crimson Blessing-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -250,9 +250,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Items/Accessories/Crimson Blessing.png
+/build:Items/Accessories/Statics/Crimson Blessing-Icon.png
 
-#begin Items/Accessories/Fast Feet.png
+#begin Items/Accessories/Statics/Fast Feet-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -262,9 +262,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Items/Accessories/Fast Feet.png
+/build:Items/Accessories/Statics/Fast Feet-Icon.png
 
-#begin Items/Accessories/Silver Powder.png
+#begin Items/Accessories/Statics/Silver Powder-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -274,9 +274,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Items/Accessories/Silver Powder.png
+/build:Items/Accessories/Statics/Silver Powder-Icon.png
 
-#begin Items/ChestArmour/Default.png
+#begin Items/ChestArmour/Statics/Default-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -286,9 +286,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Items/ChestArmour/Default.png
+/build:Items/ChestArmour/Statics/Default-Icon.png
 
-#begin Items/ChestArmour/Super Cool Epic Chest Piece.png
+#begin Items/ChestArmour/Statics/Super Cool Epic Chest Piece-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -298,9 +298,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Items/ChestArmour/Super Cool Epic Chest Piece.png
+/build:Items/ChestArmour/Statics/Super Cool Epic Chest Piece-Icon.png
 
-#begin Items/Consumables/Double Jump.png
+#begin Items/Consumables/Statics/Double Jump-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -310,9 +310,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Items/Consumables/Double Jump.png
+/build:Items/Consumables/Statics/Double Jump-Icon.png
 
-#begin Items/Consumables/Golden Mibu Water Balloon.png
+#begin Items/Consumables/Statics/Golden Mibu Water Balloon-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -322,9 +322,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Items/Consumables/Golden Mibu Water Balloon.png
+/build:Items/Consumables/Statics/Golden Mibu Water Balloon-Icon.png
 
-#begin Items/Consumables/Healing Potion.png
+#begin Items/Consumables/Statics/Healing Potion-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -334,9 +334,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Items/Consumables/Healing Potion.png
+/build:Items/Consumables/Statics/Healing Potion-Icon.png
 
-#begin Items/Consumables/Lesser Guinn.png
+#begin Items/Consumables/Statics/Lesser Guinn-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -346,9 +346,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Items/Consumables/Lesser Guinn.png
+/build:Items/Consumables/Statics/Lesser Guinn-Icon.png
 
-#begin Items/Consumables/Magic Infused Potion.png
+#begin Items/Consumables/Statics/Magic Infused Potion-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -358,9 +358,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Items/Consumables/Magic Infused Potion.png
+/build:Items/Consumables/Statics/Magic Infused Potion-Icon.png
 
-#begin Items/Consumables/Rock.png
+#begin Items/Consumables/Statics/Rock-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -370,9 +370,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Items/Consumables/Rock.png
+/build:Items/Consumables/Statics/Rock-Icon.png
 
-#begin Items/Consumables/Stamina Potion.png
+#begin Items/Consumables/Statics/Stamina Potion-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -382,9 +382,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Items/Consumables/Stamina Potion.png
+/build:Items/Consumables/Statics/Stamina Potion-Icon.png
 
-#begin Items/Consumables/Stone Potion.png
+#begin Items/Consumables/Statics/Stone Potion-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -394,9 +394,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Items/Consumables/Stone Potion.png
+/build:Items/Consumables/Statics/Stone Potion-Icon.png
 
-#begin Items/Consumables/Throwing Dagger.png
+#begin Items/Consumables/Statics/Throwing Dagger-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -406,9 +406,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Items/Consumables/Throwing Dagger.png
+/build:Items/Consumables/Statics/Throwing Dagger-Icon.png
 
-#begin Items/Footwear/Default.png
+#begin Items/Footwear/Statics/Default-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -418,9 +418,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Items/Footwear/Default.png
+/build:Items/Footwear/Statics/Default-Icon.png
 
-#begin Items/HeadGear/Default.png
+#begin Items/HeadGear/Statics/Default-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -430,9 +430,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Items/HeadGear/Default.png
+/build:Items/HeadGear/Statics/Default-Icon.png
 
-#begin Items/LegArmour/Default.png
+#begin Items/LegArmour/Statics/Default-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -442,9 +442,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Items/LegArmour/Default.png
+/build:Items/LegArmour/Statics/Default-Icon.png
 
-#begin Items/Skills/Default.png
+#begin Items/Skills/Statics/Default-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -454,7 +454,31 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Items/Skills/Default.png
+/build:Items/Skills/Statics/Default-Icon.png
+
+#begin Items/Weapons/Statics/Default-Icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Items/Weapons/Statics/Default-Icon.png
+
+#begin Items/Weapons/Statics/Wooden Sword-Icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Items/Weapons/Statics/Wooden Sword-Icon.png
 
 #begin MissingTexture.png
 /importer:TextureImporter

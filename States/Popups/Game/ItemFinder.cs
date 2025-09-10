@@ -17,7 +17,7 @@ namespace Bound.States.Popups
     {
         private List<Component> _components;
         private List<Item> _items;
-        private List<Textures.ItemType> _filter;
+        private List<TextureManager.ItemType> _filter;
         private ScrollingMenu _scrollingMenu;
         private object _creator;
         private string _slotID;
@@ -27,17 +27,17 @@ namespace Bound.States.Popups
         public float Layer;
         public Color PenColor = Game1.MenuColorPalette[2];
 
-        public ItemFinder(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics, Textures.ItemType filter, string slotID, float layer, object creator) : base(game, content, parent, graphics)
+        public ItemFinder(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics, TextureManager.ItemType filter, string slotID, float layer, object creator) : base(game, content, parent, graphics)
         {
             Name = Game1.Names.ItemFinder;
             Layer = layer;
-            _filter = new List<Textures.ItemType>() { filter };
+            _filter = new List<TextureManager.ItemType>() { filter };
             _creator = creator;
             _slotID = slotID;
             LoadContent();
         }
 
-        public ItemFinder(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics, List<Textures.ItemType> filter, string slotID, float layer, object creator) : base(game, content, parent, graphics)
+        public ItemFinder(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics, List<TextureManager.ItemType> filter, string slotID, float layer, object creator) : base(game, content, parent, graphics)
         {
             Name = Game1.Names.ItemFinder;
             Layer = layer;

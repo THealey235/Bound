@@ -54,8 +54,8 @@ namespace Bound.Controls.Game
                 { 
                     _itemPosition = new Vector2
                     (
-                        _hotbarPosition.X + (_background.Width * HotbarScale - (_item.Texture.Width) * ItemScale) / 2,
-                        _hotbarPosition.Y + (_background.Width * HotbarScale - (_item.Texture.Width) * ItemScale) / 2
+                        _hotbarPosition.X + (_background.Width * HotbarScale - (_item.Textures.GetIcon().Width) * ItemScale) / 2,
+                        _hotbarPosition.Y + (_background.Width * HotbarScale - (_item.Textures.GetIcon().Width) * ItemScale) / 2
                     );
                     SetQuantityPosition();
             }
@@ -85,7 +85,7 @@ namespace Bound.Controls.Game
             _background = neutralTexture;
             _activeBackground = activeTexture;
             if (item != "Default")
-                _item = _game.SavesManager.ActiveSave.Inventory.GetItem(Textures.ItemType.HoldableItem, item);
+                _item = _game.SavesManager.ActiveSave.Inventory.GetItem(TextureManager.ItemType.HoldableItem, item);
             Position = position;
             IsSelected = false;
         }
@@ -96,7 +96,7 @@ namespace Bound.Controls.Game
 
             if (_item != null)
             {
-                spriteBatch.Draw(_item.Texture, _itemPosition + Game1.V2Transform, null, Color.White, 0f, Vector2.Zero, ItemScale, SpriteEffects.None, Layer + 0.0001f);
+                spriteBatch.Draw(_item.Textures.GetIcon(), _itemPosition + Game1.V2Transform, null, Color.White, 0f, Vector2.Zero, ItemScale, SpriteEffects.None, Layer + 0.0001f);
                 if (_item.Quantity > 1)
                     spriteBatch.DrawString(_font, _quantity, _quantityPosition + Game1.V2Transform, Color.Black, 0f, Vector2.Zero, _quantityScale, SpriteEffects.None, Layer + 0.0002f);
             }
@@ -107,7 +107,7 @@ namespace Bound.Controls.Game
             
         }
 
-        public void UpdateItem(Textures.ItemType type, string name)
+        public void UpdateItem(TextureManager.ItemType type, string name)
         {
             _item = _game.SavesManager.ActiveSave.Inventory.GetItem(type, name);
             Position = _hotbarPosition;

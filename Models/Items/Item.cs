@@ -10,21 +10,20 @@ namespace Bound.Models.Items
 {
     public class Item
     { 
-        private Texture2D _texture;
-
+        private TextureCollection _textures;
         public int Id { get; }
         public string Name { get; }
         public string Description { get; }
 
         public Dictionary<string, Attribute> Attributes;
-        public Textures.ItemType Type { get; }
-        public Texture2D Texture { get { return _texture; } }
+        public TextureManager.ItemType Type { get; }
+        public TextureCollection Textures { get { return _textures; } }
 
         public int Quantity = 1;
 
-        public Item(Texture2D texture, int id, string name, string description, Textures.ItemType type)
+        public Item(TextureCollection textures, int id, string name, string description, TextureManager.ItemType type)
         {
-            _texture = texture;
+            _textures = textures;
             Id = id;
             Name = name;
             Description = description;
@@ -32,7 +31,7 @@ namespace Bound.Models.Items
             Attributes = new Dictionary<string, Attribute>();
         }
 
-        public Item(Texture2D texture, int id, string name, string description, string attributes, Textures.ItemType type) : this(texture, id, name, description, type)
+        public Item(TextureCollection textures, int id, string name, string description, string attributes, TextureManager.ItemType type) : this(textures, id, name, description, type)
         {
             foreach (var attribute in attributes.Split(", ").ToList())
             {
@@ -43,7 +42,7 @@ namespace Bound.Models.Items
 
         public Item Clone()
         {
-            var output = new Item(_texture, Id, Name, Description, Type);
+            var output = new Item(_textures, Id, Name, Description, Type);
             output.Attributes = Attributes;
             output.Quantity = Quantity;
 

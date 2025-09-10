@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Bound.Managers.Textures;
+using static Bound.Managers.TextureManager;
 
 //This is more of a manager but so I may move this there in the future
 namespace Bound.Models
@@ -130,11 +130,11 @@ namespace Bound.Models
             return output;
         }
 
-        public Item GetItem(Textures.ItemType type, string name)
+        public Item GetItem(TextureManager.ItemType type, string name)
         {
             if ((int)type > _inventory.Count)
                 return null;
-            else if (type == Textures.ItemType.HoldableItem)
+            else if (type == TextureManager.ItemType.HoldableItem)
             {
                 if (_consumables.ContainsKey(name))
                     return _consumables[name]; 

@@ -182,6 +182,14 @@ namespace Bound.States.Game
             foreach (var att in _attributes)
                 attributes.Add(att.Key, new Models.Attribute(att.Key, att.Value));
 
+            var startingWeapon = _choiceBoxes[0].CurIndex switch
+            {
+                0 => "Wooden Sword",
+                _ => null
+            };
+            if (startingWeapon != null)
+                _game.CurrentInventory.Add(startingWeapon);
+
             _game.SavesManager.Saves[_game.RecentSave].Attributes = attributes;
         }
         private void Heirloom_Apply(object sender, EventArgs e)

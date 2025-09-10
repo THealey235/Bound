@@ -28,7 +28,7 @@ namespace Bound.Controls.Game
             }
         }
         
-        public readonly Textures.ItemType ItemType;
+        public readonly TextureManager.ItemType ItemType;
 
         public string ContainedItem
         {
@@ -39,8 +39,8 @@ namespace Bound.Controls.Game
             set
             {
                 _containedItem = value;
-                _texture = _game.Textures.GetItemTexture(value);
-                ChangeQunatity(value, ItemType);
+                _texture = _game.Textures.GetItemIcon(value, false, ItemType);
+                ChangeQuantity(value, ItemType);
             }
         }
 
@@ -66,7 +66,7 @@ namespace Bound.Controls.Game
             }
         }
 
-        public InventorySlot(Game1 game, SpriteFont font, string id, string containedItem, Textures.ItemType type) : base(game.Textures.EmptyBox, font)
+        public InventorySlot(Game1 game, SpriteFont font, string id, string containedItem, TextureManager.ItemType type) : base(game.Textures.EmptyBox, font)
         {
             _ID = id;
             _game = game;
@@ -84,10 +84,10 @@ namespace Bound.Controls.Game
             );
 
             ContainedItem = containedItem;
-            ChangeQunatity(containedItem, type);
+            ChangeQuantity(containedItem, type);
         }
 
-        private void ChangeQunatity(string containedItem, Textures.ItemType type)
+        private void ChangeQuantity(string containedItem, TextureManager.ItemType type)
         {
             if (_containedItem != "Default")
             {
@@ -97,10 +97,10 @@ namespace Bound.Controls.Game
                 _quantityPosition = null;
             }
             else
-                _showQuantity= false ;
+                _showQuantity = false ;
         }
 
-        public InventorySlot(Game1 game, SpriteFont font, string id, string containedItem, Textures.ItemType type, int index)
+        public InventorySlot(Game1 game, SpriteFont font, string id, string containedItem, TextureManager.ItemType type, int index)
             : this(game, font, id, containedItem, type)
         {
             _index = index;
@@ -117,7 +117,7 @@ namespace Bound.Controls.Game
             }
 
             _background.Colour = colour;
-            //runing this every draw is stupid and but this is the cascading issue with setting values by public and not by constructor
+            //runing this every draw is costly for no reason but this is the cascading issue with setting values by public and not by constructor
             //and to fix this i would have to refactor a ton of code so this is a problem for later
             _background.Position = new Vector2(Position.X - 1 * Game1.ResScale, Position.Y - 1 * Game1.ResScale); 
             _background.Draw(gameTime, spriteBatch);

@@ -98,7 +98,7 @@ namespace Bound.Controls.Game
             _position = position;
             _informationBackground = infoBackground;
             _font = game.Textures.Font;
-            _sourceRectangle = game.Textures.GetSourceRectangle(item.Type, Bound.Managers.Textures.ItemTextureType.Icon);
+            _sourceRectangle = game.Textures.GetSourceRectangle(item.Type, Bound.Managers.TextureManager.ItemTextureType.Icon);
             _itemName = new List<string>() { _item.Name };
             TextureScale = 0.75f;
 
@@ -120,7 +120,7 @@ namespace Bound.Controls.Game
             foreach (var c in _components)
                 c.Draw(gameTime, spriteBatch);
 
-            spriteBatch.Draw(_item.Texture, _itemTexturePos, _sourceRectangle, Color.White, 0f, Vector2.Zero, _scale, SpriteEffects.None, Layer + 0.0002f);
+            spriteBatch.Draw(_item.Textures.GetIcon(), _itemTexturePos, _sourceRectangle, Color.White, 0f, Vector2.Zero, _scale, SpriteEffects.None, Layer + 0.0002f);
             for (int i = 0; i < _itemName.Count; i++)
                 spriteBatch.DrawString(_font, _itemName[i], _namePositions[i], Color.Black, 0f, Vector2.Zero, _fontScale, SpriteEffects.None, Layer + 0.0001f);
             if (_item.Quantity > 1)
@@ -264,7 +264,7 @@ namespace Bound.Controls.Game
             foreach (var line in _itemDescription)
                 spriteBatch.DrawString(_font, line.Text, line.Position, Color.Black, 0f, Vector2.Zero, _descriptionTextScale, SpriteEffects.None, frame.Layer);
 
-            spriteBatch.Draw(_item.Texture, _descriptionImagePos, _sourceRectangle, Color.White, 0f, Vector2.Zero, Game1.ResScale, SpriteEffects.None, frame.Layer + 0.001f);
+            spriteBatch.Draw(_item.Textures.GetIcon(), _descriptionImagePos, _sourceRectangle, Color.White, 0f, Vector2.Zero, Game1.ResScale, SpriteEffects.None, frame.Layer + 0.001f);
 
         }
     }

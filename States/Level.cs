@@ -89,7 +89,7 @@ namespace Bound.States
         }
 
         //pad bottom with rows of tiles so that it looks nice.
-        protected void PadBottom(List<(List<Textures.Blocks> Block, Color Colour)> rows)
+        protected void PadBottom(List<(List<TextureManager.Blocks> Block, Color Colour)> rows)
         {
             var index = 0;
             for (int row = 0; row < rows.Count; row++)

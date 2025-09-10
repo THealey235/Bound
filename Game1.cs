@@ -74,7 +74,7 @@ namespace Bound
         }
 
         //Holds all textures to be used
-        public Textures Textures;
+        public TextureManager Textures;
 
         public string CurrentStateName
         {
@@ -170,7 +170,7 @@ namespace Bound
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            Textures = new Textures(Content, this);
+            Textures = new TextureManager(Content, this);
 
             Items = Textures.LoadItems();
 
