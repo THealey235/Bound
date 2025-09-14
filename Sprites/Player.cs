@@ -169,7 +169,7 @@ namespace Bound.Sprites
             }
 
             Position += Velocity;
-            if (toTruncate)
+            if (toTruncate) //this snaps the player to the top of a block when it falls
                 Position = new Vector2(Position.X, (int)Position.Y);
 
             _debugRectangle.Position = ScaledPosition;
@@ -179,8 +179,8 @@ namespace Bound.Sprites
         {
             if (_keys.IsPressed("Up", true))
                 inFreefall = false;
-            //if (_keys.IsPressed("Down", true))
-            //    Velocity += new Vector2(0, Speed);
+            if (_keys.IsPressed("Down", true))
+                Velocity += new Vector2(0, Speed);
             if (_keys.IsPressed("Left", true))
             {
                 Velocity += new Vector2(-Speed, 0);

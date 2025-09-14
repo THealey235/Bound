@@ -264,7 +264,7 @@ namespace Bound.Managers
                     switch (StringToType(readItems[i][1]))
                     {
                         case (ItemType.Weapon):
-                            items.Add(readItems[i][0], new Weapon(textures, i, readItems[i][0], readItems[i][2], StringToType(readItems[i][1]), readItems[i][3]));
+                            items.Add(readItems[i][0], new Weapon(_game, textures, i, readItems[i][0], readItems[i][2], StringToType(readItems[i][1]), readItems[i][3]));
                             break;
                         default:
                             items.Add(readItems[i][0], new Item(textures, i, readItems[i][0], readItems[i][2], StringToType(readItems[i][1]), readItems[i][3]));

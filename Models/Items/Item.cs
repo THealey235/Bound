@@ -1,4 +1,5 @@
-﻿using Bound.Managers;
+﻿using Bound.Controls;
+using Bound.Managers;
 using Bound.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,6 +15,9 @@ namespace Bound.Models.Items
     public class Item
     { 
         protected TextureCollection _textures;
+        protected Rectangle _rectangle;
+        protected DebugRectangle _collisionRectangle;
+
         public int Id { get; }
         public string Name { get; }
         public string Description { get; }
@@ -24,6 +28,11 @@ namespace Bound.Models.Items
         public TextureCollection Textures { get { return _textures; } }
 
         public int Quantity = 1;
+
+        public Rectangle CollisionRectangle
+        {
+            get {  return _rectangle; }
+        }
 
         public Item(TextureCollection textures, int id, string name, string description, TextureManager.ItemType type, string attributes = "")
         {

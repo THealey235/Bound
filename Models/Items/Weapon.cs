@@ -1,13 +1,10 @@
-﻿using Bound.Managers;
+﻿using Bound.Controls;
+using Bound.Managers;
 using Bound.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SharpDX.Direct2D1.Effects;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bound.Models.Items
 {
@@ -15,19 +12,15 @@ namespace Bound.Models.Items
     {
         public static bool InUse = false;
 
+        private Game1 _game;
         private AnimationManager _animationManager;
         private Dictionary<string, Animation> _animations;
-        private Rectangle _collisionRectangle;
         private Sprite _user;
+        private Vector2 _offset = new Vector2(0, 0);
 
         public enum WeaponTypes
         {
             Sword, Bow, Unrecognised
-        }
-
-        public Rectangle CollisionRectangle
-        {
-            get { return _collisionRectangle; }
         }
 
         public override Sprite User
@@ -39,6 +32,8 @@ namespace Bound.Models.Items
                 _animationManager.Layer = 0.99f;
                 _animationManager.Scale = Scale = _user.FullScale * 1.5f;
                 _animationManager.Origin = _user.Origin;
+
+                SetCollisionRectangle();
             }
         }
 
@@ -46,7 +41,7 @@ namespace Bound.Models.Items
 
         private readonly WeaponTypes _weaponType;
 
-        public Weapon(TextureCollection textures, int id, string name, string description, TextureManager.ItemType type, string attributes = "") : base(textures, id, name, description, type, attributes)
+        public Weapon(Game1 game, TextureCollection textures, int id, string name, string description, TextureManager.ItemType type, string attributes = "") : base(textures, id, name, description, type, attributes)
         {
             name = name.ToLower();
             if (name.Contains("sword") || name.Contains("axe"))
@@ -64,7 +59,7 @@ namespace Bound.Models.Items
                 Loop = false,
             };
 
-            SetCollisionRectangle();
+            _game = game;
         }
 
         private void SetCollisionRectangle()
@@ -76,22 +71,38 @@ namespace Bound.Models.Items
             switch (_weaponType)
             {
                 case WeaponTypes.Sword:
-                    _collisionRectangle = new Rectangle(0, 0, (int)(anim.FrameWidth * Scale), (int)(anim.FrameHeight * Scale));
+                    _rectangle = new Rectangle(0, 0, (int)(anim.FrameWidth * Scale), (int)(anim.FrameHeight * Scale));
                     break;
                 default:
-                    _collisionRectangle = new Rectangle(0, 0, 1, 1); break;
+                    _rectangle = new Rectangle(0, 0, 1, 1); break;
             }
+
+            _collisionRectangle = new DebugRectangle
+            (
+                _rectangle,
+                _game.GraphicsDevice,
+                _animationManager.Layer + 0.001f,
+                1f
+            )
+            {
+                BorderColour = Color.Red
+            };
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (_user != null)
+            if (_user != null && _animationManager.CurrentAnimation != null)
             {
                 _animationManager.Effects = _user.Effects;
-                Vector2 offset = new Vector2(_user.Rectangle.Width * 0.8f, -_user.Rectangle.Height * 0.3f); //used to allign the animation with the leading hand
+                _offset = new Vector2(_user.Rectangle.Width * 0.8f, -_user.Rectangle.Height * 0.3f); //used to allign the animation with the leading hand
                 if (_user.Effects == SpriteEffects.FlipHorizontally)
-                    offset = new Vector2(-offset.X - (_animationManager.CurrentAnimation.FrameWidth * (Scale / _user.FullScale)) / 2, offset.Y);
-                _animationManager.Position = _user.ScaledPosition + offset * _user.FullScale;
+                    _offset = new Vector2(-_offset.X - (_animationManager.CurrentAnimation.FrameWidth * (Scale / _user.FullScale)) / 2, _offset.Y);
+                _animationManager.Position = _user.ScaledPosition + _offset * _user.FullScale;
+
+                _rectangle.X = (int)_user.Position.X;
+                _rectangle.Y = (int)_user.Position.Y;
+
+                _collisionRectangle.Position = _user.ScaledPosition + _offset * _user.FullScale;
             }
 
             _animationManager.Update(gameTime);
@@ -101,6 +112,9 @@ namespace Bound.Models.Items
         {
             if (_animationManager.IsPlaying)
                 _animationManager.Draw(spriteBatch);
+
+            if (Game1.InDebug && _collisionRectangle != null)
+                _collisionRectangle.Draw(gameTime, spriteBatch);
         }
 
         public override void Use()

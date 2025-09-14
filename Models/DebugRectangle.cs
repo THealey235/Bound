@@ -52,10 +52,10 @@ namespace Bound.Models
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             if (_borderTexture != null)
-                spriteBatch.Draw(_borderTexture, Position, null, Game1.DebugColour, Rotation, Origin, Scale, SpriteEffects, _layer);
+                spriteBatch.Draw(_borderTexture, Position, null, (BorderColour == Color.White) ? Game1.DebugColour : BorderColour, Rotation, Origin, Scale, SpriteEffects, _layer);
         }
 
-        public void SetRectangleTexture()
+        private void SetRectangleTexture()
         {
             var emptyColour = new Color(0, 0, 0, 0);
             var colours = new List<Color>();
@@ -69,7 +69,7 @@ namespace Bound.Models
                        x > _rectangle.Width - (BarThickness + 1) ||  //right side
                        y > _rectangle.Height - (BarThickness + 1)) //bottom side
                     {
-                        colours.Add(BorderColour);
+                        colours.Add(Color.White);
                     }
                     else
                     {
