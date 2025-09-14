@@ -10,12 +10,12 @@ namespace Bound.Models
     public class TextureCollection
     {
         private int _defaultWidth = 0;
-
+        private Dictionary<string, (int Width, float Speed)> _sheetEntityParameters = new Dictionary<string, (int, float)>(); //this gives the width of each frame for a sheet.
+        
         public static Texture2D MissingItemTexture;
         public Texture2D BlankItemTexture;
         public Dictionary<string, Texture2D> Statics = new Dictionary<string, Texture2D>();
         public Dictionary<string, Texture2D> Sheets = new Dictionary<string, Texture2D>();
-        public Dictionary<string, int> SheetEntityWidths = new Dictionary<string, int>(); //this gives the width of each frame for a sheet.
 
         public int DefaultWidth
         {
@@ -35,10 +35,10 @@ namespace Bound.Models
             if (statics.Count > 0)
                 _defaultWidth = Statics[Statics.Keys.First()].Width;
         }
-        public TextureCollection(ContentManager content, Dictionary<string, string> statics, Dictionary<string, string> sheets, Dictionary<string, int> sheetEntityWidths)
+        public TextureCollection(ContentManager content, Dictionary<string, string> statics, Dictionary<string, string> sheets, Dictionary<string, (int, float)> sheetEntityParameters)
             :this(content, statics, sheets)
         {
-            SheetEntityWidths = sheetEntityWidths;
+            _sheetEntityParameters = sheetEntityParameters;
         }
 
         public TextureCollection()
@@ -48,12 +48,20 @@ namespace Bound.Models
 
         public int FrameCount(string key)
         {
-            var width = SheetEntityWidths.ContainsKey(key) ? SheetEntityWidths[key] : _defaultWidth;
+            var width = _sheetEntityParameters.ContainsKey(key) ? _sheetEntityParameters[key].Width : _defaultWidth;
 
             if (!Sheets.ContainsKey(key) || width == 0)
                 return 1;
             else
                 return Sheets[key].Width / width;
+        }
+
+        public float FrameSpeed(string key)
+        {
+            (int, float) output;
+            if (_sheetEntityParameters.TryGetValue(key, out output))
+                return output.Item2;
+            return 0.2f;
         }
 
         public Texture2D GetIcon(bool nullAsMissing = true) 

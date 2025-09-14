@@ -84,6 +84,8 @@ namespace Bound.States
                 _player
             };
 
+            _player.Level = this;
+
             _HUD = new HeadsUpDisplay(_game, _content);
             _HUD.LoadContent();
         }

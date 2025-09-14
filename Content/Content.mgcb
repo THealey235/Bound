@@ -456,6 +456,18 @@
 /processorParam:TextureFormat=Color
 /build:Items/Skills/Statics/Default-Icon.png
 
+#begin Items/Weapons/Sheets/Wooden Sword-Use.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Items/Weapons/Sheets/Wooden Sword-Use.png
+
 #begin Items/Weapons/Statics/Default-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor

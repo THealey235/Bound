@@ -17,12 +17,18 @@ namespace Bound.Sprites
         private int _blockWidth;
         private DebugRectangle _debugRectangle;
         private float _scale;
+        private string _name;
 
         public float Layer;
         public float Rotation = 0f;
         public Color Colour = Color.White;
         public int Index;
         public Vector2 Position { get; set; }
+
+        public string Name
+        {
+            get {  return _name; }
+        }
 
         public Rectangle Rectangle
         {
@@ -59,6 +65,8 @@ namespace Bound.Sprites
         #endregion
         public Block(TextureManager textures, int index, Rectangle source, Vector2 position, float scale, float layer, GraphicsDevice graphics)
         {
+            _name = "block";
+
             _sourceRectangle = source;
 
             Position = position;
@@ -77,6 +85,7 @@ namespace Bound.Sprites
 
         public Block(TextureManager textures, GraphicsDevice graphics, int index, Vector2 position, Color colour, float rotation, Vector2 origin, float scale, SpriteEffects spriteEffects, float layer)
         {
+            _name = "block";
             _textures = textures;
             var rowLength = _textures.BlockAtlas.Width / _textures.BlockWidth;
             var column = index / rowLength;

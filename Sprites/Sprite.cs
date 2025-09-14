@@ -37,6 +37,8 @@ namespace Bound.Sprites
 
         protected float Gravity = 0;
 
+        protected string _name;
+
         #endregion
 
         #region Properties
@@ -68,6 +70,11 @@ namespace Bound.Sprites
                     _animationManager.Effects = value;
 
             }
+        }
+
+        public string Name
+        {
+            get { return _name; }
         }
 
         public bool IsRemoved { get; set; }
@@ -110,9 +117,6 @@ namespace Bound.Sprites
             set
             {
                 _origin = value;
-
-                if (_animationManager != null)
-                    _animationManager.Origin = _origin;
             }
         }
 
@@ -174,6 +178,11 @@ namespace Bound.Sprites
         public readonly Color[] TextureData;
 
         public Sprite Parent;
+
+        public SpriteEffects Effects
+        {
+            get { return _spriteEffects; }
+        }
 
         #endregion
 

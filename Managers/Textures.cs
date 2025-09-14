@@ -3,10 +3,8 @@ using Bound.Models.Items;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using SharpDX.WIC;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -49,6 +47,11 @@ namespace Bound.Managers
             Item,
             Unrecognised,
         }
+
+        private readonly Dictionary<string, (int Width, float Speed)> _spriteSheetConstants = new Dictionary<string, (int Width, float Speed)>()
+        {
+            {"Wooden Sword-Use",  (42, 0.45f / 18f)},
+        };
 
         #endregion
 
@@ -206,14 +209,24 @@ namespace Bound.Managers
                 files[itemName][file.Split('/')[^2]].Add(file);
             }
 
+            var sheetConstants = new Dictionary<string, (int Width, float Speed)>();
+            (int, float) x;
             foreach (var file in files)
             {
+                sheetConstants.Clear();
+                foreach (var texture in file.Value["Sheets"])
+                {
+                    if (_spriteSheetConstants.TryGetValue(texture.Split('/')[^1], out x))
+                        sheetConstants.Add(texture.Split('/')[^1].Split('-')[^1], x);
+                }
+
                 outputList.Add(
                     file.Key,
                     new Models.TextureCollection(
                         _content,
                         file.Value["Statics"].ToDictionary(x => x.Split('/')[^1].Split('-')[^1], x => x),
-                        file.Value["Sheets"].ToDictionary(x => x.Split('/')[^1].Split("-")[^1], x => x)
+                        file.Value["Sheets"].ToDictionary(x => x.Split('/')[^1].Split("-")[^1], x => x),
+                        sheetConstants
                     )
                 );
             }
@@ -242,16 +255,21 @@ namespace Bound.Managers
             var items = new Dictionary<string, Item>();
 
             // 0: Name, 1: ItemType, 2: Description, 3: Attributes
-            Models.TextureCollection texture;
+            Models.TextureCollection textures;
             for (int i = 0; i < readItems.Count; i++)
             {
                 try
                 {
-                    texture = (Items.ContainsKey(readItems[i][0])) ? Items[readItems[i][0]] : new Models.TextureCollection();
-                    if (readItems[i].Count == 3) //means it has no attributes
-                        items.Add(readItems[i][0], new Item(texture, i, readItems[i][0], readItems[i][2], StringToType(readItems[i][1])));
-                    else
-                        items.Add(readItems[i][0], new Item(texture, i, readItems[i][0], readItems[i][2], readItems[i][3], StringToType(readItems[i][1])));
+                    textures = (Items.ContainsKey(readItems[i][0])) ? Items[readItems[i][0]] : new Models.TextureCollection();
+                    switch (StringToType(readItems[i][1]))
+                    {
+                        case (ItemType.Weapon):
+                            items.Add(readItems[i][0], new Weapon(textures, i, readItems[i][0], readItems[i][2], StringToType(readItems[i][1]), readItems[i][3]));
+                            break;
+                        default:
+                            items.Add(readItems[i][0], new Item(textures, i, readItems[i][0], readItems[i][2], StringToType(readItems[i][1]), readItems[i][3]));
+                            break;
+                    }
 
                     IdToName.Add(i, readItems[i][0]);
                 }
@@ -275,13 +293,22 @@ namespace Bound.Managers
                 var textures = Directory.GetFiles(sprite)
                     .Select(x => x.Replace("Content/", string.Empty).Replace(".xnb", string.Empty))
                     .ToDictionary(x => x.Split('\\')[^1].Split('-')[0], x => x);
+
+                var sheetConstants = new Dictionary<string, (int Width, float Speed)>();
+                (int Width, float Speed) x;
+                foreach (var kvp in textures)
+                {
+                    if (_spriteSheetConstants.TryGetValue(kvp.Value.Split('\\')[^1], out x))
+                        sheetConstants.Add(kvp.Key, x);
+                }
                     
                 Sprites.Add(
                     sprite.Split("\\")[1],
                     new Models.TextureCollection(
                         _content,
                         textures.Where(x => !x.Value.Contains("-Sheet")).ToDictionary(x => x.Key, x => x.Value),
-                        textures.Where(x => x.Value.Contains("-Sheet")).ToDictionary(x => x.Key, x => x.Value)
+                        textures.Where(x => x.Value.Contains("-Sheet")).ToDictionary(x => x.Key, x => x.Value),
+                        sheetConstants
                     )
                 );
             }
@@ -299,7 +326,7 @@ namespace Bound.Managers
                 "consumable" => ItemType.Consumable,
                 "skill" => ItemType.Skill,
                 "weapon" => ItemType.Weapon,
-                _ => ItemType.Unrecognised,
+                _ => ItemType.Unrecognised
             };
             return output;
         }

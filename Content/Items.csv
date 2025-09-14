@@ -1,7 +1,7 @@
 Crimson Blessing;Accessory;Bestowed up on the The Lands of Garnd by the Bringer of Autumn. Said to provide the holder with increased vitality.;HP 10
-Silver Powder;Accessory;Null;MP 10
-Lesser Guinn;Consumable;Null
-Fast Feet;Accessory;Null;MVMS 5
+Silver Powder;Accessory;Consumable;MP 10
+Lesser Guinn;Consumable;Consumable;
+Fast Feet;Accessory;Consumable;MVMS 5
 Throwing Dagger;Consumable;Throw to deal a minimal ammount of damage;PATK 10
 Super Cool Epic Chest Piece;ChestArmour;Amazing piece of chest armour definitely not just a long ass name for debugging purposes >:);PDEF 10000000
 Healing Potion;Consumable;Heals for 15HP;HEAL 15

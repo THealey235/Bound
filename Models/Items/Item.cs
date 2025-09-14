@@ -1,38 +1,45 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Bound.Managers;
+using Bound.Sprites;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Bound.Managers;
+using System.Xml.Linq;
 
 namespace Bound.Models.Items
 {
     public class Item
     { 
-        private TextureCollection _textures;
+        protected TextureCollection _textures;
         public int Id { get; }
         public string Name { get; }
         public string Description { get; }
+        public virtual Sprite User { get; set; }
 
-        public Dictionary<string, Attribute> Attributes;
+        public Dictionary<string, Attribute> Attributes = new Dictionary<string, Attribute>();
         public TextureManager.ItemType Type { get; }
         public TextureCollection Textures { get { return _textures; } }
 
         public int Quantity = 1;
 
-        public Item(TextureCollection textures, int id, string name, string description, TextureManager.ItemType type)
+        public Item(TextureCollection textures, int id, string name, string description, TextureManager.ItemType type, string attributes = "")
         {
             _textures = textures;
             Id = id;
             Name = name;
             Description = description;
             Type = type;
-            Attributes = new Dictionary<string, Attribute>();
+
+            SetAttributes(attributes.ReplaceLineEndings().Replace(Environment.NewLine, string.Empty));
         }
 
-        public Item(TextureCollection textures, int id, string name, string description, string attributes, TextureManager.ItemType type) : this(textures, id, name, description, type)
+        private void SetAttributes(string attributes)
         {
+            if (attributes == "")
+                return;
             foreach (var attribute in attributes.Split(", ").ToList())
             {
                 var attr = attributes.Split(" ");
@@ -49,9 +56,16 @@ namespace Bound.Models.Items
             return output;
         }
 
-        public void Use()
+        public virtual void Use()
         {
-            return;
+        }
+
+        public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+        }
+
+        public virtual void Update(GameTime gameTime)
+        {
         }
     }
 }

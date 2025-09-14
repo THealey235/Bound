@@ -43,6 +43,7 @@
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/HeadGear/Statics/Default-Icon.png</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/LegArmour/Statics/Default-Icon.png</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Skills/Statics/Default-Icon.png</File>
+    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Weapons/Sheets/Wooden Sword-Use.png</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Weapons/Statics/Default-Icon.png</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Weapons/Statics/Wooden Sword-Icon.png</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/MissingTexture.png</File>
@@ -52,6 +53,7 @@
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Player/Walking-Sheet.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

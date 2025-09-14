@@ -3,7 +3,6 @@ using Bound.States;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using System.Linq;
 
 
 namespace Bound.Sprites
@@ -17,6 +16,7 @@ namespace Bound.Sprites
         private Dictionary<string, Attribute> _attributes;
 
         public Save Save;
+        public Level Level;
         public int HotbarSlot = 1;
         public Dictionary<string, Attribute> Attributes
         {
@@ -38,6 +38,8 @@ namespace Bound.Sprites
 
         public Player(Texture2D texture, Input Keys, Game1 game) : base(texture, game)
         {
+            _name = "player";
+
             _keys = Keys;
             Scale = 0.8f;
             _debugRectangle = new DebugRectangle
@@ -72,6 +74,9 @@ namespace Bound.Sprites
                     Scale = FullScale,
                 };
             }
+
+            foreach (var item in _game.Items)
+                item.Value.User = this;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -192,6 +197,8 @@ namespace Bound.Sprites
                 Gravity = 0;
                 Save.Health -= 5;
             }
+            if (_keys.IsPressed("Use", true))
+                Level.HUD.UseItem();
 
             return inFreefall;
         }

@@ -35,6 +35,8 @@ namespace Bound.Managers
 
         public float Scale { get; set; }
 
+        public bool Loop { get; set; }
+
         #region Methods
       
         public AnimationManager()
@@ -42,6 +44,7 @@ namespace Bound.Managers
             IsPlaying = false;
             Colour = Color.White;
             Scale = 1f;
+            Loop = true;
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -103,7 +106,10 @@ namespace Bound.Managers
                 _animation.CurrentFrame++;
 
                 if (_animation.CurrentFrame >= _animation.FrameCount)
+                {
                     _animation.CurrentFrame = 0;
+                    IsPlaying = Loop;
+                }
             }
         }
 

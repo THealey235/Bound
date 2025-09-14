@@ -24,6 +24,7 @@ namespace Bound.States.Popups.Game
         private List<int> _currentStatusBoxesWidth;
         private Save _save;
         private List<int> _statusBoxesBlacklist = new List<int>();
+        private int _hotbarSelectedSlot;
 
         public float Layer;
 
@@ -33,12 +34,16 @@ namespace Bound.States.Popups.Game
         {
             Layer = _game.Player.Layer + 0.01f;
             _save = game.SavesManager.ActiveSave;
+            _player = game.Player;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             foreach (var slot in _hotbarSlots)
                 slot.Draw(gameTime, spriteBatch);
+
+            if (_hotbarSlots[_hotbarSelectedSlot].Item != null)
+                _game.Items[_hotbarSlots[_hotbarSelectedSlot].Item.Name].Draw(gameTime, spriteBatch);
 
             for (int i = 0; i < _statusBoxes.Count; i++)
             {
@@ -69,6 +74,9 @@ namespace Bound.States.Popups.Game
                     )
                 );
             }
+            _hotbarSelectedSlot = _game.Player.HotbarSlot - 1;
+            _hotbarSlots[_hotbarSelectedSlot].IsSelected = true;
+
 
             var barScale = 1f;
             var basePos = new Vector2(20 * barScale * Game1.ResScale, 10 * Game1.ResScale);
@@ -123,13 +131,20 @@ namespace Bound.States.Popups.Game
             _previousStatusBoxesWidth = new List<int>(_currentStatusBoxesWidth);
             _currentStatusBoxesWidth = (new List<float>() { _save.Health, _save.Mana, _save.Stamina}).Select(x => (int)(x * Game1.ResScale)).ToList();
 
-            for (int i = 0; i < _hotbarSlots.Count; i++)
+            if (_hotbarSelectedSlot != _game.Player.HotbarSlot - 1)
             {
-                var hbSlot = _hotbarSlots[i];
-                if (i == _game.Player.HotbarSlot - 1)
-                    hbSlot.IsSelected = true;
-                else hbSlot.IsSelected = false;
+                _hotbarSelectedSlot = _game.Player.HotbarSlot - 1;
+                foreach (var slot in _hotbarSlots)
+                    slot.IsSelected = false;
+                _hotbarSlots[_hotbarSelectedSlot].IsSelected = true;
             }
+            //_game.Items[item.Name] is because we want the weapon class not the Item class returned by the hotbar slot because it has been cast to an Item losing some functionality
+            var item = _hotbarSlots[_hotbarSelectedSlot].Item;
+            if (item != null)
+                _game.Items[item.Name].Update(gameTime); 
+
+            foreach (var slot in _hotbarSlots)
+                slot.Update(gameTime);
 
             _statusBoxesBlacklist.Clear();
             for (int i = 0; i < _statusBoxes.Count; i++)
@@ -150,9 +165,10 @@ namespace Bound.States.Popups.Game
 
         public void UpdateHotbarSlot(Item item, int index)
         {
-            if (index > _hotbarSlots.Count)
-                return;
-            _hotbarSlots[index].Item = item;
+            if (!(index > _hotbarSlots.Count))
+                _hotbarSlots[index].Item = item;
         }
+
+        public void UseItem() => _game.Items[_hotbarSlots[_hotbarSelectedSlot].Item.Name].Use();
     }
 }
