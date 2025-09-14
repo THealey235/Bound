@@ -169,6 +169,11 @@ namespace Bound.States.Popups.Game
                 _hotbarSlots[index].Item = item;
         }
 
-        public void UseItem() => _game.Items[_hotbarSlots[_hotbarSelectedSlot].Item.Name].Use();
+        public void UseItem()
+        {
+            var item = _hotbarSlots[_hotbarSelectedSlot].Item;
+            if (item != null)
+                _game.Items[_hotbarSlots[_hotbarSelectedSlot].Item.Name].Use();
+        }
     }
 }
