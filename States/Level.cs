@@ -18,7 +18,9 @@ namespace Bound.States
     {
         protected List<Block> _blocks;
         protected List<Rectangle> _blockRects;
-        protected List<Sprite> _sprites;
+        protected List<Sprite> _mobs;
+        protected List<Sprite> _collidesWithMobs;
+        protected List<Sprite> _collidesWithPlayer;
         protected HeadsUpDisplay _HUD;
         protected (float Min, float Max) _mapBounds;
         protected (Vector2 Min, Vector2 Max) _cameraBounds;
@@ -57,7 +59,6 @@ namespace Bound.States
         {
             _blocks = new List<Block>();
             _blockRects = new List<Rectangle>();
-            _surfaces = _game.GenerateSurfaces(_levelMap, (int)(_scale * Game1.ResScale));
             for (int i = 0; i < _levelMap.Count; i++)
             {
                 for (int j = 0; j < _levelMap[i].Count; j++)
@@ -79,12 +80,16 @@ namespace Bound.States
                     _mapBounds.Max * Game1.ResScale - 0.5f * Game1.ScreenHeight + _player.Rectangle.Height * Game1.ResScale)
             );
 
-            _sprites = new List<Sprite>()
+            _mobs = new List<Sprite>()
             {
-                _player
+                new Mob(_game.Textures.Sprites["Zombie"], _game)
             };
 
+            _collidesWithPlayer = new List<Sprite>(_mobs);
+            _collidesWithMobs = new List<Sprite>() { _player };
+
             _player.Level = this;
+            _mobs[0].Position = new Vector2(10, 100);
 
             _HUD = new HeadsUpDisplay(_game, _content);
             _HUD.LoadContent();
@@ -129,6 +134,9 @@ namespace Bound.States
 
             _player.Draw(gameTime, spriteBatch);
 
+            foreach (var sprite in _mobs)
+                sprite.Draw(gameTime, spriteBatch);
+
             _HUD.Draw(gameTime, spriteBatch);
 
             if (Game1.InDebug)
@@ -166,11 +174,15 @@ namespace Bound.States
                 }
             }
 
-            _player.Update(gameTime, _blockRects);
             _HUD.Update(gameTime);
 
-            foreach (var sprite in _sprites)
+            _player.Position = new Vector2(Math.Clamp(_player.Position.X, _mapBounds.Min, _mapBounds.Max), _player.Position.Y);
+            foreach (var sprite in _mobs)
                 sprite.Position = new Vector2(Math.Clamp(sprite.Position.X, _mapBounds.Min, _mapBounds.Max), sprite.Position.Y);
+
+            _player.Update(gameTime, _blockRects, _collidesWithPlayer);
+            foreach (var sprite in _mobs)
+                sprite.Update(gameTime, _blockRects, _collidesWithMobs);
         }
 
         public override void PostUpdate(GameTime gameTime)

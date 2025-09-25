@@ -27,7 +27,7 @@ namespace Bound.States.Popups.Game
         private int _hotbarSelectedSlot;
 
         public float Layer;
-
+       
         #endregion
 
         public HeadsUpDisplay(Game1 game, ContentManager content) : base(game, content)

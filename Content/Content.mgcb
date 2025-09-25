@@ -552,3 +552,15 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/Player/Walking-Sheet.png
 
+#begin Sprites/Zombie/Standing.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Zombie/Standing.png
+

@@ -32,8 +32,6 @@ namespace Bound
         };
         public int DefaultHeight = 360;
 
-
-        //can be accessed without having by a state/component without a game object accessible
         public static int ScreenHeight;
         public static int ScreenWidth;
         public static float ResScale;
@@ -43,17 +41,13 @@ namespace Bound
         public static Names Names = new Names();
         public static Color[] MenuColorPalette = new Color[] { new Color(60, 60, 60), Color.LightGray, Color.White };
 
-        //all the managers of objects that will be stored on disk
         public SettingsManager Settings;
         public Input PlayerKeys;
         public static Dictionary<string, string> SettingsStates;
         public SaveManager SavesManager;
         public Camera Camera;
-
-        //most recent save accesssed to know which save to load when the user presses "continue" on the main menu
         public int RecentSave;
 
-        //used for changing state so that you do not change a state before the full Update/Draw loop has finished
         private State _currentState;
         private State _nextState;
 
@@ -73,7 +67,6 @@ namespace Bound
             get { return _currentState; }
         }
 
-        //Holds all textures to be used
         public TextureManager Textures;
 
         public string CurrentStateName
@@ -302,7 +295,6 @@ namespace Bound
         private void ToggleFullScreen()
         {
             _graphics.ToggleFullScreen();
-             //Gets Default screen resolution and applies it
             if (_graphics.IsFullScreen)
             {
                 ScreenHeight = _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
@@ -336,7 +328,6 @@ namespace Bound
             foreach (var state in _currentState.Popups)
                 state.LoadContent();
 
-            //if it is the main menu remove the "quit" button from settings to return to the main menu
             if (_currentState.Name != Names.MainMenu && _currentState.Popups.Count > 0)
             {
                 CenterCamera(); //This may seem redundant but when changing up resolution, without this, the settings menu becomes off center (to the right)
@@ -363,22 +354,6 @@ namespace Bound
         }
 
         private int ProcessIndex(string x) => int.TryParse(x, out var index) ? index : -1;
-
-        public List<Rectangle> GenerateSurfaces(List<List<int>> levelMap, int scale)
-        {
-            var surfaces = new List<Rectangle>();
-            var sideLength = Textures.BlockWidth * scale;
-            for (int i = 0; i < levelMap.Count; i++)
-            {
-                for (int j = 0; j < levelMap[i].Count; j++)
-                {
-                    if (levelMap[i][j] == -1)
-                        continue;
-                    surfaces.Add(new Rectangle(i * scale, j * scale, sideLength, sideLength));
-                }
-            }
-            return surfaces;
-        }
 
         public static Color BlendColors(Color color1, Color color2, float alpha)
         {

@@ -18,6 +18,7 @@ namespace Bound.Sprites
         private DebugRectangle _debugRectangle;
         private float _scale;
         private string _name;
+        private Rectangle _shapeRectangle;
 
         public float Layer;
         public float Rotation = 0f;
@@ -34,7 +35,7 @@ namespace Bound.Sprites
         {
             get
             {
-                return new Rectangle((int)(Position.X), (int)(Position.Y), (int)(_blockWidth * _scale), (int)(_blockWidth * _scale));
+                return new Rectangle((int)(Position.X) + _shapeRectangle.X, (int)(Position.Y) + _shapeRectangle.Y, (int)(_shapeRectangle.Width * _scale), (int)(_shapeRectangle.Height * _scale));
             }
         }
 
@@ -42,7 +43,7 @@ namespace Bound.Sprites
         {
             get
             {
-                return new Rectangle((int)(ScaledPosition.X), (int)(ScaledPosition.Y), _blockWidth, _blockWidth);
+                return new Rectangle((int)(ScaledPosition.X), (int)(ScaledPosition.Y), _shapeRectangle.Width, _shapeRectangle.Height);
             }
         }
 
@@ -50,7 +51,7 @@ namespace Bound.Sprites
         {
             get
             {
-                return new Vector2(Position.X * Game1.ResScale, Position.Y * Game1.ResScale);
+                return new Vector2((Position.X) * Game1.ResScale, (Position.Y) * Game1.ResScale);
             }
         }
 
@@ -78,6 +79,11 @@ namespace Bound.Sprites
             Index = index;
 
             _blockWidth = _textures.BlockWidth;
+
+            if (_textures.SpecialShapeBlocks.ContainsKey(Index))
+                _shapeRectangle = _textures.SpecialShapeBlocks[Index];
+            else _shapeRectangle = new Rectangle(0, 0, _blockWidth, _blockWidth);
+
             if (!_textures.GhostBlocks.Contains(Index))
                 _debugRectangle = new DebugRectangle(ScaledRectangle, graphics, layer + 0.1f, Scale);
 
@@ -110,6 +116,10 @@ namespace Bound.Sprites
             _blockWidth = _textures.BlockWidth;
 
             Index = index;
+
+            if (_textures.SpecialShapeBlocks.ContainsKey(Index))
+                _shapeRectangle = _textures.SpecialShapeBlocks[Index];
+            else _shapeRectangle = new Rectangle(0, 0, _blockWidth, _blockWidth);
 
             if (!_textures.GhostBlocks.Contains(Index))
                 _debugRectangle = new DebugRectangle(ScaledRectangle, graphics, layer + 0.1f, Scale);

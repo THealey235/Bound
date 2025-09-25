@@ -22,7 +22,6 @@ namespace Bound.States
         protected Player _player;
         protected List<List<int>> _levelMap;
         protected float _scale;
-        protected List<Rectangle> _surfaces;
 
         public State(Game1 game, ContentManager content)
         {

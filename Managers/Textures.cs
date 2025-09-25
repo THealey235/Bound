@@ -22,6 +22,11 @@ namespace Bound.Managers
             Grass, Path, OakPlank, OakLog, Glass, DoorA, DoorB, OakSlab, BlankTile, DirtGradient0, DirtGradient1, DirtGradient2
         }
 
+        public readonly Dictionary<int, Rectangle> SpecialShapeBlocks = new Dictionary<int, Rectangle>()
+        {
+            {(int)Blocks.OakSlab, new Rectangle(0, 8, 16, 8)}
+        };
+
         public List<int> GhostBlocks = new List<int>() //contains blocks that you can walk through (no hitbox)
         {
             (int)Blocks.DoorA, (int)Blocks.DoorB, (int)Blocks.BlankTile, (int)Blocks.DirtGradient0, (int)Blocks.DirtGradient1, (int)Blocks.DirtGradient2

@@ -9,16 +9,13 @@ namespace Bound.Sprites
 {
     public class Player : Sprite
     {
-        private float _speed = 0.1f;
         private Input _keys;
-        private double _dTime;
-        private DebugRectangle _debugRectangle;
-        private Dictionary<string, Attribute> _attributes;
+        private Dictionary<string, Models.Attribute> _attributes;
 
         public Save Save;
         public Level Level;
         public int HotbarSlot = 1;
-        public Dictionary<string, Attribute> Attributes
+        public Dictionary<string, Models.Attribute> Attributes
         {
             get { return _attributes; }
         }
@@ -63,10 +60,10 @@ namespace Bound.Sprites
             if (_game.Textures.Sprites.ContainsKey("Player"))
             {
                 _animations = new Dictionary<string, Animation>();
-                var textures = _game.Textures.Sprites["Player"];
-                foreach(var sheet in textures.Sheets)
+                _textures = _game.Textures.Sprites["Player"];
+                foreach(var sheet in _textures.Sheets)
                 {
-                    _animations.Add(sheet.Key, new Animation(sheet.Value, textures.FrameCount(sheet.Key), 0.15f));
+                    _animations.Add(sheet.Key, new Animation(sheet.Value, _textures.FrameCount(sheet.Key), 0.15f));
                 }
 
                 _animationManager = new Managers.AnimationManager()
@@ -97,9 +94,11 @@ namespace Bound.Sprites
                 _debugRectangle.Draw(gameTime, spriteBatch);
         }
 
-        public void Update(GameTime gameTime, List<Rectangle> surfaces)
+        public override void Update(GameTime gameTime, List<Rectangle> surfaces, List<Sprite> sprites = null)
         {
-            base.Update(gameTime);
+            if (_animationManager != null)
+                _animationManager.Update(gameTime);
+
             _dTime = gameTime.ElapsedGameTime.TotalMilliseconds;
 
             DoPhysics(surfaces);
@@ -125,7 +124,7 @@ namespace Bound.Sprites
                 _animationManager.Stop();
         }
 
-        private void DoPhysics(List<Rectangle> surfaces)
+        protected override void DoPhysics(List<Rectangle> surfaces, List<Sprite> sprites = null)
         {
             Velocity = new Vector2(0, 0);
             var inFreefall = true;
@@ -162,8 +161,32 @@ namespace Bound.Sprites
                 }
             }
 
+            if (sprites != null)
+            {
+                foreach (var sprite in sprites)
+                {
+                    if (Velocity.X > 0 && IsTouchingLeft(sprite))
+                    {
+                        StartKnocback("left");
+                    }
+                    else if (Velocity.X < 0 && IsTouchingRight(sprite))
+                    {
+                        StartKnocback("right");
+                    }
+                    if (Velocity.Y > 0 && IsTouchingTop(sprite))
+                    {
+                        StartKnocback("up");
+                    }
+                    else if (Velocity.Y < 0 && IsTouchingBottom(sprite))
+                    {
+                        StartKnocback("down");
+                    }
+                }
+            }
 
-            if (!inFreefall && _keys.IsPressed("Jump", true))
+            Knockback(ref Velocity);
+
+            if (!inFreefall && _keys.IsPressed("Jump", true) && !_inKnockback)
             {
                 Gravity = -4;
             }
@@ -175,8 +198,9 @@ namespace Bound.Sprites
             _debugRectangle.Position = ScaledPosition;
         }
 
-        private bool HandleKeys(ref bool inFreefall)
+        private void HandleKeys(ref bool inFreefall)
         {
+            var previousEffect = SpriteEffects;
             if (_keys.IsPressed("Up", true))
                 inFreefall = false;
             if (_keys.IsPressed("Down", true))
@@ -199,21 +223,6 @@ namespace Bound.Sprites
             }
             if (_keys.IsPressed("Use", true))
                 Level.HUD.UseItem();
-
-            return inFreefall;
-        }
-
-        //Runs when each state is reset due to a change in resolution
-        public void Reset()
-        {
-            _debugRectangle = new DebugRectangle
-            (
-                new Rectangle((int)ScaledPosition.X, (int)ScaledPosition.Y, (int)(_texture.Width), (int)(_texture.Height))
-                , _game.GraphicsDevice
-                , Layer + 0.01f,
-                FullScale
-            );
-            _animationManager.Scale = FullScale;
         }
 
         public void Kill()

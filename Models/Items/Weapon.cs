@@ -1,5 +1,4 @@
-﻿using Bound.Controls;
-using Bound.Managers;
+﻿using Bound.Managers;
 using Bound.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -85,7 +84,8 @@ namespace Bound.Models.Items
                 1f
             )
             {
-                BorderColour = Color.Red
+                BorderColour = Color.Red,
+                Position = new Vector2(-100, -100)
             };
         }
 
@@ -103,6 +103,12 @@ namespace Bound.Models.Items
                 _rectangle.Y = (int)_user.Position.Y;
 
                 _collisionRectangle.Position = _user.ScaledPosition + _offset * _user.FullScale;
+            }
+            if (!_animationManager.IsPlaying)
+            {
+                _collisionRectangle.Position = new Vector2(-100, -100);
+                _rectangle.X = -100;
+                _rectangle.Y = -100;
             }
 
             _animationManager.Update(gameTime);

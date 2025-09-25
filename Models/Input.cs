@@ -134,6 +134,11 @@ namespace Bound.Models
             return inputMode;
         }
 
+        public bool CheckKeyboard(Keys key, bool isHoldable)
+        {
+            return CurrentKeyboardState.IsKeyDown(key) && (PreviousKeyboardState.IsKeyUp(key) || isHoldable);
+        }
+
         #region Statics
         //I hate all keyboards now
         public static Dictionary<string, string> SpecialKeyMap = new Dictionary<string, string>
