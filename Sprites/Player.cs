@@ -101,7 +101,9 @@ namespace Bound.Sprites
 
             _dTime = gameTime.ElapsedGameTime.TotalMilliseconds;
 
-            DoPhysics(surfaces);
+            DoPhysics(surfaces, sprites);
+
+            _debugRectangle.Position = ScaledPosition;
 
             for (int i = 1; i < 4; i++)
             {
@@ -124,81 +126,15 @@ namespace Bound.Sprites
                 _animationManager.Stop();
         }
 
-        protected override void DoPhysics(List<Rectangle> surfaces, List<Sprite> sprites = null)
+        protected override void CheckJump(bool inFreefall)
         {
-            Velocity = new Vector2(0, 0);
-            var inFreefall = true;
-            var toTruncate = false;
-
-            HandleKeys(ref inFreefall);
-
-            if (inFreefall)
-            {
-                Gravity += SimulateGravity(g, 0, 60);
-                Velocity += new Vector2(0, Gravity);
-            }
-
-            foreach (var surface in surfaces)
-            {
-                if ((Velocity.X > 0 && IsTouchingLeft(surface)) ||
-                     (Velocity.X < 0 && IsTouchingRight(surface)))
-                    Velocity.X = 0;
-                if ((Velocity.Y > 0 && IsTouchingTop(surface)) ||
-                     (Velocity.Y < 0 && IsTouchingBottom(surface)))
-                {
-                    if (Gravity > 0)
-                    {//snaps them to the ground so that you velocity doesn't suddenly decrease when close to ground
-                        Velocity.Y = surface.Top - Rectangle.Bottom;
-                        toTruncate = true;
-                    }
-                    else
-                    {
-                        Velocity.Y = 0;
-                    }
-                    inFreefall = false;
-                    Gravity = 0;
-                    break;
-                }
-            }
-
-            if (sprites != null)
-            {
-                foreach (var sprite in sprites)
-                {
-                    if (Velocity.X > 0 && IsTouchingLeft(sprite))
-                    {
-                        StartKnocback("left");
-                    }
-                    else if (Velocity.X < 0 && IsTouchingRight(sprite))
-                    {
-                        StartKnocback("right");
-                    }
-                    if (Velocity.Y > 0 && IsTouchingTop(sprite))
-                    {
-                        StartKnocback("up");
-                    }
-                    else if (Velocity.Y < 0 && IsTouchingBottom(sprite))
-                    {
-                        StartKnocback("down");
-                    }
-                }
-            }
-
-            Knockback(ref Velocity);
-
             if (!inFreefall && _keys.IsPressed("Jump", true) && !_inKnockback)
             {
                 Gravity = -4;
             }
-
-            Position += Velocity;
-            if (toTruncate) //this snaps the player to the top of a block when it falls
-                Position = new Vector2(Position.X, (int)Position.Y);
-
-            _debugRectangle.Position = ScaledPosition;
         }
 
-        private void HandleKeys(ref bool inFreefall)
+        protected override void HandleMovements(ref bool inFreefall)
         {
             var previousEffect = SpriteEffects;
             if (_keys.IsPressed("Up", true))

@@ -27,9 +27,9 @@ namespace Bound.Sprites
         {
             var distance = (_game.Player.Position - Position).Length();
 
-            if (_game.Player.Position.X < Position.X)
+            if ((int)_game.Player.Position.X < (int)Position.X)
                 Velocity -= new Vector2(_speed, 0);
-            else if (_game.Player.Position.X > Position.X)
+            else if ((int)_game.Player.Position.X > (int)Position.X)
                 Velocity += new Vector2(_speed, 0);
         }
     }

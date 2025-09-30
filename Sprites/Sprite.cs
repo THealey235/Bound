@@ -40,11 +40,10 @@ namespace Bound.Sprites
         protected DebugRectangle _debugRectangle;
         protected string _knockbackDirection;
         protected bool _inKnockback = false;
-        protected float _knockbackDuration;
-        protected float _knockbackAcceleration = -0.2f;
-        protected float _knockbackTimer;
-        protected float _knockbackInitialVelocity = 10f;
+        protected float _knockbackAcceleration = -0.02f;
+        protected float _knockbackInitialVelocity = 5f;
         protected Vector2 _knockbackVelocity;
+        protected float _immunityTimer;
 
         #endregion
 
@@ -210,6 +209,11 @@ namespace Bound.Sprites
             get { return _spriteEffects; }
         }
 
+        public bool IsImmune
+        {
+            get { return _immunityTimer > 0; }
+        }
+
         #endregion
 
         #region Methods
@@ -372,15 +376,14 @@ namespace Bound.Sprites
             return sprite;
         }
 
-        protected float SimulateGravity(float gravity, int resistance, int mass)
+        //gravity is velocity and g is the increase in velocity each frame. Really, I should try to incorporate _dTime.
+        protected float SimulateGravity(float gravity, float acceleration)
         {
             if (_terminalVelocity <= gravity)
                 return gravity;
-            else if (resistance == 0)
-                gravity += g;
             else
-                //f = ma
-                gravity += ((mass * (g * 10)) - resistance) / (float)mass;
+                gravity += g + acceleration;
+
             return gravity;
 
         }
@@ -391,11 +394,20 @@ namespace Bound.Sprites
             var inFreefall = true;
             var toTruncate = false;
 
-            if (!_inKnockback)
+            if(!IsImmune)
                 HandleMovements(ref inFreefall);
 
-            Gravity += SimulateGravity(g, 0, 60);
-            Velocity += new Vector2(0, Gravity);
+            if (IsImmune)
+                _immunityTimer -= (float)_dTime;
+
+            if (inFreefall)
+            {
+                Gravity += SimulateGravity(g, 0);
+                Velocity += new Vector2(0, Gravity);
+            }
+
+
+            Knockback();
 
             foreach (var surface in surfaces)
             {
@@ -427,95 +439,117 @@ namespace Bound.Sprites
                     if (Velocity.X > 0 && IsTouchingLeft(sprite))
                     {
                         StartKnocback("left");
+                        sprite.StartKnocback("right");
                     }
                     else if (Velocity.X < 0 && IsTouchingRight(sprite))
                     {
                         StartKnocback("right");
+                        sprite.StartKnocback("left");
                     }
                     if (Velocity.Y > 0 && IsTouchingTop(sprite))
                     {
                         StartKnocback("up");
+                        sprite.StartKnocback("down");
                     }
                     else if (Velocity.Y < 0 && IsTouchingBottom(sprite))
                     {
                         StartKnocback("down");
+                        sprite.StartKnocback("up");
                     }
                 }
             }
 
-            Knockback(ref Velocity);
+            CheckJump(inFreefall);
 
             Position += Velocity;
-            if (toTruncate) //this snaps the player to the top of a block when it falls
+            if (toTruncate) //this snaps the sprite to the top of a block when it falls and hits the ground
                 Position = new Vector2(Position.X, (int)Position.Y);
         }
 
-        protected void StartKnocback(string direction)
+        public void StartKnocback(string direction)
         {
+            if (IsImmune)
+            {
+                switch (direction)
+                {
+                    case "down":
+                    case "up":
+                        Velocity.Y = 0; break;
+                    case "left":
+                    case "right":
+                        Velocity.X = 0; break;
+                }
+            }
+            _knockbackDirection = direction;
+            _inKnockback = true;
+            _immunityTimer = 250f; //in milliseconds
+
             switch (direction)
             {
                 case "up":
-                    _knockbackVelocity = new Vector2(0, -_knockbackInitialVelocity); break;
+                    _knockbackVelocity = new Vector2(0, -_knockbackInitialVelocity * 1.5f); break;
                 case "down":
                     _knockbackVelocity = new Vector2(0, _knockbackInitialVelocity); break;
                 case "left":
-                    _knockbackVelocity = new Vector2(1, -_knockbackInitialVelocity); break;
+                    _knockbackVelocity = new Vector2(-_knockbackInitialVelocity, 1); break;
                 case "right":
-                    _knockbackVelocity = new Vector2(1, _knockbackInitialVelocity); break;
+                    _knockbackVelocity = new Vector2(_knockbackInitialVelocity, 1); break;
                 default:
                     return;
             }
 
-            _knockbackDirection = direction;
-            _inKnockback = true;
-            _knockbackDuration = 1500f; //in milliseconds
-            _knockbackTimer = 0f;
-
+            Velocity += _knockbackVelocity;
         }
 
-        protected void Knockback(ref Vector2 velocity)
+        protected void Knockback()
         {
             if (_inKnockback)
             {
-                velocity = _knockbackVelocity;
-                _knockbackTimer += (float)_dTime;
-                if (_knockbackTimer >= _knockbackDuration)
-                {
-                    _inKnockback = false;
-                    return;
-                }
-
                 //TODO: write this more concisely
                 switch (_knockbackDirection)
                 {
                     case "up":
-                        _knockbackVelocity = new Vector2(velocity.X, _knockbackVelocity.Y - _knockbackAcceleration * (float)_dTime);
+                        _knockbackVelocity = new Vector2(0, _knockbackVelocity.Y - _knockbackAcceleration * (float)_dTime);
                         if (_knockbackVelocity.Y >= 0)
+                        {
                             _inKnockback = false;
+                            Velocity = Vector2.Zero;
+                            Gravity = _knockbackVelocity.Y;
+                            return;
+                        }
+                        else
+                        {
+                            Velocity -= new Vector2(0, Gravity);
+                        }
                         break;
                     case "down":
-                        _knockbackVelocity = new Vector2(velocity.X, _knockbackVelocity.Y + _knockbackAcceleration * (float)_dTime);
+                        _knockbackVelocity = new Vector2(0, _knockbackVelocity.Y + _knockbackAcceleration * (float)_dTime);
                         if (_knockbackVelocity.Y <= 0)
                             _inKnockback = false;
                         break;
                     case "left":
-                        _knockbackVelocity = new Vector2(_knockbackVelocity.X - _knockbackAcceleration * (float)_dTime, velocity.Y);
-                        if (_knockbackVelocity.Y >= 0)
+                        _knockbackVelocity = new Vector2(_knockbackVelocity.X - _knockbackAcceleration * (float)_dTime, 0);
+                        if (_knockbackVelocity.X >= 0)
                             _inKnockback = false;
                         break;
                     case "right":
-                        _knockbackVelocity = new Vector2(_knockbackVelocity.X + _knockbackAcceleration * (float)_dTime, velocity.Y);
-                        if (_knockbackVelocity.Y <= 0)
+                        _knockbackVelocity = new Vector2(_knockbackVelocity.X + _knockbackAcceleration * (float)_dTime, 0);
+                        if (_knockbackVelocity.X <= 0)
                             _inKnockback = false;
                         break;
                 }
 
-                
+                Velocity += _knockbackVelocity;
             }
         }
 
 
         protected virtual void HandleMovements(ref bool inFreefall)
+        {
+
+        }
+
+        protected virtual void CheckJump(bool inFreefall)
         {
 
         }

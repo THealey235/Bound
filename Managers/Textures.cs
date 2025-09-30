@@ -73,7 +73,6 @@ namespace Bound.Managers
         public Texture2D TrashCan;
         public Texture2D Null;
         public Texture2D Blank;
-        public Texture2D Block;
         public Texture2D HotbarBG;
         public Texture2D HotbarSelectedSlot;
         public Texture2D EmptyBox;
@@ -154,7 +153,6 @@ namespace Bound.Managers
             #region Game Elements
 
             BlockAtlas = content.Load<Texture2D>("Atlases/BlockAtlas");
-            Block = content.Load<Texture2D>("Atlases/DirtBlock");
             HotbarBG = content.Load<Texture2D>("Backgrounds/HotbarBG");
             HotbarSelectedSlot = content.Load<Texture2D>("Backgrounds/HotbarSelectedBG");
 
