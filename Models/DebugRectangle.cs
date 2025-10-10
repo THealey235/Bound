@@ -31,6 +31,14 @@ namespace Bound.Models
             }
         }
 
+        public Rectangle Rectangle
+        {
+            get
+            {
+                return new Rectangle((int)(Position.X * Scale), (int)(Position.Y * Scale), (int)(_borderTexture.Width * Scale), (int)(_borderTexture.Height * Scale));
+            }
+        }
+
         public DebugRectangle(Rectangle rectangle, GraphicsDevice graphics, float layer, float scale)
         {
             _rectangle = rectangle;

@@ -9,7 +9,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.Pkcs;
 
 
 namespace Bound.States
@@ -19,11 +18,13 @@ namespace Bound.States
         protected List<Block> _blocks;
         protected List<Rectangle> _blockRects;
         protected List<Sprite> _mobs;
-        protected List<Sprite> _collidesWithMobs;
-        protected List<Sprite> _collidesWithPlayer;
+        protected List<Sprite> _damagesMobs;
+        protected List<Sprite> _sprites;
         protected HeadsUpDisplay _HUD;
         protected (float Min, float Max) _mapBounds;
         protected (Vector2 Min, Vector2 Max) _cameraBounds;
+
+        public List<Sprite> ToKill = new List<Sprite>();
 
         public HeadsUpDisplay HUD
         {
@@ -82,11 +83,14 @@ namespace Bound.States
 
             _mobs = new List<Sprite>()
             {
-                new Mob(_game.Textures.Sprites["Zombie"], _game)
+                new Mob(_game.Textures.Sprites["Zombie"], _game, 10f, 10f, 10f)
             };
 
-            _collidesWithPlayer = new List<Sprite>(_mobs);
-            _collidesWithMobs = new List<Sprite>() { _player };
+            _damagesMobs = new List<Sprite>() { _player };
+
+            _sprites = new List<Sprite>();
+            _sprites.AddRange( _mobs );
+            _sprites.AddRange( _damagesMobs );
 
             _player.Level = this;
             _mobs[0].Position = new Vector2(10, 100);
@@ -126,10 +130,19 @@ namespace Bound.States
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
+            foreach (var sprite in ToKill)
+            {
+                _sprites.Remove(sprite);
+                _mobs.Remove(sprite);
+                _damagesMobs.Remove(sprite);
+            }
+
             foreach (var p in Popups)
                 p.Draw(gameTime, spriteBatch);
 
-            foreach (var block in _blocks)
+            var toDraw = _blocks.Select(x => _game.ToCull(x.ScaledRectangle) ? null : x).ToList();
+            toDraw.RemoveAll(x => x == null);
+            foreach (var block in toDraw)
                 block.Draw(gameTime, spriteBatch);
 
             _player.Draw(gameTime, spriteBatch);
@@ -176,13 +189,22 @@ namespace Bound.States
 
             _HUD.Update(gameTime);
 
+            //_game.Items[item.Name] is necessary because if it is a sub-class of Item we want that class not the Item class returned by the HUD since it has been cast to an Item 
+            var item = _HUD.HeldItem;
+            if (item != null)
+                _game.Items[item.Name].Update(gameTime, _mobs); //TODO: put collideable sprrites instead of an empty list
+
             _player.Position = new Vector2(Math.Clamp(_player.Position.X, _mapBounds.Min, _mapBounds.Max), _player.Position.Y);
             foreach (var sprite in _mobs)
                 sprite.Position = new Vector2(Math.Clamp(sprite.Position.X, _mapBounds.Min, _mapBounds.Max), sprite.Position.Y);
 
-            _player.Update(gameTime, _blockRects, _collidesWithPlayer);
+            _player.Update(gameTime, _blockRects, _sprites, _mobs);
             foreach (var sprite in _mobs)
-                sprite.Update(gameTime, _blockRects, _collidesWithMobs);
+                sprite.Update(gameTime, _blockRects, _sprites, _damagesMobs);
+
+            for (int i = 0; i < _sprites.Count; i++)
+                if (_sprites[i].Health <= 0)
+                    _sprites[i].Kill(this);
         }
 
         public override void PostUpdate(GameTime gameTime)
@@ -200,5 +222,7 @@ namespace Bound.States
             }
             return rects;
         }
+
+        public void RemoveMob(Sprite mob) => ToKill.Add(mob);
     }
 }

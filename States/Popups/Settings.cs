@@ -348,13 +348,6 @@ namespace Bound.States.Popups
             _game.Settings.Settings.InputValues[ki.Keys.Key] = _game.PlayerKeys.Keys[ki.Keys.Key] = ki.Key;
         }
 
-        private void CustomCursor_Apply(object sender, EventArgs e)
-        {
-            var box = sender as MultiChoiceBox;
-            _game.UseDefaultMouse = (box.CurIndex == 1) ? true : false;
-            _game.IsMouseVisible = (box.CurIndex == 1) ? true : false;
-            _game.Settings.Settings.General["DefaultMouse"] = (box.CurIndex == 1) ? "Yes" : "No";
-        }
         private void Button_Quit_Clicked(object sender, EventArgs e)
         {
             _game.SavesManager.UploadSave(_game.RecentSave);

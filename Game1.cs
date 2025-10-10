@@ -19,12 +19,15 @@ using System.Linq;
 namespace Bound
 {
     //Main game class where everything is routed through
+    //TODO: Refactor the attributes so that they are not static/public unless they are properties for encapsulation.
     public class Game1 : Game
     {
         #region Fields & Properties
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private static Rectangle _viewport;
+
         public Player Player;
         private List<string> _statesWithoutPlayer = new List<string>()
         {
@@ -32,12 +35,27 @@ namespace Bound
         };
         public int DefaultHeight = 360;
 
-        public static int ScreenHeight;
-        public static int ScreenWidth;
+        public static int ScreenHeight
+        {
+            get { return _screenHeight; }
+            set { 
+                    _screenHeight = value;
+                    _viewport.Height = value;
+                }
+        }
+        public static int ScreenWidth
+        {
+            get { return _screenWidth; }
+            set
+            {
+                _screenWidth = value;
+                _viewport.Width = value;
+            }
+        }
+
         public static float ResScale;
         public static bool InDebug = false;
         public static Color DebugColour = Color.White;
-        public static Vector2 V2Transform;
         public static Names Names = new Names();
         public static Color[] MenuColorPalette = new Color[] { new Color(60, 60, 60), Color.LightGray, Color.White };
 
@@ -48,6 +66,9 @@ namespace Bound
         public Camera Camera;
         public int RecentSave;
 
+        private static int _screenHeight;
+        private static int _screenWidth;
+        private static Vector2 _V2Transform;
         private State _currentState;
         private State _nextState;
 
@@ -55,8 +76,6 @@ namespace Bound
         private KeyboardState _previousKeys;
 
         public static Random Random;
-
-        public bool UseDefaultMouse;
 
         public Dictionary<string, Item> Items;
 
@@ -67,7 +86,23 @@ namespace Bound
             get { return _currentState; }
         }
 
+        public static Rectangle Viewport
+        {
+            get { return _viewport; }
+        }
+
         public TextureManager Textures;
+
+        public static Vector2 V2Transform
+        {
+            get { return _V2Transform; }
+            set
+            {
+                _V2Transform = value;
+                _viewport.X = (int)value.X;
+                _viewport.Y = (int)value.Y;
+            }
+        }
 
         public string CurrentStateName
         {
@@ -101,6 +136,7 @@ namespace Bound
         {
             _graphics = new GraphicsDeviceManager(this);
             _graphics.PreferHalfPixelOffset = true;
+            _graphics.PreferMultiSampling = true;
             //Root diretcory for the texture files
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
@@ -227,12 +263,20 @@ namespace Bound
             {
                 var cameraBounds = ((Level)_currentState).CameraBounds;
                 if (Player.ScaledPosition.X <= cameraBounds.Min.X)
-                    V2Transform.X = 0;
+                    V2Transform = new Vector2(0, V2Transform.Y);
                 else if (Player.ScaledPosition.X >= cameraBounds.Max.X)
-                    V2Transform.X = cameraBounds.Max.X - 0.5f * ScreenWidth;
+                    V2Transform = new Vector2(cameraBounds.Max.X - 0.5f * ScreenWidth, V2Transform.Y);
             }
             if (_statesWithoutPlayer.Contains(_currentState.Name))
                 V2Transform = Vector2.Zero;
+        }
+
+        public bool ToCull(Rectangle rect)
+        {
+            return Viewport.Left > rect.Right || 
+                Viewport.Right < rect.Left ||
+                Viewport.Bottom < rect.Top|| 
+                Viewport.Top > rect.Bottom;
         }
 
         public void ChangeState(State state)

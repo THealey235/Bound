@@ -12,10 +12,12 @@ namespace Bound.Models.Items
         public static bool InUse = false;
 
         private Game1 _game;
+        private bool _previousPlaying;
         private AnimationManager _animationManager;
         private Dictionary<string, Animation> _animations;
         private Sprite _user;
         private Vector2 _offset = new Vector2(0, 0);
+        private float _scale;
 
         public enum WeaponTypes
         {
@@ -28,15 +30,26 @@ namespace Bound.Models.Items
             set 
             { 
                 _user = value;
-                _animationManager.Layer = 0.99f;
-                _animationManager.Scale = Scale = _user.FullScale * 1.5f;
+                _animationManager.Layer = 0.76f;
+                _animationManager.Scale = Scale =  Game1.ResScale;
                 _animationManager.Origin = _user.Origin;
 
-                SetCollisionRectangle();
+
             }
         }
 
-        public float Scale { get; set; }
+        public float Scale 
+        { 
+            get 
+            { 
+                return _scale; 
+            } 
+            set 
+            { 
+                _scale = value;
+                _animationManager.Scale = Scale;
+            } 
+        }
 
         private readonly WeaponTypes _weaponType;
 
@@ -61,57 +74,69 @@ namespace Bound.Models.Items
             _game = game;
         }
 
-        private void SetCollisionRectangle()
+        private void SetCollisionRectangle(string key = "Use")
         {
-            if (!_animations.ContainsKey("Use"))
+            if (!_animations.ContainsKey(key))
                 return;
 
-            var anim = _animations["Use"];
+            var anim = _animations[key];
             switch (_weaponType)
             {
                 case WeaponTypes.Sword:
-                    _rectangle = new Rectangle(0, 0, (int)(anim.FrameWidth * Scale), (int)(anim.FrameHeight * Scale));
+                    _collisionRectangle = new Rectangle(0, 0, anim.FrameWidth, anim.FrameHeight);
                     break;
                 default:
-                    _rectangle = new Rectangle(0, 0, 1, 1); break;
+                    _collisionRectangle = new Rectangle(0, 0, 1, 1); break;
             }
 
-            _collisionRectangle = new DebugRectangle
+            _debugRectangle = new DebugRectangle
             (
-                _rectangle,
+                _collisionRectangle,
                 _game.GraphicsDevice,
                 _animationManager.Layer + 0.001f,
-                1f
+                Scale
             )
             {
-                BorderColour = Color.Red,
-                Position = new Vector2(-100, -100)
+                BorderColour = Color.Red
             };
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime, List<Sprite> sprites)
         {
-            if (_user != null && _animationManager.CurrentAnimation != null)
+            if (_user != null && _animationManager.IsPlaying)
             {
-                _animationManager.Effects = _user.Effects;
-                _offset = new Vector2(_user.Rectangle.Width * 0.8f, -_user.Rectangle.Height * 0.3f); //used to allign the animation with the leading hand
-                if (_user.Effects == SpriteEffects.FlipHorizontally)
-                    _offset = new Vector2(-_offset.X - (_animationManager.CurrentAnimation.FrameWidth * (Scale / _user.FullScale)) / 2, _offset.Y);
-                _animationManager.Position = _user.ScaledPosition + _offset * _user.FullScale;
-
-                _rectangle.X = (int)_user.Position.X;
-                _rectangle.Y = (int)_user.Position.Y;
-
-                _collisionRectangle.Position = _user.ScaledPosition + _offset * _user.FullScale;
-            }
-            if (!_animationManager.IsPlaying)
-            {
-                _collisionRectangle.Position = new Vector2(-100, -100);
-                _rectangle.X = -100;
-                _rectangle.Y = -100;
+                UpdateAnimation();
+                CheckCollision(sprites);
             }
 
             _animationManager.Update(gameTime);
+
+            //reset after the weapon has finished its use animation
+            if (_previousPlaying && !_animationManager.IsPlaying)
+            {
+                _previousPlaying = false;
+                _debugRectangle = null;
+                _collisionRectangle = new Rectangle(-1, -1, 0, 0);
+                _user.UnlockEffects();
+                _spriteBlacklist.Clear();
+            }
+        }
+
+        private void UpdateAnimation()
+        {
+            _animationManager.Effects = _user.Effects;
+
+            //used to allign the animation with the leading hand
+            _offset = new Vector2(0, (_user.Rectangle.Height - _animationManager.CurrentAnimation.FrameHeight) / 2);
+            if (_user.Effects == SpriteEffects.FlipHorizontally)
+                _offset = new Vector2(-_animationManager.CurrentAnimation.FrameWidth + 5, _offset.Y);
+            else
+                _offset = new Vector2(_user.Rectangle.Width - 5, _offset.Y);
+
+            _animationManager.Position = _debugRectangle.Position = (_user.Position + _offset) * Game1.ResScale;
+
+            _collisionRectangle.X = (int)(_user.Position.X + _offset.X);
+            _collisionRectangle.Y = (int)(_user.Position.Y + _offset.Y);
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -119,12 +144,15 @@ namespace Bound.Models.Items
             if (_animationManager.IsPlaying)
                 _animationManager.Draw(spriteBatch);
 
-            if (Game1.InDebug && _collisionRectangle != null)
-                _collisionRectangle.Draw(gameTime, spriteBatch);
+            if (Game1.InDebug && _debugRectangle != null)
+                _debugRectangle.Draw(gameTime, spriteBatch);
         }
 
         public override void Use()
         {
+            if (_animationManager.IsPlaying)
+                return;
+
             switch (_weaponType)
             {
                 case WeaponTypes.Sword:
@@ -138,8 +166,19 @@ namespace Bound.Models.Items
 
         private void UseSword()
         {
-            if (_animations.ContainsKey("Use") && !_animationManager.IsPlaying)
-                _animationManager.Play(_animations["Use"]);
+            if (_animations.ContainsKey("Use"))
+            {
+                StartAnimation("Use");
+                UpdateAnimation();
+            }
+        }
+
+        private void StartAnimation(string key)
+        {
+            var animation = _animations[key];
+            _animationManager.Play(animation);
+            _previousPlaying = true;
+            SetCollisionRectangle(key);
         }
 
         private void UseBow()

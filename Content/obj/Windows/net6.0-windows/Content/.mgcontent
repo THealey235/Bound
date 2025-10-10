@@ -4,6 +4,7 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
+    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/BlockAtlas (adjusted).png</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/BlockAtlas.png</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/DirtBlock.png</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Backgrounds/BaseBackground.png</File>
@@ -53,6 +54,7 @@
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Zombie/Standing.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

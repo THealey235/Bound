@@ -10,11 +10,29 @@ namespace Bound.Sprites
     public class Player : Sprite
     {
         private Input _keys;
-        private Dictionary<string, Models.Attribute> _attributes;
+        private Dictionary<string, Attribute> _attributes;
+        private Level _level;
+
+        protected override float _health
+        {
+            get { return _game.ActiveSave.Health; }
+            set { _game.ActiveSave.Health = value;}
+        }
+
+        protected override float _mana
+        {
+            get { return _game.ActiveSave.Mana; }
+            set { _game.ActiveSave.Mana = value; }
+        }
+        protected override float _stamina
+        {
+            get { return _game.ActiveSave.Stamina; }
+            set { _game.ActiveSave.Stamina = value; }
+        }
 
         public Save Save;
-        public Level Level;
         public int HotbarSlot = 1;
+
         public Dictionary<string, Models.Attribute> Attributes
         {
             get { return _attributes; }
@@ -33,9 +51,22 @@ namespace Bound.Sprites
             }
         }
 
+        public Level Level
+        {
+            get { return _level; }
+            set
+            {
+                _level = value;
+                _health = _game.ActiveSave.MaxHealth;
+
+            }
+        }
+
         public Player(Texture2D texture, Input Keys, Game1 game) : base(texture, game)
         {
             _name = "player";
+            _spriteType = SpriteType.Player;
+            _knockbackDamageDealtOut = 2f;
 
             _keys = Keys;
             Scale = 0.8f;
@@ -94,14 +125,11 @@ namespace Bound.Sprites
                 _debugRectangle.Draw(gameTime, spriteBatch);
         }
 
-        public override void Update(GameTime gameTime, List<Rectangle> surfaces, List<Sprite> sprites = null)
+        public override void Update(GameTime gameTime, List<Rectangle> surfaces, List<Sprite> sprites = null, List<Sprite> dealsKnocback = null)
         {
-            if (_animationManager != null)
-                _animationManager.Update(gameTime);
+            base.Update(gameTime);
 
-            _dTime = gameTime.ElapsedGameTime.TotalMilliseconds;
-
-            DoPhysics(surfaces, sprites);
+            DoPhysics(surfaces, sprites, dealsKnocback);
 
             _debugRectangle.Position = ScaledPosition;
 
@@ -129,9 +157,7 @@ namespace Bound.Sprites
         protected override void CheckJump(bool inFreefall)
         {
             if (!inFreefall && _keys.IsPressed("Jump", true) && !_inKnockback)
-            {
                 Gravity = -4;
-            }
         }
 
         protected override void HandleMovements(ref bool inFreefall)
@@ -158,7 +184,10 @@ namespace Bound.Sprites
                 Save.Health -= 5;
             }
             if (_keys.IsPressed("Use", true))
+            {
                 Level.HUD.UseItem();
+                _lockEffects = true;
+            }
         }
 
         public void Kill()

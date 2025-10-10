@@ -43,7 +43,7 @@ namespace Bound.Sprites
         {
             get
             {
-                return new Rectangle((int)(ScaledPosition.X), (int)(ScaledPosition.Y), _shapeRectangle.Width, _shapeRectangle.Height);
+                return new Rectangle((int)(ScaledPosition.X), (int)(ScaledPosition.Y), (int)(_shapeRectangle.Width * Scale), (int)(_shapeRectangle.Height * Scale));
             }
         }
 
@@ -82,7 +82,7 @@ namespace Bound.Sprites
 
             if (_textures.SpecialShapeBlocks.ContainsKey(Index))
                 _shapeRectangle = _textures.SpecialShapeBlocks[Index];
-            else _shapeRectangle = new Rectangle(0, 0, _blockWidth, _blockWidth);
+            else _shapeRectangle = new Rectangle(0, 0, _sourceRectangle.Width, _sourceRectangle.Height);
 
             if (!_textures.GhostBlocks.Contains(Index))
                 _debugRectangle = new DebugRectangle(ScaledRectangle, graphics, layer + 0.1f, Scale);
@@ -91,6 +91,8 @@ namespace Bound.Sprites
 
         public Block(TextureManager textures, GraphicsDevice graphics, int index, Vector2 position, Color colour, float rotation, Vector2 origin, float scale, SpriteEffects spriteEffects, float layer)
         {
+            //TODO: FIX LINE ARTIFACTING DUE TO MONOGAME (only happens to the right side of the texture)
+            //This will require changing logic to automatically find the source rect position and changing the atlas to extend each block by one pixel to the right
             _name = "block";
             _textures = textures;
             var rowLength = _textures.BlockAtlas.Width / _textures.BlockWidth;
@@ -119,10 +121,10 @@ namespace Bound.Sprites
 
             if (_textures.SpecialShapeBlocks.ContainsKey(Index))
                 _shapeRectangle = _textures.SpecialShapeBlocks[Index];
-            else _shapeRectangle = new Rectangle(0, 0, _blockWidth, _blockWidth);
+            else _shapeRectangle = new Rectangle(0, 0, _sourceRectangle.Width, _sourceRectangle.Height);
 
             if (!_textures.GhostBlocks.Contains(Index))
-                _debugRectangle = new DebugRectangle(ScaledRectangle, graphics, layer + 0.1f, Scale);
+                _debugRectangle = new DebugRectangle(ScaledRectangle, graphics, layer + 0.1f, 1f);
         }
 
         public void Update(GameTime gameTime)

@@ -1,16 +1,12 @@
 ﻿using Bound.Controls;
 using Bound.Controls.Game;
-using Bound.Managers;
 using Bound.Models;
 using Bound.Models.Items;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bound.States.Popups.Game
 {
@@ -27,6 +23,11 @@ namespace Bound.States.Popups.Game
         private int _hotbarSelectedSlot;
 
         public float Layer;
+
+        public Item HeldItem
+        {
+            get { return _hotbarSlots[_hotbarSelectedSlot].Item; }
+        }
        
         #endregion
 
@@ -73,6 +74,9 @@ namespace Bound.States.Popups.Game
                         save.EquippedItems["hotbar"][i]
                     )
                 );
+                var item = _hotbarSlots[i].Item;
+                if (item != null)
+                    _game.Items[item.Name].User = _player;
             }
             _hotbarSelectedSlot = _game.Player.HotbarSlot - 1;
             _hotbarSlots[_hotbarSelectedSlot].IsSelected = true;
@@ -129,7 +133,7 @@ namespace Bound.States.Popups.Game
         public override void Update(GameTime gameTime)
         {
             _previousStatusBoxesWidth = new List<int>(_currentStatusBoxesWidth);
-            _currentStatusBoxesWidth = (new List<float>() { _save.Health, _save.Mana, _save.Stamina}).Select(x => (int)(x * Game1.ResScale)).ToList();
+            _currentStatusBoxesWidth = (new List<float>() { _player.Health, _player.Mana, _player.Stamina}).Select(x => (int)(x * Game1.ResScale)).ToList();
 
             if (_hotbarSelectedSlot != _game.Player.HotbarSlot - 1)
             {
@@ -138,10 +142,6 @@ namespace Bound.States.Popups.Game
                     slot.IsSelected = false;
                 _hotbarSlots[_hotbarSelectedSlot].IsSelected = true;
             }
-            //_game.Items[item.Name] is because we want the weapon class not the Item class returned by the hotbar slot because it has been cast to an Item losing some functionality
-            var item = _hotbarSlots[_hotbarSelectedSlot].Item;
-            if (item != null)
-                _game.Items[item.Name].Update(gameTime); 
 
             foreach (var slot in _hotbarSlots)
                 slot.Update(gameTime);
@@ -149,14 +149,10 @@ namespace Bound.States.Popups.Game
             _statusBoxesBlacklist.Clear();
             for (int i = 0; i < _statusBoxes.Count; i++)
             {
-                if (_currentStatusBoxesWidth[i] == 0)
-                {
-                    _statusBoxesBlacklist.Add(i); continue;
-                }
-
-                if (_previousStatusBoxesWidth[i] != _currentStatusBoxesWidth[i])
+                if (_currentStatusBoxesWidth[i] <= 0)
+                    _statusBoxesBlacklist.Add(i);
+                else if (_previousStatusBoxesWidth[i] != _currentStatusBoxesWidth[i])
                     _statusBoxes[i].Width = _currentStatusBoxesWidth[i];
-
             }
 
             foreach (var c in _statusBoxes)

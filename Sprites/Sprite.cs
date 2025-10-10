@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Bound.Models;
 using Bound.Managers;
+using System.Security.Cryptography.X509Certificates;
+using Bound.States;
 
 namespace Bound.Sprites
 {
@@ -24,12 +26,15 @@ namespace Bound.Sprites
         protected Vector2 _position { get; set; }
 
         protected float _rotation { get; set; }
+        protected virtual float _health { get; set; }
+        protected virtual float _stamina { get; set; }
+        protected virtual float _mana { get; set; }
 
         private Color _colour;
+        private SpriteEffects _spriteEffects;
 
         private float _scale { get; set; }
 
-        private SpriteEffects _spriteEffects;
 
         protected Texture2D _texture;
         protected float g = 0.09f;
@@ -44,6 +49,17 @@ namespace Bound.Sprites
         protected float _knockbackInitialVelocity = 5f;
         protected Vector2 _knockbackVelocity;
         protected float _immunityTimer;
+        protected Color _hitColour = Game1.BlendColors(Color.Red, Color.White, 0.5f);
+        protected SpriteType _spriteType = SpriteType.Sprite;
+        protected bool _lockEffects = false;
+        protected float _knockbackDamageDealtOut = 1f;
+
+        public enum SpriteType
+        {
+            Player,
+            Mob,
+            Sprite
+        }
 
         #endregion
 
@@ -71,6 +87,9 @@ namespace Bound.Sprites
             }
             set
             {
+                if (_lockEffects)
+                    return;
+
                 _spriteEffects = value;
                 if (_animationManager != null)
                     _animationManager.Effects = value;
@@ -214,6 +233,26 @@ namespace Bound.Sprites
             get { return _immunityTimer > 0; }
         }
 
+        public float Health
+        {
+            get { return _health; }
+        }
+
+        public float Mana
+        {
+            get { return _mana; }
+        }
+
+        public float Stamina
+        {
+            get { return _stamina; }
+        }
+
+        public float KnockbackDamageDealtOut
+        {
+            get { return _knockbackDamageDealtOut; }
+        }
+
         #endregion
 
         #region Methods
@@ -247,39 +286,23 @@ namespace Bound.Sprites
                 
         }
 
-        public Sprite(Dictionary<string, Animation> animations, Game1 game)
-        {
-            _texture = null;
-
-            Children = new List<Sprite>();
-
-            Colour = Color.White;
-
-            _animations = animations;
-
-            var animation = _animations.FirstOrDefault().Value;
-
-            _animationManager = new AnimationManager();
-
-            Origin = Vector2.Zero;
-
-            Scale = 1f;
-
-            _game = game;
-        }
-
         public override void Update(GameTime gameTime)
         {
+            if (IsImmune)
+                Colour = _hitColour;
+            else
+                Colour = Color.White;
+
             if (_animationManager != null)
                 _animationManager.Update(gameTime);
 
             _dTime = gameTime.ElapsedGameTime.TotalMilliseconds;
         }
 
-        public virtual void Update(GameTime gameTime, List<Rectangle> surfaces, List<Sprite> collideableSprites = null)
+        public virtual void Update(GameTime gameTime, List<Rectangle> surfaces, List<Sprite> collideableSprites = null, List<Sprite> dealsKnockback = null)
         {
             Update(gameTime);
-            DoPhysics(surfaces, collideableSprites);
+            DoPhysics(surfaces, collideableSprites, dealsKnockback);
             _debugRectangle.Position = ScaledPosition;
         }
 
@@ -295,7 +318,7 @@ namespace Bound.Sprites
         }
 
         #region Sprite Collision
-        protected bool IsTouchingLeft(Sprite sprite)
+        public bool IsTouchingLeft(Sprite sprite)
         {
             return this.Rectangle.Right + this.Velocity.X > sprite.Rectangle.Left &&
                 this.Rectangle.Left < sprite.Rectangle.Left &&
@@ -303,7 +326,7 @@ namespace Bound.Sprites
                 this.Rectangle.Top < sprite.Rectangle.Bottom;
         }
 
-        protected bool IsTouchingRight(Sprite sprite)
+        public bool IsTouchingRight(Sprite sprite)
         {
             return this.Rectangle.Left + this.Velocity.X < sprite.Rectangle.Right &&
                 this.Rectangle.Right > sprite.Rectangle.Right &&
@@ -311,7 +334,7 @@ namespace Bound.Sprites
                 this.Rectangle.Top < sprite.Rectangle.Bottom;
         }
 
-        protected bool IsTouchingTop(Sprite sprite)
+        public bool IsTouchingTop(Sprite sprite)
         {
             return this.Rectangle.Bottom + this.Velocity.Y > sprite.Rectangle.Top &&
                 this.Rectangle.Top < sprite.Rectangle.Top &&
@@ -319,7 +342,7 @@ namespace Bound.Sprites
                 this.Rectangle.Left < sprite.Rectangle.Right;
         }
 
-        protected bool IsTouchingBottom(Sprite sprite)
+        public bool IsTouchingBottom(Sprite sprite)
         {
             return this.Rectangle.Top + this.Velocity.Y < sprite.Rectangle.Bottom &&
                 this.Rectangle.Bottom > sprite.Rectangle.Bottom &&
@@ -329,7 +352,7 @@ namespace Bound.Sprites
         #endregion
 
         #region Rectangle Collision
-        protected bool IsTouchingLeft(Rectangle rect)
+        public bool IsTouchingLeft(Rectangle rect)
         {
             return this.Rectangle.Right + this.Velocity.X > rect.Left &&
                 this.Rectangle.Left < rect.Left &&
@@ -337,7 +360,7 @@ namespace Bound.Sprites
                 this.Rectangle.Top < rect.Bottom;
         }
 
-        protected bool IsTouchingRight(Rectangle rect)
+        public bool IsTouchingRight(Rectangle rect)
         {
             return this.Rectangle.Left + this.Velocity.X < rect.Right &&
                 this.Rectangle.Right > rect.Right &&
@@ -345,7 +368,7 @@ namespace Bound.Sprites
                 this.Rectangle.Top < rect.Bottom;
         }
 
-        protected bool IsTouchingTop(Rectangle rect)
+        public bool IsTouchingTop(Rectangle rect)
         {
             return this.Rectangle.Bottom + this.Velocity.Y > rect.Top &&
                 this.Rectangle.Top < rect.Top &&
@@ -353,7 +376,7 @@ namespace Bound.Sprites
                 this.Rectangle.Left < rect.Right;
         }
 
-        protected bool IsTouchingBottom(Rectangle rect)
+        public bool IsTouchingBottom(Rectangle rect)
         {
             return this.Rectangle.Top + this.Velocity.Y < rect.Bottom &&
                 this.Rectangle.Bottom > rect.Bottom &&
@@ -388,13 +411,13 @@ namespace Bound.Sprites
 
         }
 
-        protected virtual void DoPhysics(List<Rectangle> surfaces, List<Sprite> sprites = null)
+        protected virtual void DoPhysics(List<Rectangle> surfaces, List<Sprite> sprites = null, List<Sprite> dealsKnockback = null)
         {
             Velocity = new Vector2(0, 0);
             var inFreefall = true;
             var toTruncate = false;
 
-            if(!IsImmune)
+            if (!IsImmune)
                 HandleMovements(ref inFreefall);
 
             if (IsImmune)
@@ -408,7 +431,6 @@ namespace Bound.Sprites
 
 
             Knockback();
-
             foreach (var surface in surfaces)
             {
                 if ((Velocity.X > 0 && IsTouchingLeft(surface)) ||
@@ -432,32 +454,7 @@ namespace Bound.Sprites
                 }
             }
 
-            if (sprites != null)
-            {
-                foreach (var sprite in sprites)
-                {
-                    if (Velocity.X > 0 && IsTouchingLeft(sprite))
-                    {
-                        StartKnocback("left");
-                        sprite.StartKnocback("right");
-                    }
-                    else if (Velocity.X < 0 && IsTouchingRight(sprite))
-                    {
-                        StartKnocback("right");
-                        sprite.StartKnocback("left");
-                    }
-                    if (Velocity.Y > 0 && IsTouchingTop(sprite))
-                    {
-                        StartKnocback("up");
-                        sprite.StartKnocback("down");
-                    }
-                    else if (Velocity.Y < 0 && IsTouchingBottom(sprite))
-                    {
-                        StartKnocback("down");
-                        sprite.StartKnocback("up");
-                    }
-                }
-            }
+            CheckSpriteCollision(sprites, ref dealsKnockback);
 
             CheckJump(inFreefall);
 
@@ -466,7 +463,61 @@ namespace Bound.Sprites
                 Position = new Vector2(Position.X, (int)Position.Y);
         }
 
-        public void StartKnocback(string direction)
+        private void CheckSpriteCollision(List<Sprite> sprites, ref List<Sprite> dealsKnockback)
+        {
+            dealsKnockback = dealsKnockback ?? new List<Sprite>();
+            if (sprites != null)
+            {
+                foreach (var sprite in sprites)
+                {
+                    if (sprite == this)
+                        continue;
+
+                    if (Velocity.X > 0 && IsTouchingLeft(sprite))
+                    {
+                        if (dealsKnockback.Contains(sprite))
+                        {
+                            StartKnocback("left", sprite.KnockbackDamageDealtOut);
+                            sprite.StartKnocback("right", _knockbackDamageDealtOut);
+                        }
+                        else
+                            Velocity.X = 0;
+                    }
+                    else if (Velocity.X < 0 && IsTouchingRight(sprite))
+                    {
+                        if (dealsKnockback.Contains(sprite))
+                        {
+                            StartKnocback("right", sprite.KnockbackDamageDealtOut);
+                            sprite.StartKnocback("left", _knockbackDamageDealtOut);
+                        }
+                        else
+                            Velocity.X = 0;
+                    }
+                    if (Velocity.Y > 0 && IsTouchingTop(sprite))
+                    {
+                        if (dealsKnockback.Contains(sprite))
+                        {
+                            StartKnocback("up", sprite.KnockbackDamageDealtOut);
+                            sprite.StartKnocback("down", _knockbackDamageDealtOut);
+                        }
+                        else
+                            Velocity.Y = 0;
+                    }
+                    else if (Velocity.Y < 0 && IsTouchingBottom(sprite))
+                    {
+                        if (dealsKnockback.Contains(sprite))
+                        {
+                            StartKnocback("down", sprite.KnockbackDamageDealtOut);
+                            sprite.StartKnocback("up", _knockbackDamageDealtOut);
+                        }
+                        else
+                            Velocity.Y = 0;
+                    }
+                }
+            }
+        }
+
+        public void StartKnocback(string direction, float damage = 1f)
         {
             if (IsImmune)
             {
@@ -480,9 +531,11 @@ namespace Bound.Sprites
                         Velocity.X = 0; break;
                 }
             }
+
             _knockbackDirection = direction;
             _inKnockback = true;
             _immunityTimer = 250f; //in milliseconds
+            Damage(damage);
 
             switch (direction)
             {
@@ -568,7 +621,32 @@ namespace Bound.Sprites
                 _animationManager.Scale = FullScale;
         }
 
+        public void UnlockEffects() => _lockEffects = false;
+
+        public void Kill(Level level) => level.RemoveMob(this);
+
+        public void Damage(float damage) => _health -= (damage >= 0) ? damage : 0f;
+
+        public bool UseStamina(float staminaToUse)
+        {
+            if (staminaToUse <= _stamina)
+            {
+                _stamina -= staminaToUse;
+                return true;
+            }
+            return false;
+        }
+
+        public bool UseMana(float manaToUse)
+        {
+            if (manaToUse <= _mana)
+            {
+                _mana -= manaToUse;
+                return true;
+            }
+            return false;
+        }
+
         #endregion
     }
 }
-

@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -15,8 +16,9 @@ namespace Bound.Models.Items
     public class Item
     { 
         protected TextureCollection _textures;
-        protected Rectangle _rectangle;
-        protected DebugRectangle _collisionRectangle;
+        protected Rectangle _collisionRectangle;
+        protected DebugRectangle _debugRectangle;
+        protected List<Sprite> _spriteBlacklist = new List<Sprite>();
 
         public int Id { get; }
         public string Name { get; }
@@ -31,7 +33,7 @@ namespace Bound.Models.Items
 
         public Rectangle CollisionRectangle
         {
-            get {  return _rectangle; }
+            get {  return _collisionRectangle; }
         }
 
         public Item(TextureCollection textures, int id, string name, string description, TextureManager.ItemType type, string attributes = "")
@@ -65,6 +67,32 @@ namespace Bound.Models.Items
             return output;
         }
 
+        protected void CheckCollision(List<Sprite> sprites)
+        {
+            //will have to alter code for this and StartKnockback to take into account MATK and defence values for each type of attack
+            var damage = Attributes.ContainsKey("PATK") ? Attributes["PATK"].Value : 1f;
+            
+            foreach (var sprite in sprites)
+            {
+                if (sprite.IsImmune || _spriteBlacklist.Contains(sprite))
+                    continue;
+
+                if (sprite.IsTouchingLeft(_collisionRectangle))
+                    sprite.StartKnocback("left", damage);
+                else if (sprite.IsTouchingRight(_collisionRectangle))
+                    sprite.StartKnocback("right", damage);
+                else if (sprite.IsTouchingTop(_collisionRectangle))
+                    sprite.StartKnocback("up", damage);
+                else if (sprite.IsTouchingBottom(_collisionRectangle))
+                    sprite.StartKnocback("down", damage);
+
+                //sprite will now be immune if it was hit
+                if (sprite.IsImmune)
+                    _spriteBlacklist.Add(sprite);
+            }
+
+        }
+
         public virtual void Use()
         {
         }
@@ -73,7 +101,7 @@ namespace Bound.Models.Items
         {
         }
 
-        public virtual void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime, List<Sprite> sprites)
         {
         }
     }
