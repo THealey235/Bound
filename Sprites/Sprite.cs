@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Bound.Models;
 using Bound.Managers;
-using System.Security.Cryptography.X509Certificates;
 using Bound.States;
 
 namespace Bound.Sprites
@@ -35,7 +34,7 @@ namespace Bound.Sprites
 
         private float _scale { get; set; }
 
-
+        private bool _toUnlockEffects = false;
         protected Texture2D _texture;
         protected float g = 0.09f;
         protected double _dTime;
@@ -297,6 +296,9 @@ namespace Bound.Sprites
                 _animationManager.Update(gameTime);
 
             _dTime = gameTime.ElapsedGameTime.TotalMilliseconds;
+
+            if (_toUnlockEffects)
+                _lockEffects = _toUnlockEffects = false;
         }
 
         public virtual void Update(GameTime gameTime, List<Rectangle> surfaces, List<Sprite> collideableSprites = null, List<Sprite> dealsKnockback = null)
@@ -621,7 +623,7 @@ namespace Bound.Sprites
                 _animationManager.Scale = FullScale;
         }
 
-        public void UnlockEffects() => _lockEffects = false;
+        public void UnlockEffects() => _toUnlockEffects = true;
 
         public void Kill(Level level) => level.RemoveMob(this);
 

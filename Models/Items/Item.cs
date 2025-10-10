@@ -95,6 +95,8 @@ namespace Bound.Models.Items
 
         public virtual void Use()
         {
+            if (User != null)
+                User.UnlockEffects();
         }
 
         public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)

@@ -185,8 +185,8 @@ namespace Bound.Sprites
             }
             if (_keys.IsPressed("Use", true))
             {
-                Level.HUD.UseItem();
-                _lockEffects = true;
+                _lockEffects = Level.HUD.UseItem();
+                
             }
         }
 
