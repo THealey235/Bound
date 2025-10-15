@@ -17,19 +17,26 @@ namespace Bound.Managers
         public int BlockWidth = 16;
 
         //Name corresponding to the index of a texture in the block atlas
-        public enum Blocks
+        public enum CommonBlocks
         {
             Grass, Path, OakPlank, OakLog, Glass, DoorA, DoorB, OakSlab, BlankTile, DirtGradient0, DirtGradient1, DirtGradient2
         }
 
+        public readonly List<string> CommonBlocksKey = new List<string>()
+        {
+            "Grass", "Path", "OakPlank", "OakLog", "Glass", "DoorA", "DoorB", "OakSlab", "BlankTile", "DirtGradient0", "DirtGradient1", "DirtGradient2"
+        };
+
+        public string GetAtlasKey(int i, string s) => GetAtlasInformation(s).AtlasKeys[i];
+            
         public readonly Dictionary<int, Rectangle> SpecialShapeBlocks = new Dictionary<int, Rectangle>()
         {
-            {(int)Blocks.OakSlab, new Rectangle(0, 8, 16, 8)}
+            {(int)CommonBlocks.OakSlab, new Rectangle(0, 8, 16, 8)}
         };
 
         public List<int> GhostBlocks = new List<int>() //contains blocks that you can walk through (no hitbox)
         {
-            (int)Blocks.DoorA, (int)Blocks.DoorB, (int)Blocks.BlankTile, (int)Blocks.DirtGradient0, (int)Blocks.DirtGradient1, (int)Blocks.DirtGradient2
+            (int)CommonBlocks.DoorA, (int)CommonBlocks.DoorB, (int)CommonBlocks.BlankTile, (int)CommonBlocks.DirtGradient0, (int)CommonBlocks.DirtGradient1, (int)CommonBlocks.DirtGradient2
         };
 
         public enum ItemTextureType
@@ -63,7 +70,6 @@ namespace Bound.Managers
         private ContentManager _content;
         private Game1 _game;
 
-        public Texture2D BlockAtlas;
         public Texture2D Button;
         public Texture2D BaseBackground;
         public Texture2D RedX;
@@ -92,8 +98,9 @@ namespace Bound.Managers
         private Dictionary<int, string> IdToName = new Dictionary<int, string>();
 
         public Dictionary<string, Texture2D> Buttons;
-
         public List<SpriteFont> Fonts;
+
+        private Dictionary<string, Texture2D> CommonBlockAtlas = new Dictionary<string, Texture2D>();
 
         
 
@@ -152,7 +159,7 @@ namespace Bound.Managers
 
             #region Game Elements
 
-            BlockAtlas = content.Load<Texture2D>("Atlases/BlockAtlas");
+            LoadBlockDirectory("Content/Atlases/Common", "common");
             HotbarBG = content.Load<Texture2D>("Backgrounds/HotbarBG");
             HotbarSelectedSlot = content.Load<Texture2D>("Backgrounds/HotbarSelectedBG");
 
@@ -243,6 +250,20 @@ namespace Bound.Managers
                 SortedItems.Add(type, outputList);
 
         }
+
+        private void LoadBlockDirectory(string masterPath, string atlasName)
+        {
+            var paths = Directory.GetFiles(masterPath).Select(x => x.Replace("Content/", string.Empty).Replace(".xnb", string.Empty));
+            var atlasInfo = GetAtlasInformation(atlasName);
+            foreach (var path in paths)
+            {
+                var key = path.Split('\\')[^1];
+                if (atlasInfo.AtlasKeys.Contains(key))
+                    atlasInfo.Atlas.Add(key, _content.Load<Texture2D>(path));
+            }
+        }
+
+
         public Dictionary<string, Item> LoadItems()
         {
             List<List<string>> readItems;
@@ -334,6 +355,15 @@ namespace Bound.Managers
             return output;
         }
 
+        private (List<string> AtlasKeys, Dictionary<string, Texture2D> Atlas) GetAtlasInformation(string atlasName)
+        {
+            switch (atlasName.ToLower())
+            {
+                default:
+                    return (CommonBlocksKey, CommonBlockAtlas);
+            }
+        }
+
         public Texture2D CreateSubTexture(GraphicsDevice graphicsDevice, Texture2D sourceTexture, Rectangle sourceRectangle)
         {
             Color[] sourceData = new Color[sourceTexture.Width * sourceTexture.Height];
@@ -392,5 +422,11 @@ namespace Bound.Managers
         }
 
         public string GetItemName(int ID) => (ID < IdToName.Count) ? IdToName[ID] : "Default";
+
+        public Texture2D GetBlock(int index, string name)
+        {
+            var info = GetAtlasInformation(name);
+            return info.Atlas[info.AtlasKeys[index]];
+        }
     }
 }

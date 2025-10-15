@@ -1,13 +1,10 @@
 ﻿using Bound.Controls;
-using Bound.Managers;
-using Bound.States.Game;
 using Bound.States.Popups;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 namespace Bound.States
 {
     public class MainMenu : State
@@ -128,7 +125,7 @@ namespace Bound.States
 
         private void Button_Saves_Clicked(object sender, EventArgs e)
         {
-            Popups.Add(new SavesMenu(_game, _content, this, _graphics));
+            Popups.Add(new SavesMenu(_game, _content, this));
             Popups[^1].LoadContent();
         }
 

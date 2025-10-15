@@ -22,11 +22,11 @@ namespace Bound.States.Game
         {
             base.LoadContent();
 
-            var rows = new List<(List<TextureManager.Blocks>, Color)>()
+            var rows = new List<(List<TextureManager.CommonBlocks>, Color)>()
             {
-                (new List<TextureManager.Blocks>{TextureManager.Blocks.DirtGradient0, TextureManager.Blocks.DirtGradient1, TextureManager.Blocks.DirtGradient2 }, Color.White),
+                (new List<TextureManager.CommonBlocks>{TextureManager.CommonBlocks.DirtGradient0, TextureManager.CommonBlocks.DirtGradient1, TextureManager.CommonBlocks.DirtGradient2 }, Color.White),
             };
-            rows.AddRange(Enumerable.Repeat((new List<TextureManager.Blocks> { TextureManager.Blocks.BlankTile }, Color.Black), 5));
+            rows.AddRange(Enumerable.Repeat((new List<TextureManager.CommonBlocks> { TextureManager.CommonBlocks.BlankTile }, Color.Black), 5));
             PadBottom(rows);
         }
     }

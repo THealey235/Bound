@@ -26,7 +26,7 @@ namespace Bound.States.Popups.Game
       
         public float Layer;
 
-        public InventoryMenu(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content, parent, graphics)
+        public InventoryMenu(Game1 game, ContentManager content, State parent) : base(game, content, parent)
         {
             Name = Game1.Names.InventoryWindow;
             Layer = 0.79f;
@@ -267,27 +267,27 @@ namespace Bound.States.Popups.Game
         private void Button_Armour_Clicked(object sender, EventArgs eventArgs)
         {
             var button = sender as InventorySlot;
-            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, _graphics, button.ItemType, button.ID,  Layer + 0.01f, this));
+            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, button.ItemType, button.ID,  Layer + 0.01f, this));
             _selectedBoxIndex = button.Index;
         }
 
         private void Button_Accessory_Clicked(object sender, EventArgs e)
         {
             var button = sender as InventorySlot;
-            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, _graphics, button.ItemType, button.ID, Layer + 0.01f, this));
+            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, button.ItemType, button.ID, Layer + 0.01f, this));
             _selectedBoxIndex = button.Index;
         }
         private void Button_Hotbar_Clicked(object sender, EventArgs e)
         {
             var button = sender as InventorySlot;
-            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, _graphics, new List<TextureManager.ItemType>() { TextureManager.ItemType.Weapon, TextureManager.ItemType.Consumable }, button.ID, Layer + 0.01f, this));
+            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, new List<TextureManager.ItemType>() { TextureManager.ItemType.Weapon, TextureManager.ItemType.Consumable }, button.ID, Layer + 0.01f, this));
             _selectedBoxIndex = button.Index;
         }
 
         private void Button_Skills_Clicked(object sender, EventArgs e)
         {
             var button = sender as InventorySlot;
-            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, _graphics, button.ItemType, button.ID, Layer + 0.01f, this));
+            Parent.Popups.Add(new ItemFinder(_game, _content, Parent, button.ItemType, button.ID, Layer + 0.01f, this));
             _selectedBoxIndex = button.Index;
         }
 

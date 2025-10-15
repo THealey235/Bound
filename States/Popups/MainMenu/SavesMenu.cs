@@ -18,7 +18,7 @@ namespace Bound.States
 
         private List<Component> _components;
 
-        public SavesMenu(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content, parent, graphics)
+        public SavesMenu(Game1 game, ContentManager content, State parent) : base(game, content, parent)
         {
             Name = "savesmenu";
         }
@@ -109,7 +109,7 @@ namespace Bound.States
             _game.RecentSave = _game.SaveIndex = save.Index;
             _game.Settings.Settings.General["MostRecentSave"] = save.Index.ToString();
             SettingsManager.Save(_game.Settings);
-            _game.ChangeState(_game.SavesManager.GetState(save.Index, _game, _content, _graphics));
+            _game.ChangeState(_game.SavesManager.GetState(save.Index, _game, _content, _game.GraphicsManager));
         }
 
         #endregion

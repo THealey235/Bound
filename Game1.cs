@@ -104,6 +104,11 @@ namespace Bound
             }
         }
 
+        public GraphicsDeviceManager GraphicsManager
+        {
+            get { return _graphics; }
+        }
+
         public string CurrentStateName
         {
             get
@@ -244,7 +249,7 @@ namespace Bound
                 }
                 else if (_currentState.Name != Names.CharacterInit && PlayerKeys.IsPressed("Menu", false))
                 {
-                    var options = new States.Popups.Game.Options(this, Content, _currentState, _graphics);
+                    var options = new States.Popups.Game.Options(this, Content, _currentState);
                     _currentState.Popups.Add(options);
                     options.Layer = Player.Layer + 0.001f;
                     options.LoadContent();

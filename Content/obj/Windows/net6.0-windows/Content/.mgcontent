@@ -6,6 +6,18 @@
   <SourceFiles>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/BlockAtlas (adjusted).png</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/BlockAtlas.png</File>
+    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/BlankTile.png</File>
+    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DirtGradient0.png</File>
+    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DirtGradient1.png</File>
+    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DirtGradient2.png</File>
+    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DoorA.png</File>
+    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DoorB.png</File>
+    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/Glass.png</File>
+    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/Grass.png</File>
+    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/OakLog.png</File>
+    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/OakPlank.png</File>
+    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/OakSlab.png</File>
+    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/Path.png</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/DirtBlock.png</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Backgrounds/BaseBackground.png</File>
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Backgrounds/Bordered.png</File>
@@ -54,6 +66,18 @@
     <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Zombie/Standing.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

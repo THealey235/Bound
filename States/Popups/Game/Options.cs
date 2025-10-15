@@ -18,7 +18,7 @@ namespace Bound.States.Popups.Game
 
         public float Layer;
 
-        public Options(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content, parent, graphics)
+        public Options(Game1 game, ContentManager content, State parent) : base(game, content, parent)
         {
             Name = Game1.Names.GameOptions;
             Layer = 0.8f;
@@ -96,7 +96,7 @@ namespace Bound.States.Popups.Game
 
         private void Button_Settings_Clicked(object sender, EventArgs e)
         {
-            var settings = new Settings(_game, _content, Parent, _graphics);
+            var settings = new Settings(_game, _content, Parent, _game.GraphicsManager);
             Parent.Popups.Add(settings);
             settings.LoadContent();
             settings.LoadMenuButton();
@@ -104,14 +104,14 @@ namespace Bound.States.Popups.Game
 
         private void Button_Inventory_Clicked(object sender, EventArgs e)
         {
-            var inventory = new InventoryMenu(_game, _content, Parent, _graphics);
+            var inventory = new InventoryMenu(_game, _content, Parent);
             Parent.Popups.Add(inventory);
             inventory.LoadContent();
         }
 
         private void Button_Stats_Clicked(object sender, EventArgs e)
         {
-            Parent.Popups.Add(new Stats(_game, _content, Parent, _graphics));
+            Parent.Popups.Add(new Stats(_game, _content, Parent));
             Parent.Popups[^1].LoadContent();
         }
 

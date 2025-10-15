@@ -27,7 +27,7 @@ namespace Bound.States.Popups
         public float Layer;
         public Color PenColor = Game1.MenuColorPalette[2];
 
-        public ItemFinder(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics, TextureManager.ItemType filter, string slotID, float layer, object creator) : base(game, content, parent, graphics)
+        public ItemFinder(Game1 game, ContentManager content, State parent, TextureManager.ItemType filter, string slotID, float layer, object creator) : base(game, content, parent)
         {
             Name = Game1.Names.ItemFinder;
             Layer = layer;
@@ -37,7 +37,7 @@ namespace Bound.States.Popups
             LoadContent();
         }
 
-        public ItemFinder(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics, List<TextureManager.ItemType> filter, string slotID, float layer, object creator) : base(game, content, parent, graphics)
+        public ItemFinder(Game1 game, ContentManager content, State parent, List<TextureManager.ItemType> filter, string slotID, float layer, object creator) : base(game, content, parent)
         {
             Name = Game1.Names.ItemFinder;
             Layer = layer;

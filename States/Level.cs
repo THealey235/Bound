@@ -95,12 +95,12 @@ namespace Bound.States
             _player.Level = this;
             _mobs[0].Position = new Vector2(10, 100);
 
-            _HUD = new HeadsUpDisplay(_game, _content);
+            _HUD = new HeadsUpDisplay(_game, _content, this);
             _HUD.LoadContent();
         }
 
         //pad bottom with rows of tiles so that it looks nice.
-        protected void PadBottom(List<(List<TextureManager.Blocks> Block, Color Colour)> rows)
+        protected void PadBottom(List<(List<TextureManager.CommonBlocks> Block, Color Colour)> rows)
         {
             var index = 0;
             for (int row = 0; row < rows.Count; row++)

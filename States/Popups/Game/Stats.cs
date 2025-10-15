@@ -16,7 +16,7 @@ namespace Bound.States.Popups.Game
         public float Layer;
         public Color PenColor = Game1.MenuColorPalette[2];
         
-        public Stats(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content, parent, graphics)
+        public Stats(Game1 game, ContentManager content, State parent) : base(game, content, parent)
         {
             Name = Game1.Names.StatsWindow;
             Layer = 0.79f;

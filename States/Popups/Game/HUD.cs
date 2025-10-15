@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Bound.States.Popups.Game
 {
-    public class HeadsUpDisplay : State
+    public class HeadsUpDisplay : Popup
     {
         #region Attributes
 
@@ -31,7 +31,7 @@ namespace Bound.States.Popups.Game
        
         #endregion
 
-        public HeadsUpDisplay(Game1 game, ContentManager content) : base(game, content)
+        public HeadsUpDisplay(Game1 game, ContentManager content, State parent) : base(game, content, parent)
         {
             Layer = _game.Player.Layer + 0.01f;
             _save = game.SavesManager.ActiveSave;

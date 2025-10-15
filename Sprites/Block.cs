@@ -6,11 +6,11 @@ using Bound.Models;
 
 namespace Bound.Sprites
 {
-    public class Block
+    public class Block : Component
     {
         #region Fields & Properties
 
-        private TextureManager _textures;
+        private Texture2D _texture;
         private Rectangle _sourceRectangle;
         private SpriteEffects _spriteEffects;
         private Vector2 _origin = Vector2.Zero;
@@ -64,11 +64,13 @@ namespace Bound.Sprites
         }
 
         #endregion
-        public Block(TextureManager textures, int index, Rectangle source, Vector2 position, float scale, float layer, GraphicsDevice graphics)
+        public Block(TextureManager textures, int index, Vector2 position, float scale, float layer, GraphicsDevice graphics)
         {
             _name = "block";
 
-            _sourceRectangle = source;
+            _texture = textures.GetBlock(index, "common");
+
+            _sourceRectangle = new Rectangle(0, 0, textures.BlockWidth, textures.BlockWidth);
 
             Position = position;
 
@@ -78,30 +80,26 @@ namespace Bound.Sprites
             
             Index = index;
 
-            _blockWidth = _textures.BlockWidth;
+            _blockWidth = textures.BlockWidth;
 
-            if (_textures.SpecialShapeBlocks.ContainsKey(Index))
-                _shapeRectangle = _textures.SpecialShapeBlocks[Index];
-            else _shapeRectangle = new Rectangle(0, 0, _sourceRectangle.Width, _sourceRectangle.Height);
+            if (textures.SpecialShapeBlocks.ContainsKey(Index))
+                _shapeRectangle = textures.SpecialShapeBlocks[Index];
+            else _shapeRectangle = _sourceRectangle;
 
-            if (!_textures.GhostBlocks.Contains(Index))
+            if (!textures.GhostBlocks.Contains(Index))
                 _debugRectangle = new DebugRectangle(ScaledRectangle, graphics, layer + 0.1f, Scale);
 
         }
 
         public Block(TextureManager textures, GraphicsDevice graphics, int index, Vector2 position, Color colour, float rotation, Vector2 origin, float scale, SpriteEffects spriteEffects, float layer)
         {
-            //TODO: FIX LINE ARTIFACTING DUE TO MONOGAME (only happens to the right side of the texture)
-            //This will require changing logic to automatically find the source rect position and changing the atlas to extend each block by one pixel to the right
             _name = "block";
-            _textures = textures;
-            var rowLength = _textures.BlockAtlas.Width / _textures.BlockWidth;
-            var column = index / rowLength;
-            var row = index % rowLength;
 
             Position = position;
 
-            _sourceRectangle = new Rectangle(_textures.BlockWidth * row, _textures.BlockWidth * column, _textures.BlockWidth, _textures.BlockWidth);
+            _texture = textures.GetBlock(index, "common");
+
+            _sourceRectangle = new Rectangle(0, 0, _texture.Width, _texture.Height);
 
             Colour = colour;
 
@@ -115,26 +113,26 @@ namespace Bound.Sprites
 
             Layer = layer;
 
-            _blockWidth = _textures.BlockWidth;
+            _blockWidth = textures.BlockWidth;
 
             Index = index;
 
-            if (_textures.SpecialShapeBlocks.ContainsKey(Index))
-                _shapeRectangle = _textures.SpecialShapeBlocks[Index];
+            if (textures.SpecialShapeBlocks.ContainsKey(Index))
+                _shapeRectangle = textures.SpecialShapeBlocks[Index];
             else _shapeRectangle = new Rectangle(0, 0, _sourceRectangle.Width, _sourceRectangle.Height);
 
-            if (!_textures.GhostBlocks.Contains(Index))
+            if (!textures.GhostBlocks.Contains(Index))
                 _debugRectangle = new DebugRectangle(ScaledRectangle, graphics, layer + 0.1f, 1f);
         }
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
 
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_textures.BlockAtlas, ScaledPosition, _sourceRectangle, Colour, Rotation, _origin, Scale, _spriteEffects, Layer);
+            spriteBatch.Draw(_texture, ScaledPosition, null, Colour, Rotation, _origin, Scale, _spriteEffects, Layer);
             if (Game1.InDebug && _debugRectangle != null)
                 _debugRectangle.Draw(gameTime, spriteBatch);
         }

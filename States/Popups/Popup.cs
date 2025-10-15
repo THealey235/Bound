@@ -13,12 +13,10 @@ namespace Bound.States.Popups
     public abstract class Popup : State
     {
         public State Parent;
-        protected GraphicsDeviceManager _graphics;
 
-        public Popup(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content)
+        public Popup(Game1 game, ContentManager content, State parent) : base(game, content)
         {
             Parent = parent;
-            _graphics = graphics;
         }
     }
 }

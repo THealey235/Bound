@@ -24,17 +24,19 @@ namespace Bound.States.Popups
         private KeyboardState _currentKeys;
         private KeyboardState _previousKeys;
         private ScrollingMenu _scrollingKeyInputs;
+        private GraphicsDeviceManager _graphics;
         private bool _enableEscape;
 
         #endregion
 
         #region Constructor / Inherited
-        public Settings(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content, parent, graphics)
+        public Settings(Game1 game, ContentManager content, State parent, GraphicsDeviceManager graphics) : base(game, content, parent)
         {
             Parent = parent;
             _graphics = graphics;
             Name = Game1.Names.Settings;
             _enableEscape = false;
+            _graphics = graphics;
         }
 
         public override void LoadContent()
