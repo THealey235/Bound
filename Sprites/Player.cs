@@ -102,9 +102,6 @@ namespace Bound.Sprites
                     Scale = FullScale,
                 };
             }
-
-            foreach (var item in _game.Items)
-                item.Value.User = this;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -186,7 +183,6 @@ namespace Bound.Sprites
             if (_keys.IsPressed("Use", true))
             {
                 _lockEffects = Level.HUD.UseItem();
-                
             }
         }
 

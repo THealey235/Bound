@@ -19,11 +19,12 @@ namespace Bound.Models.Items
         protected Rectangle _collisionRectangle;
         protected DebugRectangle _debugRectangle;
         protected List<Sprite> _spriteBlacklist = new List<Sprite>();
+        protected Sprite _owner;
 
         public int Id { get; }
         public string Name { get; }
         public string Description { get; }
-        public virtual Sprite User { get; set; }
+        public virtual Sprite Owner { get; set; }
 
         public Dictionary<string, Attribute> Attributes = new Dictionary<string, Attribute>();
         public TextureManager.ItemType Type { get; }
@@ -58,7 +59,7 @@ namespace Bound.Models.Items
             }
         }
 
-        public Item Clone()
+        public virtual Item Clone()
         {
             var output = new Item(_textures, Id, Name, Description, Type);
             output.Attributes = Attributes;
@@ -67,11 +68,13 @@ namespace Bound.Models.Items
             return output;
         }
 
-        protected void CheckCollision(List<Sprite> sprites)
+        protected bool CheckCollision(List<Sprite> sprites)
         {
             //will have to alter code for this and StartKnockback to take into account MATK and defence values for each type of attack
             var damage = Attributes.ContainsKey("PATK") ? Attributes["PATK"].Value : 1f;
             
+            var length = _spriteBlacklist.Count;
+
             foreach (var sprite in sprites)
             {
                 if (sprite.IsImmune || _spriteBlacklist.Contains(sprite))
@@ -91,12 +94,14 @@ namespace Bound.Models.Items
                     _spriteBlacklist.Add(sprite);
             }
 
+            return (_spriteBlacklist.Count > length) ? true : false;
+
         }
 
         public virtual void Use()
         {
-            if (User != null)
-                User.UnlockEffects();
+            if (Owner != null)
+                Owner.UnlockEffects();
         }
 
         public virtual void Draw(GameTime gameTime, SpriteBatch spriteBatch)

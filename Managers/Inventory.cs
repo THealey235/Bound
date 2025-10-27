@@ -1,33 +1,19 @@
 ﻿using Bound.Managers;
 using Bound.Models.Items;
-using SharpDX.Direct3D9;
+using Bound.Sprites;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using static Bound.Managers.TextureManager;
 
-//This is more of a manager but so I may move this there in the future
-namespace Bound.Models
+namespace Bound.Managers
 {
     public class Inventory
     {
-        /*public enum ItemType
-        {
-            HeadGear,
-            ChestArmour,
-            LegArmour,
-            Footwear,
-            Accessory,
-            Weapon,
-            Consumable,
-            Skill,
-            HoldableItem,
-            Item,
-            Unrecognised,
-        }*/
+
         private Game1 _game;
+        private Sprite _owner;
         private Dictionary<string, Item> _headgear = new Dictionary<string, Item>();
         private Dictionary<string, Item> _chestArmour = new Dictionary<string, Item>();
         private Dictionary<string, Item> _legArmour = new Dictionary<string, Item>();
@@ -38,18 +24,32 @@ namespace Bound.Models
         private Dictionary<string, Item> _skills = new Dictionary<string, Item>();
         private List<Dictionary<string, Item>> _inventory;
 
-        public List<string> EntireInvetory
+        private static Item Blank = new Item(new Models.TextureCollection(), -1, "Blank", "null", ItemType.Unrecognised);
+
+        public List<string> FlatInventory
         {
             get
             {
                 var inv = new List<string>();
                 foreach (var list in _inventory)
-                    inv.AddRange(list.Keys);
+                    inv.AddRange(list.Keys); //returns strings not items for data safety
                 return inv;
             }
         }
 
-        public Inventory(Game1 game) 
+        public Sprite Owner
+        {
+            get { return _owner; }
+            set
+            {
+                _owner = value;
+                foreach (var dict in _inventory)
+                    foreach (var item in dict.Values)
+                        item.Owner = _owner;
+            }
+        }
+
+        public Inventory(Game1 game, Sprite Owner) 
         {
             _inventory = new List<Dictionary<string, Item>>()
             {
@@ -57,21 +57,24 @@ namespace Bound.Models
             };
 
             _game = game;
+            _owner = Owner;
         }
 
-        public void Add(string name, Item item)
+        public void Add(Item item)
         {
             var index = (int)item.Type;
             if (index >= _inventory.Count)
                 return;
 
-            _inventory[index].Add(name, item.Clone());
+            _inventory[index].Add(item.Name, item.Clone());
+            _inventory[index].Values.ToArray()[^1].Owner = _owner;
         }
 
         public void Add(string name, int numberTaken = 1)
         {
             var item = _game.Items[name].Clone();
             item.Quantity = numberTaken;
+            item.Owner = _owner;
             var index = (int)item.Type;
             if (index >= _inventory.Count)
                 return;
@@ -94,6 +97,7 @@ namespace Bound.Models
             }
 
             var newItem = _game.Items[args["Name"]].Clone();
+            newItem.Owner = _owner;
             if (args.ContainsKey("Ammount")) newItem.Quantity = int.Parse(args["Ammount"]);
 
             var index = (int)newItem.Type;
@@ -144,7 +148,7 @@ namespace Bound.Models
             else if (_inventory[(int)type].ContainsKey(name))
                 return _inventory[(int)type][name];
 
-            return null;//TODO: return a blank item
+            return Blank;
             
         }
     }

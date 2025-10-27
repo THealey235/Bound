@@ -290,6 +290,9 @@ namespace Bound.Managers
                         case (ItemType.Weapon):
                             items.Add(readItems[i][0], new Weapon(_game, textures, i, readItems[i][0], readItems[i][2], StringToType(readItems[i][1]), readItems[i][3]));
                             break;
+                        case (ItemType.Consumable):
+                            items.Add(readItems[i][0], new Consumable(_game, textures, i, readItems[i][0], readItems[i][2], StringToType(readItems[i][1]), readItems[i][3]));
+                            break;
                         default:
                             items.Add(readItems[i][0], new Item(textures, i, readItems[i][0], readItems[i][2], StringToType(readItems[i][1]), readItems[i][3]));
                             break;

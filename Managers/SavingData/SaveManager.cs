@@ -108,7 +108,7 @@ namespace Bound.Managers
 
             using (var writer = new StreamWriter(new FileStream(path, FileMode.Create)))
             {
-                writer.Write(save);
+                writer.Write(save);//save.ToString() is called
             }
         }
 

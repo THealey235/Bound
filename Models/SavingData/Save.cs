@@ -93,7 +93,7 @@ namespace Bound.Models
             str += EncryptKVP("Mana", _mana.ToString());
             str += EncryptKVP("Stamina", _stamina.ToString());
 
-            if (Inventory.EntireInvetory.Count > 0)
+            if (Inventory.FlatInventory.Count > 0)
                 str += EncryptKeyListPair("Inventory", Inventory.FormatForSave());
             if (EquippedItems.Count > 0)
                 str += EncryptKeyListPair("EquippedItems", EquippedItems
@@ -281,14 +281,13 @@ namespace Bound.Models
                 PlayerName = "_",
                 Manager = manager,
                 Attributes = new Dictionary<string, Attribute>(),
-                Inventory = new Inventory(game),
+                Inventory = new Inventory(game, game.Player),
             };
 
             AddMissingKeys(manager, save, manager.DefaultAttributes.Keys.ToList());
 
             return save;
         }
-
 
         public static Save ImportSave(SaveManager manager, List<string> lines, Game1 game)
         {
@@ -298,7 +297,7 @@ namespace Bound.Models
                 {
                     Manager = manager,
                     Attributes = new Dictionary<string, Attribute>(),
-                    Inventory = new Inventory(game),
+                    Inventory = new Inventory(game, game.Player),
                 };
 
                 var AttributeKeys = manager.DefaultAttributes.Keys.ToList();

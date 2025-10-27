@@ -192,6 +192,12 @@ namespace Bound
                 Position = new Vector2(100, 0),
             };
 
+            foreach (var save in SavesManager.Saves)
+            {
+                if (save != null) 
+                    save.Inventory.Owner = Player;
+            }
+
             Camera = new Camera();
 
             V2Transform = Vector2.Zero;

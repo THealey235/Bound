@@ -192,7 +192,7 @@ namespace Bound.States
             //_game.Items[item.Name] is necessary because if it is a sub-class of Item we want that class not the Item class returned by the HUD since it has been cast to an Item 
             var item = _HUD.HeldItem;
             if (item != null)
-                _game.Items[item.Name].Update(gameTime, _mobs); //TODO: put collideable sprrites instead of an empty list
+                item.Update(gameTime, _mobs);
 
             _player.Position = new Vector2(Math.Clamp(_player.Position.X, _mapBounds.Min, _mapBounds.Max), _player.Position.Y);
             foreach (var sprite in _mobs)

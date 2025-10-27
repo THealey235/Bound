@@ -44,7 +44,7 @@ namespace Bound.States.Popups.Game
                 slot.Draw(gameTime, spriteBatch);
 
             if (_hotbarSlots[_hotbarSelectedSlot].Item != null)
-                _game.Items[_hotbarSlots[_hotbarSelectedSlot].Item.Name].Draw(gameTime, spriteBatch);
+                _hotbarSlots[_hotbarSelectedSlot].Item.Draw(gameTime, spriteBatch);
 
             for (int i = 0; i < _statusBoxes.Count; i++)
             {
@@ -75,8 +75,6 @@ namespace Bound.States.Popups.Game
                     )
                 );
                 var item = _hotbarSlots[i].Item;
-                if (item != null)
-                    _game.Items[item.Name].User = _player;
             }
             _hotbarSelectedSlot = _game.Player.HotbarSlot - 1;
             _hotbarSlots[_hotbarSelectedSlot].IsSelected = true;
@@ -170,7 +168,7 @@ namespace Bound.States.Popups.Game
             var item = _hotbarSlots[_hotbarSelectedSlot].Item;
             if (item != null)
             {
-                _game.Items[_hotbarSlots[_hotbarSelectedSlot].Item.Name].Use();
+                _hotbarSlots[_hotbarSelectedSlot].Item.Use();
                 return true;
             }
             return false;

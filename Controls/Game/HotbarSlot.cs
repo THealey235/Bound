@@ -3,6 +3,7 @@ using Bound.Models;
 using Bound.Models.Items;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Drawing.Printing;
 
 namespace Bound.Controls.Game
@@ -104,7 +105,7 @@ namespace Bound.Controls.Game
 
         public override void Update(GameTime gameTime)
         {
-            
+
         }
 
         public void UpdateItem(TextureManager.ItemType type, string name)

@@ -4,71 +4,65 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/BlockAtlas (adjusted).png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/BlockAtlas.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/BlankTile.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DirtGradient0.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DirtGradient1.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DirtGradient2.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DoorA.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DoorB.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/Glass.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/Grass.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/OakLog.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/OakPlank.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/OakSlab.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/Path.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/DirtBlock.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Backgrounds/BaseBackground.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Backgrounds/Bordered.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Backgrounds/HotbarBG.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Backgrounds/HotbarSelectedBG.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Buttons/Button.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Buttons/Button1.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Buttons/BW.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/EmptyBox.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Icos/ArrowLeft.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Icos/PlayButton.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Icos/Plus.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Icos/RedX.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Icos/TrashCan.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Fonts/JX-1080.spritefont</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Fonts/JX-1440.spritefont</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Fonts/JX-2160.spritefont</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Fonts/JX-720.spritefont</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Fonts/JX-900.spritefont</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Accessories/Statics/Crimson Blessing-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Accessories/Statics/Fast Feet-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Accessories/Statics/Silver Powder-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/ChestArmour/Statics/Default-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/ChestArmour/Statics/Super Cool Epic Chest Piece-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Double Jump-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Golden Mibu Water Balloon-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Healing Potion-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Lesser Guinn-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Magic Infused Potion-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Rock-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Stamina Potion-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Stone Potion-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Throwing Dagger-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Footwear/Statics/Default-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/HeadGear/Statics/Default-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/LegArmour/Statics/Default-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Skills/Statics/Default-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Weapons/Sheets/Wooden Sword-Use.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Weapons/Statics/Default-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Weapons/Statics/Wooden Sword-Icon.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/MissingTexture.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Mouse/MouseFill.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Mouse/MouseOutline.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Player/Standing.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Player/Walking-Sheet.png</File>
-    <File>C:/Users/tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Zombie/Standing.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/BlankTile.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DirtGradient0.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DirtGradient1.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DirtGradient2.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DoorA.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DoorB.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/Glass.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/Grass.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/OakLog.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/OakPlank.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/OakSlab.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/Path.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Backgrounds/BaseBackground.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Backgrounds/Bordered.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Backgrounds/HotbarBG.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Backgrounds/HotbarSelectedBG.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Buttons/Button.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Buttons/Button1.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Buttons/BW.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/EmptyBox.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Icos/ArrowLeft.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Icos/PlayButton.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Icos/Plus.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Icos/RedX.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Controls/Icos/TrashCan.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Fonts/JX-1080.spritefont</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Fonts/JX-1440.spritefont</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Fonts/JX-2160.spritefont</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Fonts/JX-720.spritefont</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Fonts/JX-900.spritefont</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Accessories/Statics/Crimson Blessing-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Accessories/Statics/Fast Feet-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Accessories/Statics/Silver Powder-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/ChestArmour/Statics/Default-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/ChestArmour/Statics/Super Cool Epic Chest Piece-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Double Jump-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Golden Mibu Water Balloon-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Healing Potion-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Lesser Guinn-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Magic Infused Potion-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Rock-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Stamina Potion-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Stone Potion-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Throwing Dagger-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Footwear/Statics/Default-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/HeadGear/Statics/Default-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/LegArmour/Statics/Default-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Skills/Statics/Default-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Weapons/Sheets/Wooden Sword-Use.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Weapons/Statics/Default-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Weapons/Statics/Wooden Sword-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/MissingTexture.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Mouse/MouseFill.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Mouse/MouseOutline.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Player/Standing.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Player/Walking-Sheet.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Zombie/Standing.png</File>
   </SourceFiles>
   <DestFiles>
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

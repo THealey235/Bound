@@ -2,43 +2,37 @@
 using Bound.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Bound.Models.Items
 {
-    public class Weapon : Item
+    public class Weapon : UsableItem
     {
-        public static bool InUse = false;
-
-        private Game1 _game;
-        private bool _previousPlaying;
-        private AnimationManager _animationManager;
-        private Dictionary<string, Animation> _animations;
-        private Sprite _user;
-        private Vector2 _offset = new Vector2(0, 0);
-        private float _scale;
+        protected AnimationManager _animationManager;
+        protected Dictionary<string, Animation> _animations;
 
         public enum WeaponTypes
         {
             Sword, Bow, Unrecognised
         }
 
-        public override Sprite User
+        public override Sprite Owner
         {
-            get { return _user; }
+            get { return _owner; }
             set 
-            { 
-                _user = value;
+            {
+                if (value == null)
+                    return;
+                _owner = value;
                 _animationManager.Layer = 0.76f;
                 _animationManager.Scale = Scale =  Game1.ResScale;
-                _animationManager.Origin = _user.Origin;
-
-
+                _animationManager.Origin = _owner.Origin;
             }
         }
 
-        public float Scale 
+        public override float Scale 
         { 
             get 
             { 
@@ -53,7 +47,7 @@ namespace Bound.Models.Items
 
         private readonly WeaponTypes _weaponType;
 
-        public Weapon(Game1 game, TextureCollection textures, int id, string name, string description, TextureManager.ItemType type, string attributes = "") : base(textures, id, name, description, type, attributes)
+        public Weapon(Game1 game, TextureCollection textures, int id, string name, string description, TextureManager.ItemType type, string attributes = "") : base(game, textures, id, name, description, type, attributes)
         {
             name = name.ToLower();
             if (name.Contains("sword") || name.Contains("axe"))
@@ -70,8 +64,6 @@ namespace Bound.Models.Items
             {
                 Loop = false,
             };
-
-            _game = game;
         }
 
         private void SetCollisionRectangle(string key = "Use")
@@ -103,7 +95,7 @@ namespace Bound.Models.Items
 
         public override void Update(GameTime gameTime, List<Sprite> sprites)
         {
-            if (_user != null && _animationManager.IsPlaying)
+            if (_owner != null && _animationManager.IsPlaying)
             {
                 UpdateAnimation();
                 CheckCollision(sprites);
@@ -117,26 +109,32 @@ namespace Bound.Models.Items
                 _previousPlaying = false;
                 _debugRectangle = null;
                 _collisionRectangle = new Rectangle(-1, -1, 0, 0);
-                _user.UnlockEffects();
+                _owner.UnlockEffects();
                 _spriteBlacklist.Clear();
             }
         }
 
         private void UpdateAnimation()
         {
-            _animationManager.Effects = _user.Effects;
+            if (_owner == null)
+            {
+                Console.Write($"_owner null in weapon class for {Name}.");
+                return;
+            }
+
+            _animationManager.Effects = _owner.Effects;
 
             //used to allign the animation with the leading hand
-            _offset = new Vector2(0, (_user.Rectangle.Height - _animationManager.CurrentAnimation.FrameHeight) / 2);
-            if (_user.Effects == SpriteEffects.FlipHorizontally)
+            _offset = new Vector2(0, (_owner.Rectangle.Height - _animationManager.CurrentAnimation.FrameHeight) / 2);
+            if (_owner.Effects == SpriteEffects.FlipHorizontally)
                 _offset = new Vector2(-_animationManager.CurrentAnimation.FrameWidth + 5, _offset.Y);
             else
-                _offset = new Vector2(_user.Rectangle.Width - 5, _offset.Y);
+                _offset = new Vector2(_owner.Rectangle.Width - 5, _offset.Y);
 
-            _animationManager.Position = _debugRectangle.Position = (_user.Position + _offset) * Game1.ResScale;
+            _animationManager.Position = _debugRectangle.Position = (_owner.Position + _offset) * Game1.ResScale;
 
-            _collisionRectangle.X = (int)(_user.Position.X + _offset.X);
-            _collisionRectangle.Y = (int)(_user.Position.Y + _offset.Y);
+            _collisionRectangle.X = (int)(_owner.Position.X + _offset.X);
+            _collisionRectangle.Y = (int)(_owner.Position.Y + _offset.Y);
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -184,6 +182,15 @@ namespace Bound.Models.Items
         private void UseBow()
         {
 
+        }
+
+        public override Weapon Clone()
+        {
+            var output = new Weapon(_game, Textures, Id, Name, Description, Type);
+            output.Attributes = Attributes;
+            output.Quantity = Quantity;
+
+            return output;
         }
     }
 }
