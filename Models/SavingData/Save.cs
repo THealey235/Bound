@@ -1,4 +1,6 @@
 ﻿using Bound.Managers;
+using Bound.Sprites;
+using Bound.States;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -19,6 +21,7 @@ namespace Bound.Models
 
         #endregion
 
+        private static Player _player;
         private float _health;
         private float _mana;
         private float _stamina;
@@ -34,9 +37,27 @@ namespace Bound.Models
         public int HotbarSlots;
         public int SkillSlots;
 
-        public Dictionary<string, Attribute> Attributes;
-        public Inventory Inventory;
-        public Dictionary<string, List<string>> EquippedItems = new Dictionary<string, List<string>>();
+        private Inventory _inventory;
+        private Dictionary<string, List<string>> _equippedItems = new Dictionary<string, List<string>>();
+        private Dictionary<string, Attribute> _attributes;
+
+        public Dictionary<string, List<string>> EquippedItems
+        {
+            get { return _equippedItems; }
+        }
+
+        public Inventory Inventory
+        {
+            get { return _inventory; }
+        }
+
+        public Dictionary<string, Attribute> Attributes
+        {
+            get { return _attributes; }
+            set { if (value != null) _attributes = value; }
+        }
+
+
 
         public float Health
         {
@@ -120,7 +141,6 @@ namespace Bound.Models
 
         public void SetEquippedItems(string input)
         {
-            EquippedItems = new Dictionary<string, List<string>>();
             var items = input.Split(';').Select(x => x.Split(": "));
             foreach (var item in items)
             {
@@ -147,6 +167,29 @@ namespace Bound.Models
             for (int i = 0; i < limit - overflow; i++)
                 value += levelAdditions[i];
             return value + (overflow * levelAdditions[^1]);
+        }
+
+        public void Update()
+        {
+            string name;
+            foreach (var dict in EquippedItems)
+                for (int i = 0; i < dict.Value.Count; i++)
+                {
+                    name = dict.Value[i];
+                    if (name != "Default" && !Inventory.Contains(name))
+                    {
+                        if (dict.Key == "hotbar")
+                            _player.RemoveItemFromHotbar(name);
+                        dict.Value.RemoveAt(i);
+                        i--;
+                            
+                    }
+                }
+        }
+
+        public static void SetPlayer(Player player)
+        {
+            _player = player;
         }
 
         #region Encryption
@@ -273,15 +316,19 @@ namespace Bound.Models
         //returns a new save
         #region New Saves
 
+        private Save(Game1 game, SaveManager manager)
+        {
+            _inventory = new Inventory(game, game.Player);
+            Manager = manager;
+            _attributes = new Dictionary<string, Attribute>();
+        }
+
         public static Save NewSave(SaveManager manager, Game1 game)
         {
-            var save = new Save()
+            var save = new Save(game, manager)
             {
                 Level = "newgame",
                 PlayerName = "_",
-                Manager = manager,
-                Attributes = new Dictionary<string, Attribute>(),
-                Inventory = new Inventory(game, game.Player),
             };
 
             AddMissingKeys(manager, save, manager.DefaultAttributes.Keys.ToList());
@@ -293,11 +340,9 @@ namespace Bound.Models
         {
             try
             {
-                var save = new Save()
+                var save = new Save(game, manager)
                 {
                     Manager = manager,
-                    Attributes = new Dictionary<string, Attribute>(),
-                    Inventory = new Inventory(game, game.Player),
                 };
 
                 var AttributeKeys = manager.DefaultAttributes.Keys.ToList();

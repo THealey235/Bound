@@ -151,5 +151,24 @@ namespace Bound.Managers
             return Blank;
             
         }
+
+        public void RemoveItem(string name)
+        {
+            foreach (var dict in _inventory)
+                foreach (var kvp in dict)
+                    if (kvp.Key == name)
+                    {
+                        dict.Remove(kvp.Key);
+                        return;
+                    }
+        }
+
+        public bool Contains(string name)
+        {
+            foreach (var dict in _inventory)
+                if (dict.ContainsKey(name))
+                    return true;
+            return false;
+        }
     }
 }

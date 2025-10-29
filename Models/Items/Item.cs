@@ -20,6 +20,7 @@ namespace Bound.Models.Items
         protected DebugRectangle _debugRectangle;
         protected List<Sprite> _spriteBlacklist = new List<Sprite>();
         protected Sprite _owner;
+        protected int _quantity = 1;
 
         public int Id { get; }
         public string Name { get; }
@@ -30,7 +31,17 @@ namespace Bound.Models.Items
         public TextureManager.ItemType Type { get; }
         public TextureCollection Textures { get { return _textures; } }
 
-        public int Quantity = 1;
+        public int Quantity
+        {
+            get { return _quantity; }
+            set 
+            {
+                if (value >= 0)
+                    _quantity = value;
+                if (value == 0)
+                    _owner.Inventory.RemoveItem(Name);
+            }
+        }
 
         public Rectangle CollisionRectangle
         {

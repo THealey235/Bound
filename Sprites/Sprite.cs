@@ -1,22 +1,24 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using System;
+using Bound.Models;
 using System.Collections.Generic;
 using System.Linq;
-using Bound.Models;
 using Bound.Managers;
 using Bound.States;
+using System;
 
 namespace Bound.Sprites
 {
-    public class Sprite : Component, ICloneable
+    public class Sprite : Component
     {
         #region Fields
+
         protected Models.TextureCollection _textures;
-
         protected Dictionary<string, Animation> _animations;
-
+        protected Dictionary<string, Models.Attribute> _attributes;
+        protected List<Buff> _buffs = new List<Buff>();
         protected AnimationManager _animationManager;
+        protected Inventory _inventory;
 
         protected float _layer { get; set; }
 
@@ -58,6 +60,11 @@ namespace Bound.Sprites
             Player,
             Mob,
             Sprite
+        }
+
+        public List<(Buff, float SecondsRemaning)> Buffs
+        {
+            get { return _buffs.Select(x => (x, x.SecondsRemaining)).ToList(); }
         }
 
         #endregion
@@ -252,6 +259,11 @@ namespace Bound.Sprites
             get { return _knockbackDamageDealtOut; }
         }
 
+        public virtual Inventory Inventory
+        {
+            get { return _inventory; }
+        }
+
         #endregion
 
         #region Methods
@@ -273,6 +285,8 @@ namespace Bound.Sprites
             Scale = 1f;
 
             _game = game;
+
+            _inventory = new Inventory(game, this);
 
             Reset();
         }
@@ -299,6 +313,19 @@ namespace Bound.Sprites
 
             if (_toUnlockEffects)
                 _lockEffects = _toUnlockEffects = false;
+
+            Buff buff;
+            for (int i = 0; i < _buffs.Count; i++)
+            {
+                buff = _buffs[i];
+                buff.DecrementTimer((float)gameTime.ElapsedGameTime.TotalSeconds);
+                if (buff.SecondsRemaining <= 0)
+                {
+                    _buffs.RemoveAt(i);
+                    i--;
+                }
+
+            }
         }
 
         public virtual void Update(GameTime gameTime, List<Rectangle> surfaces, List<Sprite> collideableSprites = null, List<Sprite> dealsKnockback = null)
@@ -647,6 +674,20 @@ namespace Bound.Sprites
                 return true;
             }
             return false;
+        }
+
+        public void UpdateAttribute(Models.Attribute attr)
+        {
+            if (!_attributes.ContainsKey(attr.Name))
+                _attributes.Add(attr.Name, attr);
+            else
+                _attributes[attr.Name].Value += attr.Value;
+        }
+
+        public void GiveBuff(Buff buff)
+        {
+            _buffs.Remove(buff); //even if not in list it cleans any buffs from the same source with the same name
+            _buffs.Add(buff);
         }
 
         #endregion

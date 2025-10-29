@@ -18,6 +18,7 @@ namespace Bound.Models.Items
         private bool _hasTexture;
         private float _cooldown;
         private float _cooldownTimer;
+        private float _buffDuration;
         private float _rotation;
         private Vector2 _position = Vector2.Zero;
         private Vector2 _origin = Vector2.Zero;
@@ -32,6 +33,10 @@ namespace Bound.Models.Items
             if (Attributes.ContainsKey("CLDWN"))
                 _cooldown = Attributes["CLDWN"].Value;
             else _cooldown = 1;
+
+            if (Attributes.ContainsKey("DUR"))
+                _buffDuration = Attributes["DUR"].Value;
+            else _buffDuration = 20f;
 
             if (Textures.Statics.ContainsKey("Icon"))
             {
@@ -106,6 +111,9 @@ namespace Bound.Models.Items
                     {
                         InUse = false;
                         _owner.UnlockEffects();
+                        foreach (var attribute in Attributes.Values)
+                            _owner.GiveBuff(new Buff(_texture, Name, attribute.Name, attribute.Value, _buffDuration));
+                        Quantity--;
                     }
                 }
             }

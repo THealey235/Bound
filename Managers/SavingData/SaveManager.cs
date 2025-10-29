@@ -67,6 +67,7 @@ namespace Bound.Managers
             {
                 game.Settings.Settings.General["MostRecentSave"] = "-1";
             }
+
         }
 
         #region Save Management

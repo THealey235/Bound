@@ -1,4 +1,5 @@
-﻿using Bound.Models;
+﻿using Bound.Managers;
+using Bound.Models;
 using Bound.States;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,8 +11,10 @@ namespace Bound.Sprites
     public class Player : Sprite
     {
         private Input _keys;
-        private Dictionary<string, Attribute> _attributes;
         private Level _level;
+
+        public Save Save;
+        public int HotbarSlot = 1;
 
         protected override float _health
         {
@@ -29,9 +32,6 @@ namespace Bound.Sprites
             get { return _game.ActiveSave.Stamina; }
             set { _game.ActiveSave.Stamina = value; }
         }
-
-        public Save Save;
-        public int HotbarSlot = 1;
 
         public Dictionary<string, Models.Attribute> Attributes
         {
@@ -51,6 +51,11 @@ namespace Bound.Sprites
             }
         }
 
+        public override Inventory Inventory
+        {
+            get { return Save.Inventory; }
+        }
+
         public Level Level
         {
             get { return _level; }
@@ -65,6 +70,7 @@ namespace Bound.Sprites
         public Player(Texture2D texture, Input Keys, Game1 game) : base(texture, game)
         {
             _name = "player";
+            Save.SetPlayer(this);
             _spriteType = SpriteType.Player;
             _knockbackDamageDealtOut = 2f;
 
@@ -141,6 +147,8 @@ namespace Bound.Sprites
             
             if (_animationManager != null)
                 SetAnimation();
+
+            Save.Update();
         }
 
         private void SetAnimation()
@@ -201,5 +209,7 @@ namespace Bound.Sprites
         {
             _attributes = _game.SavesManager.Saves[saveIndex].Attributes;
         }
+
+        public void RemoveItemFromHotbar(string name) => Level.HUD.RemoveFromHotbar(name);
     }
 }

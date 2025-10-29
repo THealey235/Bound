@@ -10,33 +10,39 @@ namespace Bound.Models
 {
     public class Attribute
     {
-
-        private enum Type
+        protected enum Type
         {
             Stat, Effect
         };
 
-        public enum AllAttributes
+        protected enum Attributes
         {
             Vigor, Mind, Endurance, Strength, Dexterity, AmmoHandling, Precision, Arcane,
             Focus, MovementSpeed, PhysicalAttack, PhysicalDefence, Stamina, Health, MoneyMultiplier,
-
-            DoubleJump
         };//Vigor is max HP, Health is current HP
 
-        public enum AllAttributeAbreviations
+        protected enum Buffs
         {
-            HP, MP, END, STR, DEX, AMMH, PRC, ARC, FOC, MVMS, PATK, PDEF, STAM, HEAL, MONEYMULT,
-            DJMP
+            DoubleJump
         }
 
-        public string Name;
-        public int Value;
+        protected string _name;
+        protected int _value;
+
+        public string Name
+        {
+            get { return _name; }
+        }
+        public int Value
+        {
+            get { return _value; }
+            set { _value = value; }
+        }
 
         public Attribute(string name, int value)
         {
-            Name = name;
-            Value = value;
+            _name = name;
+            _value = value;
         }
 
         public override string ToString()

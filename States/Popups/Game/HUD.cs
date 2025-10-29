@@ -173,5 +173,17 @@ namespace Bound.States.Popups.Game
             }
             return false;
         }
+
+        public void RemoveFromHotbar(string itemName)
+        {
+            for (int i = 0; i < _hotbarSlots.Count; i++)
+            {
+                var item = _hotbarSlots[i].Item;
+                if (item != null && item.Name == itemName)
+                {
+                    _hotbarSlots[i].Item = null;
+                }
+            }
+        }
     }
 }

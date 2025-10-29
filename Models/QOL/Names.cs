@@ -2,6 +2,7 @@
 
 namespace Bound.Models
 {
+    //make this an enum and make names Names instead of strings
     public struct Names
     {
         #region StateNames
