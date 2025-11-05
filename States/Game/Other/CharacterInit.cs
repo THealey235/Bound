@@ -196,7 +196,7 @@ namespace Bound.States.Game
         {
             var box = _choiceBoxes[1];
             _game.CurrentInventory.Add(box.Choices[box.CurIndex]);
-            _game.CurrentInventory.Add("Throwing Dagger", 10);
+            _game.CurrentInventory.Add("Throwing Dagger", 100);
             _game.CurrentInventory.Add(_game.Items[_game.Textures.GetItemName(5)].Name);
             foreach (var item in new List<string>() { "Lesser Guinn", "Rock", "Golden Mibu Water Balloon", "Double Jump", "Magic Infused Potion", "Stamina Potion", "Stone Potion" })
                 _game.CurrentInventory.Add(item, 2);

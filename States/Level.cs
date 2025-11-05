@@ -20,6 +20,8 @@ namespace Bound.States
         protected List<Sprite> _mobs;
         protected List<Sprite> _damagesMobs;
         protected List<Sprite> _sprites;
+        protected List<Sprite> _projectiles;
+        protected List<(Sprite Sprite, bool DamagedByPlayer)> _spritesToAdd = new List<(Sprite Sprite, bool DamagedByPlayer)>();
         protected HeadsUpDisplay _HUD;
         protected (float Min, float Max) _mapBounds;
         protected (Vector2 Min, Vector2 Max) _cameraBounds;
@@ -145,7 +147,8 @@ namespace Bound.States
             foreach (var block in toDraw)
                 block.Draw(gameTime, spriteBatch);
 
-            _player.Draw(gameTime, spriteBatch);
+            foreach (var sprite in _damagesMobs)
+                sprite.Draw(gameTime, spriteBatch);
 
             foreach (var sprite in _mobs)
                 sprite.Draw(gameTime, spriteBatch);
@@ -169,6 +172,17 @@ namespace Bound.States
 
         public override void Update(GameTime gameTime)
         {
+            if (_spritesToAdd.Count > 0)
+            {
+                foreach(var i in _spritesToAdd)
+                {
+                    if (i.DamagedByPlayer)
+                        _mobs.Add(i.Sprite);
+                    else _damagesMobs.Add(i.Sprite);
+                }
+                _spritesToAdd.Clear();
+            }
+
             var count = Popups.Count;
             if (count > 0)
             {
@@ -198,7 +212,8 @@ namespace Bound.States
             foreach (var sprite in _mobs)
                 sprite.Position = new Vector2(Math.Clamp(sprite.Position.X, _mapBounds.Min, _mapBounds.Max), sprite.Position.Y);
 
-            _player.Update(gameTime, _blockRects, _sprites, _mobs);
+            foreach (var sprite in _damagesMobs)
+                sprite.Update(gameTime, _blockRects, _sprites, _mobs);
             foreach (var sprite in _mobs)
                 sprite.Update(gameTime, _blockRects, _sprites, _damagesMobs);
 
@@ -224,5 +239,10 @@ namespace Bound.States
         }
 
         public void RemoveMob(Sprite mob) => ToKill.Add(mob);
+
+        public void AddProjectile(Projectile projectile, bool damagesPlayer)
+        {
+            _spritesToAdd.Add((projectile, damagesPlayer));
+        }
     }
 }

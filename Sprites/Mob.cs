@@ -8,7 +8,7 @@ namespace Bound.Sprites
     {
         public Mob(Models.TextureCollection textures, Game1 game, float health, float stamina, float mana) : base(textures, game)
         {
-            _speed = 0.75f;
+            _speed = 75f;
             _spriteType = SpriteType.Mob;
             if (textures.Sheets.Count > 0)
             {

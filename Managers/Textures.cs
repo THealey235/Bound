@@ -65,6 +65,11 @@ namespace Bound.Managers
             {"Wooden Sword-Use",  (42, 0.45f / 18f)},
         };
 
+        private readonly Dictionary<string, (int Width, int Height, Vector2 Origin, float Scale)> _projectileCustomHitboxes = new Dictionary<string, (int Width, int Height, Vector2 Origin, float Scale)>()
+        {
+            {"Throwing Dagger",  (32, 12, new Vector2(10, 10), 0.5f)}
+        };
+
         #endregion
 
         private ContentManager _content;
@@ -431,5 +436,7 @@ namespace Bound.Managers
             var info = GetAtlasInformation(name);
             return info.Atlas[info.AtlasKeys[index]];
         }
+
+        public bool GetCustomProjectileHitbox(string name, out (int Width, int Height, Vector2 Origin, float Scale) hitbox) => _projectileCustomHitboxes.TryGetValue(name, out hitbox);
     }
 }

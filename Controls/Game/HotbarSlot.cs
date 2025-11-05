@@ -99,7 +99,7 @@ namespace Bound.Controls.Game
             {
                 spriteBatch.Draw(_item.Textures.GetIcon(), _itemPosition + Game1.V2Transform, null, Color.White, 0f, Vector2.Zero, ItemScale, SpriteEffects.None, Layer + 0.0001f);
                 if (_item.Quantity > 1)
-                    spriteBatch.DrawString(_font, _quantity, _quantityPosition + Game1.V2Transform, Color.Black, 0f, Vector2.Zero, _quantityScale, SpriteEffects.None, Layer + 0.0002f);
+                    spriteBatch.DrawString(_font, $"x{_item.Quantity}", _quantityPosition + Game1.V2Transform, Color.Black, 0f, Vector2.Zero, _quantityScale, SpriteEffects.None, Layer + 0.0002f);
             }
         }
 

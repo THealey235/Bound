@@ -57,8 +57,6 @@ namespace Bound.Models
             set { if (value != null) _attributes = value; }
         }
 
-
-
         public float Health
         {
             get { return _health; }
@@ -142,6 +140,7 @@ namespace Bound.Models
         public void SetEquippedItems(string input)
         {
             var items = input.Split(';').Select(x => x.Split(": "));
+            EquippedItems.Clear();
             foreach (var item in items)
             {
                 if (EquippedItems.ContainsKey(item[0]))
@@ -178,9 +177,9 @@ namespace Bound.Models
                     name = dict.Value[i];
                     if (name != "Default" && !Inventory.Contains(name))
                     {
-                        if (dict.Key == "hotbar")
+                            if (dict.Key == "hotbar")
                             _player.RemoveItemFromHotbar(name);
-                        dict.Value.RemoveAt(i);
+                        dict.Value[i] = "Default";
                         i--;
                             
                     }

@@ -74,7 +74,6 @@ namespace Bound.States.Popups.Game
                         save.EquippedItems["hotbar"][i]
                     )
                 );
-                var item = _hotbarSlots[i].Item;
             }
             _hotbarSelectedSlot = _game.Player.HotbarSlot - 1;
             _hotbarSlots[_hotbarSelectedSlot].IsSelected = true;
@@ -160,7 +159,7 @@ namespace Bound.States.Popups.Game
         public void UpdateHotbarSlot(Item item, int index)
         {
             if (!(index > _hotbarSlots.Count))
-                _hotbarSlots[index].Item = item;
+                _hotbarSlots[index].Item = (item.Name == "Blank") ? null : item;
         }
 
         public bool UseItem()

@@ -19,6 +19,8 @@ namespace Bound.Sprites
         protected List<Buff> _buffs = new List<Buff>();
         protected AnimationManager _animationManager;
         protected Inventory _inventory;
+        protected bool _useHitboxOverride;
+        protected Rectangle _overridenHitbox;
 
         protected float _layer { get; set; }
 
@@ -31,22 +33,22 @@ namespace Bound.Sprites
         protected virtual float _stamina { get; set; }
         protected virtual float _mana { get; set; }
 
-        private Color _colour;
-        private SpriteEffects _spriteEffects;
+        protected Color _colour;
+        protected SpriteEffects _spriteEffects;
 
         private float _scale { get; set; }
 
         private bool _toUnlockEffects = false;
         protected Texture2D _texture;
         protected float g = 0.09f;
-        protected double _dTime;
+        protected float _dTime;
         protected float _terminalVelocity = 2;
         protected float Gravity = 0;
         protected string _name;
         protected DebugRectangle _debugRectangle;
         protected string _knockbackDirection;
         protected bool _inKnockback = false;
-        protected float _knockbackAcceleration = -0.02f;
+        protected float _knockbackAcceleration = -20f;
         protected float _knockbackInitialVelocity = 5f;
         protected Vector2 _knockbackVelocity;
         protected float _immunityTimer;
@@ -59,7 +61,8 @@ namespace Bound.Sprites
         {
             Player,
             Mob,
-            Sprite
+            Sprite,
+            Projectile
         }
 
         public List<(Buff, float SecondsRemaning)> Buffs
@@ -85,7 +88,7 @@ namespace Bound.Sprites
             }
         }
 
-        protected SpriteEffects SpriteEffects
+        public SpriteEffects Effects
         {
             get
             {
@@ -178,10 +181,11 @@ namespace Bound.Sprites
         {
             get
             {
-                if (_texture != null)
-                {
+                if (_useHitboxOverride)
+                    return new Rectangle((int)Position.X - (int)Origin.X, (int)Position.Y - (int)Origin.Y, (int)(_overridenHitbox.Width * _scale), (int)(_overridenHitbox.Height * _scale));
+
+                else if (_texture != null)
                     return new Rectangle((int)(Position.X), (int)(Position.Y), (int)(_texture.Width * _scale), (int)(_texture.Height * _scale));
-                }
 
                 else if (_animationManager != null && _animationManager.CurrentAnimation != null)
                 {
@@ -198,10 +202,11 @@ namespace Bound.Sprites
         {
             get
             {
-                if (_texture != null)
-                {
+                if (_useHitboxOverride)
+                    return new Rectangle((int)Position.X - (int)Origin.X, (int)Position.Y - (int)Origin.Y, (int)(_overridenHitbox.Width * FullScale), (int)(_overridenHitbox.Height * FullScale));
+
+                else if (_texture != null)
                     return new Rectangle((int)(ScaledPosition.X), (int)(ScaledPosition.Y), (int)(_texture.Width * FullScale), (int)(_texture.Height * FullScale));
-                }
 
                 else if (_animationManager != null && _animationManager.CurrentAnimation != null)
                 {
@@ -227,12 +232,7 @@ namespace Bound.Sprites
         }
 
         public Sprite Parent;
-        protected float _speed = 0.1f;
-
-        public SpriteEffects Effects
-        {
-            get { return _spriteEffects; }
-        }
+        protected float _speed = 100f;
 
         public bool IsImmune
         {
@@ -262,6 +262,23 @@ namespace Bound.Sprites
         public virtual Inventory Inventory
         {
             get { return _inventory; }
+        }
+
+        public SpriteType Type
+        {
+            get { return _spriteType; }
+        }
+
+        public Rectangle CustomHitbox
+        {
+            get { return _overridenHitbox; }
+            set { _overridenHitbox = value; _useHitboxOverride = true; }
+        }
+
+        public bool UseCustomHitbox
+        {
+            get { return _useHitboxOverride; }
+            set { _useHitboxOverride = value; }
         }
 
         #endregion
@@ -309,16 +326,13 @@ namespace Bound.Sprites
             if (_animationManager != null)
                 _animationManager.Update(gameTime);
 
-            _dTime = gameTime.ElapsedGameTime.TotalMilliseconds;
-
-            if (_toUnlockEffects)
-                _lockEffects = _toUnlockEffects = false;
+            _dTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             Buff buff;
             for (int i = 0; i < _buffs.Count; i++)
             {
                 buff = _buffs[i];
-                buff.DecrementTimer((float)gameTime.ElapsedGameTime.TotalSeconds);
+                buff.DecrementTimer(_dTime);
                 if (buff.SecondsRemaining <= 0)
                 {
                     _buffs.RemoveAt(i);
@@ -340,7 +354,7 @@ namespace Bound.Sprites
             if (_animationManager != null && _animationManager.IsPlaying == true)
                 _animationManager.Draw(spriteBatch);
             else if (_texture != null)
-                spriteBatch.Draw(_texture, ScaledPosition, null, Colour, _rotation, Origin, FullScale, SpriteEffects, Layer);
+                spriteBatch.Draw(_texture, ScaledPosition - Origin, null, Colour, _rotation, Origin, FullScale, Effects, Layer);
 
             if (Game1.InDebug && _debugRectangle != null)
                 _debugRectangle.Draw(gameTime, spriteBatch);
@@ -448,6 +462,7 @@ namespace Bound.Sprites
 
             if (!IsImmune)
                 HandleMovements(ref inFreefall);
+            Velocity *= _dTime;
 
             if (IsImmune)
                 _immunityTimer -= (float)_dTime;
@@ -546,7 +561,7 @@ namespace Bound.Sprites
             }
         }
 
-        public void StartKnocback(string direction, float damage = 1f)
+        public virtual void StartKnocback(string direction, float damage = 1f)
         {
             if (IsImmune)
             {
@@ -563,7 +578,7 @@ namespace Bound.Sprites
 
             _knockbackDirection = direction;
             _inKnockback = true;
-            _immunityTimer = 250f; //in milliseconds
+            _immunityTimer = 0.25f; //seconds
             Damage(damage);
 
             switch (direction)
@@ -583,11 +598,10 @@ namespace Bound.Sprites
             Velocity += _knockbackVelocity;
         }
 
-        protected void Knockback()
+        protected virtual void Knockback()
         {
             if (_inKnockback)
             {
-                //TODO: write this more concisely
                 switch (_knockbackDirection)
                 {
                     case "up":
@@ -639,9 +653,21 @@ namespace Bound.Sprites
         //Runs when each state is reset due to a change in resolution
         public void Reset()
         {
+            int width;
+            int height;
+
+            if (_useHitboxOverride)
+            {
+                width = _overridenHitbox.Width; height = _overridenHitbox.Height;
+            }
+            else
+            {
+                width = _texture.Width; height = _texture.Height;
+            }
+
             _debugRectangle = new DebugRectangle
             (
-                new Rectangle((int)ScaledPosition.X, (int)ScaledPosition.Y, (int)(_texture.Width), (int)(_texture.Height))
+                new Rectangle((int)ScaledPosition.X, (int)ScaledPosition.Y, width, height)
                 , _game.GraphicsDevice
                 , Layer + 0.01f,
                 FullScale
@@ -650,7 +676,7 @@ namespace Bound.Sprites
                 _animationManager.Scale = FullScale;
         }
 
-        public void UnlockEffects() => _toUnlockEffects = true;
+        public void UnlockEffects() => _lockEffects = false;
 
         public void Kill(Level level) => level.RemoveMob(this);
 

@@ -40,7 +40,7 @@ namespace Bound.Sprites
 
         public float Speed
         {
-            get { return (float)(_speed * _dTime); }
+            get { return _speed; }
         }
 
         public new Vector2 ScaledPosition
@@ -73,6 +73,7 @@ namespace Bound.Sprites
             Save.SetPlayer(this);
             _spriteType = SpriteType.Player;
             _knockbackDamageDealtOut = 2f;
+            _speed = 100f;
 
             _keys = Keys;
             Scale = 0.8f;
@@ -117,12 +118,12 @@ namespace Bound.Sprites
                 if (_animationManager.IsPlaying == true)
                     _animationManager.Draw(spriteBatch);
                 else if (Gravity != 0)
-                    spriteBatch.Draw(_animations["Walking"].Texture, ScaledPosition, new Rectangle(0, 0, _texture.Width, _texture.Height), Colour, _rotation, Origin, FullScale, SpriteEffects, Layer);
+                    spriteBatch.Draw(_animations["Walking"].Texture, ScaledPosition, new Rectangle(0, 0, _texture.Width, _texture.Height), Colour, _rotation, Origin, FullScale, Effects, Layer);
                 else
-                    spriteBatch.Draw(_texture, ScaledPosition, null, Colour, _rotation, Origin, FullScale, SpriteEffects, Layer);
+                    spriteBatch.Draw(_texture, ScaledPosition, null, Colour, _rotation, Origin, FullScale, Effects, Layer);
             }
             else if (_texture != null)
-                spriteBatch.Draw(_texture, ScaledPosition, null, Colour, _rotation, Origin, FullScale, SpriteEffects, Layer);
+                spriteBatch.Draw(_texture, ScaledPosition, null, Colour, _rotation, Origin, FullScale, Effects, Layer);
 
             if (Game1.InDebug)
                 _debugRectangle.Draw(gameTime, spriteBatch);
@@ -167,7 +168,7 @@ namespace Bound.Sprites
 
         protected override void HandleMovements(ref bool inFreefall)
         {
-            var previousEffect = SpriteEffects;
+            var previousEffect = Effects;
             if (_keys.IsPressed("Up", true))
                 inFreefall = false;
             if (_keys.IsPressed("Down", true))
@@ -175,12 +176,12 @@ namespace Bound.Sprites
             if (_keys.IsPressed("Left", true))
             {
                 Velocity += new Vector2(-Speed, 0);
-                SpriteEffects = SpriteEffects.FlipHorizontally;
+                Effects = SpriteEffects.FlipHorizontally;
             }
             if (_keys.IsPressed("Right", true))
             {
                 Velocity += new Vector2(Speed, 0);
-                SpriteEffects = SpriteEffects.None;
+                Effects = SpriteEffects.None;
             }
             if (_keys.IsPressed("Reset", true))
             {
@@ -202,7 +203,7 @@ namespace Bound.Sprites
 
         public void UpdateWhileStatic(GameTime gameTime)
         {
-            _dTime = gameTime.ElapsedGameTime.TotalMilliseconds;
+            _dTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
 
         public void UpdateAttributes(int saveIndex)
