@@ -48,6 +48,7 @@
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Stamina Potion-Icon.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Stone Potion-Icon.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Throwing Dagger-Icon.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Consumables/Statics/Throwing Dagger-Projectile.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Footwear/Statics/Default-Icon.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/HeadGear/Statics/Default-Icon.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/LegArmour/Statics/Default-Icon.png</File>
@@ -63,6 +64,7 @@
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Zombie/Standing.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

@@ -48,14 +48,14 @@ namespace Bound.Controls
         public int Height;
         public bool IsBordered;
         public Color BorderColor;
-        public bool ToCenter = false;
+        public bool IgnoreCameraTransform = false;
 
 
         public Vector2 Position
         {
             get
             {
-                if (ToCenter)
+                if (IgnoreCameraTransform)
                     return _position + Game1.V2Transform;
                 return _position;
             }

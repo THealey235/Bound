@@ -24,6 +24,11 @@ namespace Bound.Models
             }
         }
 
+        public Vector2 MousePosition
+        {
+            get { return new Vector2(CurrentMouseState.X, CurrentMouseState.Y); }
+        }
+
         public bool IsLeftClick
         {
             get

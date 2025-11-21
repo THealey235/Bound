@@ -25,6 +25,11 @@ namespace Bound.Sprites
             base.Update(gameTime, surfaces, sprites, dealsKnockabck);  
         }
 
+        protected override void SurfaceTouched(string surfaceFace, Rectangle surface)
+        {
+            base.SurfaceTouched(surfaceFace, surface);
+        }
+
         protected override void HandleMovements(ref bool inFreefall)
         {
             var distance = (_game.Player.Position - Position).Length();

@@ -99,11 +99,6 @@ namespace Bound.States
 
         }
 
-        public override void PostUpdate(GameTime gameTime)
-        {
-            
-        }
-
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             foreach (var component in _components)

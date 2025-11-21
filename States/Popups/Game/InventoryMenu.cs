@@ -210,11 +210,6 @@ namespace Bound.States.Popups.Game
 
         }
 
-        public override void PostUpdate(GameTime gameTime)
-        {
-
-        }
-
         public void UpdateSlot(TextureManager.ItemType type, string item)
         {
             var isHotbar = false;

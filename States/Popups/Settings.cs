@@ -257,11 +257,6 @@ namespace Bound.States.Popups
                 if (_currentKeys.IsKeyUp(Keys.Escape)) _enableEscape = true;
         }
 
-        public override void PostUpdate(GameTime gameTime)
-        {
-            
-        }
-
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             foreach (var component in _components)

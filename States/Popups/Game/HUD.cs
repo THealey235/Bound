@@ -18,9 +18,11 @@ namespace Bound.States.Popups.Game
         private List<BorderedBox> _statusBoxes; //0: Health, 1: Stamina, 3: MP
         private List<int> _previousStatusBoxesWidth;
         private List<int> _currentStatusBoxesWidth;
+        private List<BuffInfo> _buffInfo = new List<BuffInfo>();
         private Save _save;
         private List<int> _statusBoxesBlacklist = new List<int>();
         private int _hotbarSelectedSlot;
+        private float _buffInfoScale = 0.5f;
 
         public float Layer;
 
@@ -53,6 +55,8 @@ namespace Bound.States.Popups.Game
 
                 (_statusBoxes[i]).Draw(gameTime, spriteBatch);
             }
+            foreach (var c in _buffInfo)
+                c.Draw(gameTime, spriteBatch);
         }
 
         public override void LoadContent()
@@ -79,8 +83,7 @@ namespace Bound.States.Popups.Game
             _hotbarSlots[_hotbarSelectedSlot].IsSelected = true;
 
 
-            var barScale = 1f;
-            var basePos = new Vector2(20 * barScale * Game1.ResScale, 10 * Game1.ResScale);
+            var basePos = new Vector2(15 * Game1.ResScale, 10 * Game1.ResScale);
             var barHeight = (int)(5 * Game1.ResScale);
             var increment = new Vector2(0, barHeight + 3 * Game1.ResScale);
             _statusBoxes = new List<BorderedBox>()
@@ -117,13 +120,9 @@ namespace Bound.States.Popups.Game
                 )
             };
             foreach (var c in _statusBoxes)
-                c.ToCenter = true;
+                c.IgnoreCameraTransform = true;
 
             _currentStatusBoxesWidth = _statusBoxes.Select(x => x.Width).ToList();
-        }
-
-        public override void PostUpdate(GameTime gameTime)
-        {
 
         }
 
@@ -154,6 +153,19 @@ namespace Bound.States.Popups.Game
 
             foreach (var c in _statusBoxes)
                 c.Update(gameTime);
+
+            for (int i = 0; i < _buffInfo.Count; i++)
+            {
+                if (_buffInfo[i].SecondsRemaining <= 0)
+                {
+                    _buffInfo.RemoveAt(i);
+                    i--;
+                    SetBuffPositions();
+                    continue;
+                }
+                _buffInfo[i].Update(gameTime);
+            }
+
         }
 
         public void UpdateHotbarSlot(Item item, int index)
@@ -182,6 +194,29 @@ namespace Bound.States.Popups.Game
                 {
                     _hotbarSlots[i].Item = null;
                 }
+            }
+        }
+
+        public void AddBuff(Buff buff)
+        {
+            _buffInfo.Add(new BuffInfo(buff, _game, Vector2.Zero, _buffInfoScale, Layer - 0.001f));
+            SetBuffPositions();
+        }
+
+        private void SetBuffPositions()
+        {
+            var gap = 5f * Game1.ResScale;
+            var spacing = new Vector2(gap, gap);
+            if (_buffInfo.Count > 0)
+                spacing += new Vector2(_buffInfo[0].Width, _buffInfo[0].Height);
+            var position = new Vector2(15 * Game1.ResScale, 25 * Game1.ResScale + _statusBoxes[^1].Height + gap);
+            for (int i = 0; i < _buffInfo.Count; i++)
+            {
+                _buffInfo[i].Position = position;
+                if (i != 0 && i % 8 == 0)
+                    position += new Vector2(-spacing.X * 8, spacing.Y);
+                else position += new Vector2(spacing.X, 0);
+
             }
         }
     }

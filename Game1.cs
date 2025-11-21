@@ -1,4 +1,6 @@
-﻿using Bound.Managers;
+﻿using Bound.Controls;
+using Bound.Controls.Game;
+using Bound.Managers;
 using Bound.Models;
 using Bound.Models.Items;
 using Bound.Sprites;
@@ -58,6 +60,7 @@ namespace Bound
         public static Color DebugColour = Color.White;
         public static Names Names = new Names();
         public static Color[] MenuColorPalette = new Color[] { new Color(60, 60, 60), Color.LightGray, Color.White };
+        private BorderedBox _mouse;
 
         public SettingsManager Settings;
         public Input PlayerKeys;
@@ -192,11 +195,15 @@ namespace Bound
                 Position = new Vector2(100, 0),
             };
 
+            BuffInfo.SetRedXTexture(Textures.RedX);
+
             foreach (var save in SavesManager.Saves)
             {
                 if (save != null) 
                     save.Inventory.Owner = Player;
             }
+
+            _mouse = new BorderedBox(Textures.BaseBackground, GraphicsDevice, Color.Purple, new Vector2(0, 0), 0.9f, 2, 2);
 
             Camera = new Camera();
 
@@ -241,7 +248,6 @@ namespace Bound
             ChangeDebugMode();
 
             _currentState.Update(gameTime);
-            _currentState.PostUpdate(gameTime);
 
             //if you aren't in the main menu you may press escape to access settings and return to the main menu
             if (_currentState.Popups.Count == 0 && _currentState.Name != Names.MainMenu)
@@ -257,14 +263,18 @@ namespace Bound
                 {
                     var options = new States.Popups.Game.Options(this, Content, _currentState);
                     _currentState.Popups.Add(options);
-                    options.Layer = Player.Layer + 0.001f;
+                    options.Layer = Player.Layer + 0.1f;
                     options.LoadContent();
                 }
             }
 
+
             CenterCamera();
 
             base.Update(gameTime);
+
+            if (InDebug)
+                _mouse.Position = PlayerKeys.MousePosition + Game1.V2Transform;
         }
 
         private void CenterCamera()
@@ -310,6 +320,9 @@ namespace Bound
                 _spriteBatch.Begin(SpriteSortMode.FrontToBack, samplerState: SamplerState.PointClamp);
 
             _currentState.Draw(gameTime, _spriteBatch);
+
+            if (InDebug)
+                _mouse.Draw(gameTime, _spriteBatch);
 
             _spriteBatch.End();
 

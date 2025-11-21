@@ -179,6 +179,8 @@ namespace Bound.States
                     if (i.DamagedByPlayer)
                         _mobs.Add(i.Sprite);
                     else _damagesMobs.Add(i.Sprite);
+
+                    _sprites.Add(i.Sprite);
                 }
                 _spritesToAdd.Clear();
             }
@@ -203,7 +205,6 @@ namespace Bound.States
 
             _HUD.Update(gameTime);
 
-            //_game.Items[item.Name] is necessary because if it is a sub-class of Item we want that class not the Item class returned by the HUD since it has been cast to an Item 
             var item = _HUD.HeldItem;
             if (item != null)
                 item.Update(gameTime, _mobs);
@@ -222,10 +223,6 @@ namespace Bound.States
                     _sprites[i].Kill(this);
         }
 
-        public override void PostUpdate(GameTime gameTime)
-        {
-
-        }
         protected List<Rectangle> UpdateBlockRects()
         {
             List<Rectangle> rects = new List<Rectangle>();

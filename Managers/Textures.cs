@@ -60,14 +60,18 @@ namespace Bound.Managers
             Unrecognised,
         }
 
-        private readonly Dictionary<string, (int Width, float Speed)> _spriteSheetConstants = new Dictionary<string, (int Width, float Speed)>()
+        public record ProjectileInfo(float Scale, bool HasProjTexture, float TextureRotation);
+        public record SpriteSheetInfo(int Width, float Speed);
+
+        private readonly Dictionary<string, SpriteSheetInfo> _spriteSheetConstants = new Dictionary<string, SpriteSheetInfo>()
         {
-            {"Wooden Sword-Use",  (42, 0.45f / 18f)},
+            {"Wooden Sword-Use",  new SpriteSheetInfo(42, 0.45f / 18f)},
         };
 
-        private readonly Dictionary<string, (int Width, int Height, Vector2 Origin, float Scale)> _projectileCustomHitboxes = new Dictionary<string, (int Width, int Height, Vector2 Origin, float Scale)>()
+        private readonly Dictionary<string, ProjectileInfo> _projectileInfo = new Dictionary<string, ProjectileInfo>()
         {
-            {"Throwing Dagger",  (32, 12, new Vector2(10, 10), 0.5f)}
+            {"Throwing Dagger", new ProjectileInfo(0.5f, true, (float)Math.PI / 2f)},
+            {"Rock", new ProjectileInfo(0.5f, false, 0f) },
         };
 
         #endregion
@@ -168,14 +172,14 @@ namespace Bound.Managers
             HotbarBG = content.Load<Texture2D>("Backgrounds/HotbarBG");
             HotbarSelectedSlot = content.Load<Texture2D>("Backgrounds/HotbarSelectedBG");
 
-            LoadDirectory("Content/Items/HeadGear", HeadGear);
-            LoadDirectory("Content/Items/ChestArmour", ChestArmour);
-            LoadDirectory("Content/Items/LegArmour", LegArmour);
-            LoadDirectory("Content/Items/Footwear", Footwear);
-            LoadDirectory("Content/Items/Accessories", Accessories);
-            LoadDirectory("Content/Items/Consumables", Consumables);
-            LoadDirectory("Content/Items/Skills", Skills);
-            LoadDirectory("Content/Items/Weapons", Weapons);
+            LoadTextureDirectory("Content/Items/HeadGear", HeadGear);
+            LoadTextureDirectory("Content/Items/ChestArmour", ChestArmour);
+            LoadTextureDirectory("Content/Items/LegArmour", LegArmour);
+            LoadTextureDirectory("Content/Items/Footwear", Footwear);
+            LoadTextureDirectory("Content/Items/Accessories", Accessories);
+            LoadTextureDirectory("Content/Items/Consumables", Consumables);
+            LoadTextureDirectory("Content/Items/Skills", Skills);
+            LoadTextureDirectory("Content/Items/Weapons", Weapons);
 
 
             foreach (var dict in new List<Dictionary<string, Models.TextureCollection>>() { HeadGear, ChestArmour, LegArmour, Footwear, Accessories, Consumables, Skills, Weapons})
@@ -198,7 +202,7 @@ namespace Bound.Managers
         }
 
 
-        private void LoadDirectory (string masterPath, Dictionary<string, Models.TextureCollection> outputList)
+        private void LoadTextureDirectory (string masterPath, Dictionary<string, Models.TextureCollection> outputList)
         {
             var paths = new List<string>();
             try
@@ -224,15 +228,15 @@ namespace Bound.Managers
                 files[itemName][file.Split('/')[^2]].Add(file);
             }
 
-            var sheetConstants = new Dictionary<string, (int Width, float Speed)>();
-            (int, float) x;
+            var sheetConstants = new Dictionary<string, SpriteSheetInfo>();
+            SpriteSheetInfo constants;
             foreach (var file in files)
             {
                 sheetConstants.Clear();
                 foreach (var texture in file.Value["Sheets"])
                 {
-                    if (_spriteSheetConstants.TryGetValue(texture.Split('/')[^1], out x))
-                        sheetConstants.Add(texture.Split('/')[^1].Split('-')[^1], x);
+                    if (_spriteSheetConstants.TryGetValue(texture.Split('/')[^1], out constants))
+                        sheetConstants.Add(texture.Split('/')[^1].Split('-')[^1], constants);
                 }
 
                 outputList.Add(
@@ -282,28 +286,30 @@ namespace Bound.Managers
             }
 
             var items = new Dictionary<string, Item>();
+            List<string> item;
 
-            // 0: Name, 1: ItemType, 2: Description, 3: Attributes
+            // 0: Name, 1: ItemType, 2: Description, 3: Attributes, 4:Type (more specific)
             Models.TextureCollection textures;
             for (int i = 0; i < readItems.Count; i++)
             {
                 try
                 {
-                    textures = (Items.ContainsKey(readItems[i][0])) ? Items[readItems[i][0]] : new Models.TextureCollection();
-                    switch (StringToType(readItems[i][1]))
+                    item = readItems[i];
+                    textures = (Items.ContainsKey(item[0])) ? Items[item[0]] : new Models.TextureCollection();
+                    switch (StringToType(item[1]))
                     {
                         case (ItemType.Weapon):
-                            items.Add(readItems[i][0], new Weapon(_game, textures, i, readItems[i][0], readItems[i][2], StringToType(readItems[i][1]), readItems[i][3]));
+                            items.Add(item[0], new Weapon(_game, textures, i, item[0], item[2], StringToType(item[1]), item[3]));
                             break;
                         case (ItemType.Consumable):
-                            items.Add(readItems[i][0], new Consumable(_game, textures, i, readItems[i][0], readItems[i][2], StringToType(readItems[i][1]), readItems[i][3]));
+                            items.Add(item[0], new Consumable(_game, textures, i, item[0], item[2], StringToType(item[1]), item[4], item[3]));
                             break;
                         default:
-                            items.Add(readItems[i][0], new Item(textures, i, readItems[i][0], readItems[i][2], StringToType(readItems[i][1]), readItems[i][3]));
+                            items.Add(item[0], new Item(textures, i, item[0], item[2], StringToType(item[1]), item[3]));
                             break;
                     }
 
-                    IdToName.Add(i, readItems[i][0]);
+                    IdToName.Add(i, item[0]);
                 }
                 catch (Exception e)
                 {
@@ -326,8 +332,8 @@ namespace Bound.Managers
                     .Select(x => x.Replace("Content/", string.Empty).Replace(".xnb", string.Empty))
                     .ToDictionary(x => x.Split('\\')[^1].Split('-')[0], x => x);
 
-                var sheetConstants = new Dictionary<string, (int Width, float Speed)>();
-                (int Width, float Speed) x;
+                var sheetConstants = new Dictionary<string, SpriteSheetInfo>();
+                SpriteSheetInfo x;
                 foreach (var kvp in textures)
                 {
                     if (_spriteSheetConstants.TryGetValue(kvp.Value.Split('\\')[^1], out x))
@@ -437,6 +443,6 @@ namespace Bound.Managers
             return info.Atlas[info.AtlasKeys[index]];
         }
 
-        public bool GetCustomProjectileHitbox(string name, out (int Width, int Height, Vector2 Origin, float Scale) hitbox) => _projectileCustomHitboxes.TryGetValue(name, out hitbox);
+        public bool GetProjectileInfo(string name, out ProjectileInfo info) => _projectileInfo.TryGetValue(name, out info);
     }
 }

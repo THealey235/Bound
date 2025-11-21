@@ -4,13 +4,14 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Schema;
+using static Bound.Managers.TextureManager;
 
 namespace Bound.Models
 {
     public class TextureCollection
     {
         private int _defaultWidth = 0;
-        private Dictionary<string, (int Width, float Speed)> _sheetEntityParameters = new Dictionary<string, (int, float)>(); //this gives the width of each frame for a sheet.
+        private Dictionary<string, SpriteSheetInfo> _sheetEntityParameters = new Dictionary<string, SpriteSheetInfo>(); //this gives the width of each frame for a sheet.
         
         public static Texture2D MissingItemTexture;
         public Texture2D BlankItemTexture;
@@ -35,7 +36,7 @@ namespace Bound.Models
             if (statics.Count > 0)
                 _defaultWidth = Statics[Statics.Keys.First()].Width;
         }
-        public TextureCollection(ContentManager content, Dictionary<string, string> statics, Dictionary<string, string> sheets, Dictionary<string, (int, float)> sheetEntityParameters)
+        public TextureCollection(ContentManager content, Dictionary<string, string> statics, Dictionary<string, string> sheets, Dictionary<string, SpriteSheetInfo> sheetEntityParameters)
             :this(content, statics, sheets)
         {
             _sheetEntityParameters = sheetEntityParameters;
@@ -58,9 +59,9 @@ namespace Bound.Models
 
         public float FrameSpeed(string key)
         {
-            (int, float) output;
+            SpriteSheetInfo output;
             if (_sheetEntityParameters.TryGetValue(key, out output))
-                return output.Item2;
+                return output.Speed;
             return 0.2f;
         }
 

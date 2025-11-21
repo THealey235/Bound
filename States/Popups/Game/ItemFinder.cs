@@ -235,11 +235,6 @@ namespace Bound.States.Popups
             Close();
         }
 
-        public override void PostUpdate(GameTime gameTime)
-        {
-
-        }
-
         private void Button_ItemPressed(object sender, EventArgs e)
         {
 

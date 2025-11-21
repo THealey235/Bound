@@ -97,10 +97,5 @@ namespace Bound.States.Popups.Game
             Parent.Popups.Remove(this);
         }
 
-        public override void PostUpdate(GameTime gameTime)
-        {
-            
-        }
-
     }
 }

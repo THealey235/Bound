@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata;
 using Microsoft.Xna.Framework.Input;
 
 
@@ -117,10 +116,6 @@ namespace Bound.States.Popups.Game
 
         #endregion
 
-        public override void PostUpdate(GameTime gameTime)
-        {
-            
-        }
 
         public override void Update(GameTime gameTime)
         {

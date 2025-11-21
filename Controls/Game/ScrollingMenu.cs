@@ -272,21 +272,6 @@ namespace Bound.Controls.Game
                 ) { IsBordered = false},
             };
 
-            if (Game1.InDebug)
-            {
-                _components.Add(new BorderedBox
-                (
-                    game.Textures.BaseBackground,
-                    game.GraphicsDevice,
-                    Color.Red,
-                    Position,
-                    Layer - 0.000001f,
-                    _width,
-                    _height
-                ));
-            }
-
-
             if (_enableCursor)
             {
                 _components.Add(_bar);

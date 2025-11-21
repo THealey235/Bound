@@ -75,11 +75,6 @@ namespace Bound.States
                 comp.Draw(gameTime, spriteBatch);
         }
 
-        public override void PostUpdate(GameTime gameTime)
-        {
-            
-        }
-
         public override void Update(GameTime gameTime)
         {
             for (int i = _components.Count - 5; i < _components.Count; i++)

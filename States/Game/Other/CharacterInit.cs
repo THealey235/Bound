@@ -151,11 +151,6 @@ namespace Bound.States.Game
 
         }
 
-        public override void PostUpdate(GameTime gameTime)
-        {
-
-        }
-
 
         #region Clicked Methods
 

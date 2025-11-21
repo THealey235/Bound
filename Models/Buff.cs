@@ -37,7 +37,13 @@ namespace Bound.Models
         {
             var buff = obj as Buff;
             return _source == buff.Source && _name == buff.Name;
-            
         }
+
+        public override int GetHashCode()
+        {
+           return base.GetHashCode();
+        }
+
+        public void ResetTimer(float time) => _timer = time;
     }
 }

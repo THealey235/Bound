@@ -79,9 +79,9 @@ namespace Bound.Sprites
             Scale = 0.8f;
             _debugRectangle = new DebugRectangle
             (
-                new Rectangle((int)Position.X, (int)Position.Y, _texture.Width, _texture.Height)
-                , game.GraphicsDevice
-                , Layer + 0.01f,
+                new Rectangle((int)Position.X, (int)Position.Y, _texture.Width, _texture.Height),
+                game.GraphicsDevice,
+                Layer + 0.01f,
                 FullScale
             );
 
@@ -183,6 +183,8 @@ namespace Bound.Sprites
                 Velocity += new Vector2(Speed, 0);
                 Effects = SpriteEffects.None;
             }
+            if (_keys.IsPressed("Up", true))
+                Velocity -= new Vector2(Gravity, 0);
             if (_keys.IsPressed("Reset", true))
             {
                 Position = new Vector2(100, 0);
@@ -212,5 +214,19 @@ namespace Bound.Sprites
         }
 
         public void RemoveItemFromHotbar(string name) => Level.HUD.RemoveFromHotbar(name);
+
+        public override void GiveBuff(Buff buff)
+        {
+            foreach (var i in _buffs)
+            {
+                if (buff.Equals(i))
+                {
+                    i.ResetTimer(buff.SecondsRemaining);
+                    return;
+                }
+            }
+            _buffs.Add(buff);
+            Level.HUD.AddBuff(buff);
+        }
     }
 }

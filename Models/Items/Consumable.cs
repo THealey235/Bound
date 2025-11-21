@@ -12,35 +12,49 @@ namespace Bound.Models.Items
     public class Consumable : UsableItem
     {
 
-        private static float _one_quater_rotation = (MathHelper.Pi / 2) ;
-        private static bool _blockThrowables;
-        private static List<string> _throwablesPointingUp = new List<string> { "Throwing Dagger" };
+        private static string[] _edibles = new string[] { 
+            "Healing Potion", "Stamina Potion", "Stone Potion", "Magic Infused Potion" 
+        };
+        private static string[] _attackAttributes = new string[] { "PATK", "MATK" };
+
+        public enum ConsumableTypes { NoCLDWNRecovery, Recovery, Buff, Projectile};
 
         private Texture2D _texture;
-        private bool _isThrowable;
+        private bool _isThrowable = false;
+        private bool _isEdible;
         private float _cooldown;
         private float _cooldownTimer;
         private float _rotation;
-
-        private bool _throwablePointingUp;
-        private float _horizontalVelocity;
-        private float _elapsedTime;
-        private float _g = 9.81f;
-
         private bool _hasTexture;
         private float _buffDuration;
         private Vector2 _position = Vector2.Zero;
         private Vector2 _origin = Vector2.Zero;
+        private ConsumableTypes _type;
 
-        public Consumable(Game1 game, TextureCollection textures, int id, string name, string description, TextureManager.ItemType type, string attributes = "") : base(game, textures, id, name, description, type, attributes)
+        public float Damage
         {
-            if (Attributes.ContainsKey("PATK") || Attributes.ContainsKey("MATK"))
+            get
             {
-                _isThrowable = true;
-                if (_throwablesPointingUp.Contains(name))
-                    _throwablePointingUp = true;
+                //This code be 5 lines of code instead and more readable
+                return _attackAttributes.Aggregate(0, (a, x) => Attributes.TryGetValue(x, out Attribute b) ? a + b.Value : a);
             }
-            else _isThrowable = false;
+        }
+
+        public ConsumableTypes ConsumableType
+        {
+            get { return  _type; }
+        }
+
+        public Consumable(Game1 game, TextureCollection textures, int id, string name, string description, TextureManager.ItemType type, ConsumableTypes consumableType, string attributes = "") : base(game, textures, id, name, description, type, attributes)
+        {
+            _type = consumableType;
+            SetValues();
+        }
+
+        private void SetValues()
+        {
+            _isEdible = _edibles.Contains(Name);
+            _isThrowable = _type == ConsumableTypes.Projectile;
 
             if (Attributes.ContainsKey("CLDWN"))
                 _cooldown = Attributes["CLDWN"].Value;
@@ -53,58 +67,80 @@ namespace Bound.Models.Items
             if (Textures.Statics.ContainsKey("Icon"))
             {
                 _hasTexture = true;
-                _texture = Textures.Statics["Icon"];
+                if (!Textures.Statics.TryGetValue("Projectile", out _texture))
+                    _texture = Textures.Statics["Icon"];
             }
 
-            _scale = 0.5f; 
+            _scale = 0.5f;
+        }
+
+        public Consumable(Game1 game, TextureCollection textures, int id, string name, string description, TextureManager.ItemType type, string consumableType, string attributes = "") : base(game, textures, id, name, description, type, attributes)
+        {
+            switch (consumableType.ReplaceLineEndings().Replace("\r\n", ""))
+            {
+                case "Projectile":
+                    _type = ConsumableTypes.Projectile; break;
+                case "No CLDWN Recovery":
+                    _type = ConsumableTypes.NoCLDWNRecovery; break;
+                case "Recovery":
+                    _type = ConsumableTypes.Recovery; break;
+                default:
+                    _type = ConsumableTypes.Buff; break;
+            }
+
+            SetValues();
+            
         }
 
         public override void Use()
         {
-            if (!_hasTexture || _owner == null || (_isThrowable && _blockThrowables)) return;
-
+            if (!_hasTexture || _owner == null || (_isThrowable && _owner.BlockThrowables) || _owner.ConsumableBlacklistContains(Name)) return;
             InUse = true;
             _rotation = 0;
             _offset = Vector2.Zero;
             _origin = Vector2.Zero;
-            _horizontalVelocity = 100f * Game1.ResScale;
-            _elapsedTime = 0f;
+            _cooldownTimer = _cooldown;
 
             if (_isThrowable)
             {
-                _cooldownTimer = _cooldown;
-                _blockThrowables = true;
-
-                if (_throwablePointingUp)
-                    _rotation = _one_quater_rotation;
-
+                _owner.BlockThrowables = true;
                 //Current state will always be a level if an item is being used
-                (_game.CurrentState as Level).AddProjectile(new Projectile(_texture, Name, Owner, _game, _rotation, new Vector2(0, 0)), Owner.Name != "player");
+                (_game.CurrentState as Level).AddProjectile(new Projectile(_texture, Name, Owner, _game, Damage), Owner.Name != "player");
 
-                Quantity--;
+                DecrementQuanity();
             }
-            else
+            else 
             {
-                _cooldownTimer = _cooldown;
-
-                if (_owner.Effects == SpriteEffects.None)
-                    _offset = new Vector2(_owner.ScaledRectangle.Width / 2, _owner.ScaledRectangle.Height / 2);
+                if (_isEdible)
+                {
+                    if (_owner.Effects == SpriteEffects.None)
+                        _offset = new Vector2(_owner.ScaledRectangle.Width / 2, _owner.ScaledRectangle.Height / 3);
+                    else
+                    {
+                        _offset = new Vector2(-_owner.ScaledRectangle.Width / 8, _owner.ScaledRectangle.Height / 3);
+                        _origin = new Vector2(_texture.Width, 0);
+                    }
+                    SetRotationForEdible();
+                }
                 else
                 {
-                    _offset = new Vector2(0, _owner.ScaledRectangle.Height / 2);
-                    _origin = new Vector2(_texture.Width, 0);
+                    if (_owner.Effects == SpriteEffects.None)
+                        _offset = new Vector2(_owner.ScaledRectangle.Width / 2, _owner.ScaledRectangle.Height / 4);
+                    else
+                        _offset = new Vector2(-_owner.ScaledRectangle.Width / 5, _owner.ScaledRectangle.Height / 4);
                 }
 
-                SetRotationForEdible();
+                if (_type == ConsumableTypes.Recovery)
+                    _owner.AddToConsumableBlacklist(Name);
+
                 _position = _owner.ScaledPosition;
             }
-                
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             if (InUse && !_isThrowable)
-                spriteBatch.Draw(_texture, _position + _origin + _offset, null, Color.White, _rotation, _origin, _scale * Game1.ResScale, _owner.Effects, _layer);
+                    spriteBatch.Draw(_texture, _position + _origin + _offset, null, Color.White, _rotation, _origin, _scale * Game1.ResScale, _owner.Effects, _layer);
         }
 
         public override void Update(GameTime gameTime, List<Sprite> sprites)
@@ -117,23 +153,28 @@ namespace Bound.Models.Items
             {
                 if (_isThrowable)
                 {
-                    if (_blockThrowables && _cooldownTimer <= 0)
+                    if (_owner.BlockThrowables && _cooldownTimer <= 0)
                     {
-                        _blockThrowables = false;
+                        _owner.BlockThrowables = false;
                         _owner.UnlockEffects();
                     }
                 }
                 else
                 {
-                    SetRotationForEdible();
+                    if (_isEdible)
+                        SetRotationForEdible();
+
                     _position = _owner.ScaledPosition;
                     if (_cooldownTimer <= 0)
                     {
                         InUse = false;
                         _owner.UnlockEffects();
-                        foreach (var attribute in Attributes.Values)
-                            _owner.GiveBuff(new Buff(_texture, Name, attribute.Name, attribute.Value, _buffDuration));
-                        Quantity--;
+                        if (_type != ConsumableTypes.NoCLDWNRecovery)
+                        {
+                            foreach (var attribute in Attributes.Values)
+                                _owner.GiveBuff(new Buff(_texture, Name, attribute.Name, attribute.Value, _buffDuration));
+                        }
+                        DecrementQuanity();
                     }
                 }
             }
@@ -149,10 +190,13 @@ namespace Bound.Models.Items
 
         public override Item Clone()
         {
-            var newitem =  new Consumable(_game, Textures, Id, Name, Description, Type, String.Join(',', Attributes.Select(x => $"{x.Key} {x.Value.Value}")));
+            var newitem =  new Consumable(_game, Textures, Id, Name, Description, Type, _type, String.Join(',', Attributes.Select(x => $"{x.Key} {x.Value.Value}")));
             newitem.Quantity = Quantity;
 
             return newitem;
         }
+
+        private void DecrementQuanity() => SetRotationForEdible(); //Only here to remove quantity removal when debuging
+
     }
 }

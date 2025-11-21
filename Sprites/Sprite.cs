@@ -6,6 +6,7 @@ using System.Linq;
 using Bound.Managers;
 using Bound.States;
 using System;
+using Bound.Models.Items;
 
 namespace Bound.Sprites
 {
@@ -56,6 +57,8 @@ namespace Bound.Sprites
         protected SpriteType _spriteType = SpriteType.Sprite;
         protected bool _lockEffects = false;
         protected float _knockbackDamageDealtOut = 1f;
+        protected bool _blockThrowables = false;
+        protected List<string> _consumableBlacklist = new List<string>();
 
         public enum SpriteType
         {
@@ -65,17 +68,15 @@ namespace Bound.Sprites
             Projectile
         }
 
-        public List<(Buff, float SecondsRemaning)> Buffs
+        public List<Buff> Buffs
         {
-            get { return _buffs.Select(x => (x, x.SecondsRemaining)).ToList(); }
+            get { return _buffs; }
         }
 
         #endregion
 
         #region Properties
         public Vector2 Velocity;
-
-        public List<Sprite> Children { get; set; }
 
         public Color Colour
         {
@@ -182,7 +183,7 @@ namespace Bound.Sprites
             get
             {
                 if (_useHitboxOverride)
-                    return new Rectangle((int)Position.X - (int)Origin.X, (int)Position.Y - (int)Origin.Y, (int)(_overridenHitbox.Width * _scale), (int)(_overridenHitbox.Height * _scale));
+                    return new Rectangle((int)Position.X, (int)Position.Y, (int)(_overridenHitbox.Width * _scale), (int)(_overridenHitbox.Height * _scale));
 
                 else if (_texture != null)
                     return new Rectangle((int)(Position.X), (int)(Position.Y), (int)(_texture.Width * _scale), (int)(_texture.Height * _scale));
@@ -217,6 +218,18 @@ namespace Bound.Sprites
 
                 throw new Exception("Unknown sprite");
             }
+
+        }
+
+        public Vector2 TextureCenter
+        {
+            get 
+            {
+                if (_texture == null)
+                    return Vector2.Zero;
+                return new Vector2(_texture.Width / 2, _texture.Height / 2);
+            }
+
         }
 
         public float Rotation
@@ -281,6 +294,12 @@ namespace Bound.Sprites
             set { _useHitboxOverride = value; }
         }
 
+        public bool BlockThrowables
+        {
+            get { return _blockThrowables; }
+            set { _blockThrowables = value; }
+        }
+
         #endregion
 
         #region Methods
@@ -292,8 +311,6 @@ namespace Bound.Sprites
         private void SetValues(Texture2D texture, Game1 game)
         {
             _texture = texture;
-
-            Children = new List<Sprite>();
 
             Origin = Vector2.Zero;
 
@@ -336,9 +353,9 @@ namespace Bound.Sprites
                 if (buff.SecondsRemaining <= 0)
                 {
                     _buffs.RemoveAt(i);
+                    _consumableBlacklist.Remove(buff.Source);
                     i--;
                 }
-
             }
         }
 
@@ -354,7 +371,7 @@ namespace Bound.Sprites
             if (_animationManager != null && _animationManager.IsPlaying == true)
                 _animationManager.Draw(spriteBatch);
             else if (_texture != null)
-                spriteBatch.Draw(_texture, ScaledPosition - Origin, null, Colour, _rotation, Origin, FullScale, Effects, Layer);
+                spriteBatch.Draw(_texture, ScaledPosition, null, Colour, _rotation, Origin, FullScale, Effects, Layer);
 
             if (Game1.InDebug && _debugRectangle != null)
                 _debugRectangle.Draw(gameTime, spriteBatch);
@@ -458,7 +475,6 @@ namespace Bound.Sprites
         {
             Velocity = new Vector2(0, 0);
             var inFreefall = true;
-            var toTruncate = false;
 
             if (!IsImmune)
                 HandleMovements(ref inFreefall);
@@ -477,24 +493,19 @@ namespace Bound.Sprites
             Knockback();
             foreach (var surface in surfaces)
             {
-                if ((Velocity.X > 0 && IsTouchingLeft(surface)) ||
-                     (Velocity.X < 0 && IsTouchingRight(surface)))
-                    Velocity.X = 0;
+                if ((Velocity.X > 0 && IsTouchingLeft(surface)))
+                    SurfaceTouched("left", surface);
+                else if (Velocity.X < 0 && IsTouchingRight(surface))
+                    SurfaceTouched("right", surface);
                 if ((Velocity.Y > 0 && IsTouchingTop(surface)) ||
                      (Velocity.Y < 0 && IsTouchingBottom(surface)))
                 {
-                    if (Gravity > 0)
-                    {//snaps them to the ground so that you velocity doesn't suddenly decrease when close to ground
-                        Velocity.Y = surface.Top - Rectangle.Bottom;
-                        toTruncate = true;
-                    }
+                    if (Velocity.Y > 0)
+                        SurfaceTouched("top", surface);
                     else
-                    {
-                        Velocity.Y = 0;
-                    }
+                        SurfaceTouched("bottom", surface);
                     inFreefall = false;
                     Gravity = 0;
-                    break;
                 }
             }
 
@@ -503,8 +514,21 @@ namespace Bound.Sprites
             CheckJump(inFreefall);
 
             Position += Velocity;
-            if (toTruncate) //this snaps the sprite to the top of a block when it falls and hits the ground
-                Position = new Vector2(Position.X, (int)Position.Y);
+        }
+
+        protected virtual void SurfaceTouched(string surfaceFace, Rectangle surface)
+        {
+            switch (surfaceFace)
+            {
+                case "left":
+                    Velocity.X = surface.Left - Rectangle.Right; break;
+                case "right":
+                    Velocity.X = surface.Right - Rectangle.Left; break;
+                case "top":
+                    Velocity.Y = surface.Top - Rectangle.Bottom; break;
+                case "bottom":
+                    Velocity.Y = surface.Bottom - Rectangle.Top; break;
+            }
         }
 
         private void CheckSpriteCollision(List<Sprite> sprites, ref List<Sprite> dealsKnockback)
@@ -524,7 +548,7 @@ namespace Bound.Sprites
                             StartKnocback("left", sprite.KnockbackDamageDealtOut);
                             sprite.StartKnocback("right", _knockbackDamageDealtOut);
                         }
-                        else
+                        else if (!(sprite.Type == SpriteType.Projectile))
                             Velocity.X = 0;
                     }
                     else if (Velocity.X < 0 && IsTouchingRight(sprite))
@@ -534,7 +558,7 @@ namespace Bound.Sprites
                             StartKnocback("right", sprite.KnockbackDamageDealtOut);
                             sprite.StartKnocback("left", _knockbackDamageDealtOut);
                         }
-                        else
+                        else if (!(sprite.Type == SpriteType.Projectile))
                             Velocity.X = 0;
                     }
                     if (Velocity.Y > 0 && IsTouchingTop(sprite))
@@ -544,7 +568,7 @@ namespace Bound.Sprites
                             StartKnocback("up", sprite.KnockbackDamageDealtOut);
                             sprite.StartKnocback("down", _knockbackDamageDealtOut);
                         }
-                        else
+                        else if (!(sprite.Type == SpriteType.Projectile))
                             Velocity.Y = 0;
                     }
                     else if (Velocity.Y < 0 && IsTouchingBottom(sprite))
@@ -554,7 +578,7 @@ namespace Bound.Sprites
                             StartKnocback("down", sprite.KnockbackDamageDealtOut);
                             sprite.StartKnocback("up", _knockbackDamageDealtOut);
                         }
-                        else
+                        else if (!(sprite.Type == SpriteType.Projectile))
                             Velocity.Y = 0;
                     }
                 }
@@ -710,11 +734,21 @@ namespace Bound.Sprites
                 _attributes[attr.Name].Value += attr.Value;
         }
 
-        public void GiveBuff(Buff buff)
+        public virtual void GiveBuff(Buff buff)
         {
-            _buffs.Remove(buff); //even if not in list it cleans any buffs from the same source with the same name
+            foreach (var i in _buffs)
+            {
+                if (buff.Equals(i))
+                {
+                    i.ResetTimer(buff.SecondsRemaining);
+                    return;
+                }
+            }
             _buffs.Add(buff);
         }
+
+        public void AddToConsumableBlacklist(string name) => _consumableBlacklist.Add(name);
+        public bool ConsumableBlacklistContains(string name) => _consumableBlacklist.Contains(name);
 
         #endregion
     }
