@@ -1,5 +1,6 @@
 ﻿using Bound.Models;
 using Bound.Models.Items;
+using Bound.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -62,6 +63,7 @@ namespace Bound.Managers
 
         public record ProjectileInfo(float Scale, bool HasProjTexture, float TextureRotation);
         public record SpriteSheetInfo(int Width, float Speed);
+        public record MobInfo(int Health = 10, int Stamina = 10, int Mana = 10, float KNBKDmg = 15f, float Speed = 10f);
 
         private readonly Dictionary<string, SpriteSheetInfo> _spriteSheetConstants = new Dictionary<string, SpriteSheetInfo>()
         {
@@ -72,6 +74,12 @@ namespace Bound.Managers
         {
             {"Throwing Dagger", new ProjectileInfo(0.5f, true, (float)Math.PI / 2f)},
             {"Rock", new ProjectileInfo(0.5f, false, 0f) },
+        };
+
+        private readonly Dictionary<string, MobInfo> _mobInfo = new Dictionary<string, MobInfo>()
+        {
+            {"Zombie", new MobInfo(Health: 50) },
+            {"Galahad", new MobInfo(Health: 100) },
         };
 
         #endregion
@@ -91,6 +99,7 @@ namespace Bound.Managers
         public Texture2D HotbarBG;
         public Texture2D HotbarSelectedSlot;
         public Texture2D EmptyBox;
+        public Texture2D BossBar;
 
         public Dictionary<string, Models.TextureCollection> HeadGear = new Dictionary<string, Models.TextureCollection>();
         public Dictionary<string, Models.TextureCollection> ChestArmour = new Dictionary<string, Models.TextureCollection>();
@@ -171,6 +180,7 @@ namespace Bound.Managers
             LoadBlockDirectory("Content/Atlases/Common", "common");
             HotbarBG = content.Load<Texture2D>("Backgrounds/HotbarBG");
             HotbarSelectedSlot = content.Load<Texture2D>("Backgrounds/HotbarSelectedBG");
+            BossBar = content.Load<Texture2D>("Backgrounds/BossBar");
 
             LoadTextureDirectory("Content/Items/HeadGear", HeadGear);
             LoadTextureDirectory("Content/Items/ChestArmour", ChestArmour);
@@ -444,5 +454,7 @@ namespace Bound.Managers
         }
 
         public bool GetProjectileInfo(string name, out ProjectileInfo info) => _projectileInfo.TryGetValue(name, out info);
+
+        public bool GetMobInfo(string name, out MobInfo info) => _mobInfo.TryGetValue(name, out info);
     }
 }

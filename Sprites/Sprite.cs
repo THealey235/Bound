@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Bound.Managers;
 using Bound.States;
-using System;
 using Bound.Models.Items;
 
 namespace Bound.Sprites
@@ -16,8 +15,9 @@ namespace Bound.Sprites
 
         protected Models.TextureCollection _textures;
         protected Dictionary<string, Animation> _animations;
-        protected Dictionary<string, Models.Attribute> _attributes;
+        protected Dictionary<string, Attribute> _attributes;
         protected List<Buff> _buffs = new List<Buff>();
+        protected Dictionary<string, int> _buffAttributes = new Dictionary<string, int>();
         protected AnimationManager _animationManager;
         protected Inventory _inventory;
         protected bool _useHitboxOverride;
@@ -195,7 +195,7 @@ namespace Bound.Sprites
                     return new Rectangle((int)Position.X - (int)Origin.X, (int)Position.Y - (int)Origin.Y, (int)(animation.FrameWidth * _scale), (int)(animation.FrameHeight * _scale));
                 }
 
-                throw new Exception("Unknown sprite");
+                throw new System.Exception("Unknown sprite");
             }
         }
 
@@ -216,7 +216,7 @@ namespace Bound.Sprites
                     return new Rectangle((int)ScaledPosition.X - (int)Origin.X, (int)ScaledPosition.Y - (int)Origin.Y, (int)(animation.FrameWidth * FullScale), (int)(animation.FrameHeight * FullScale));
                 }
 
-                throw new Exception("Unknown sprite");
+                throw new System.Exception("Unknown sprite");
             }
 
         }
@@ -303,12 +303,18 @@ namespace Bound.Sprites
         #endregion
 
         #region Methods
+
+        protected Sprite()
+        {
+
+        }
+
         public Sprite(Texture2D texture, Game1 game)
         {
             SetValues(texture, game);
         }
 
-        private void SetValues(Texture2D texture, Game1 game)
+        protected void SetValues(Texture2D texture, Game1 game)
         {
             _texture = texture;
 
@@ -345,11 +351,13 @@ namespace Bound.Sprites
 
             _dTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            _buffAttributes.Clear();
             Buff buff;
             for (int i = 0; i < _buffs.Count; i++)
             {
                 buff = _buffs[i];
                 buff.DecrementTimer(_dTime);
+                ApplyBuff(buff.Attributes, buff.Type);
                 if (buff.SecondsRemaining <= 0)
                 {
                     _buffs.RemoveAt(i);
@@ -702,9 +710,9 @@ namespace Bound.Sprites
 
         public void UnlockEffects() => _lockEffects = false;
 
-        public void Kill(Level level) => level.RemoveMob(this);
+        public virtual void Kill(Level level) => level.RemoveMob(this);
 
-        public void Damage(float damage) => _health -= (damage >= 0) ? damage : 0f;
+        public virtual void Damage(float damage) => _health -= (damage >= 0) ? damage : 0f;
 
         public bool UseStamina(float staminaToUse)
         {
@@ -726,7 +734,7 @@ namespace Bound.Sprites
             return false;
         }
 
-        public void UpdateAttribute(Models.Attribute attr)
+        public void UpdateAttribute(Attribute attr)
         {
             if (!_attributes.ContainsKey(attr.Name))
                 _attributes.Add(attr.Name, attr);
@@ -734,18 +742,56 @@ namespace Bound.Sprites
                 _attributes[attr.Name].Value += attr.Value;
         }
 
-        public virtual void GiveBuff(Buff buff)
+        public virtual bool GiveBuff(Buff buff)
         {
             foreach (var i in _buffs)
             {
                 if (buff.Equals(i))
                 {
                     i.ResetTimer(buff.SecondsRemaining);
-                    return;
+                    return false;
                 }
             }
+
             _buffs.Add(buff);
+
+            if (buff.Type == Consumable.ConsumableTypes.Recovery)
+            {
+                foreach (var attr in buff.Attributes)
+                {
+                    switch (attr.Name)
+                    {
+                        case "GLD":
+                            Inventory.Money += attr.Value; break;
+                        case "HEAL":
+                            _health += attr.Value; break;
+                    }
+                }
+            }
+
+            return true;
         }
+
+        private void ApplyBuff(List<Attribute> attributes, Consumable.ConsumableTypes type)
+        {
+            if (type == Consumable.ConsumableTypes.Recovery)
+                return;
+
+            foreach (var attr in attributes)
+            {
+                if (_buffAttributes.ContainsKey(attr.Name))
+                    _buffAttributes[attr.Name] += attr.Value;
+                else
+                    _buffAttributes.Add(attr.Name, attr.Value);
+            }
+        }
+
+        private int GetAttributeValue(string name)
+        {
+            return _attributes[name].Value + (_buffAttributes.TryGetValue(name, out int value) ? value : 0);
+        }
+
+
 
         public void AddToConsumableBlacklist(string name) => _consumableBlacklist.Add(name);
         public bool ConsumableBlacklistContains(string name) => _consumableBlacklist.Contains(name);

@@ -1,13 +1,16 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using System.Threading;
+﻿using Bound.Models.Items;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using static Bound.Models.Items.Consumable;
 
 namespace Bound.Models
 {
-    public class Buff : Attribute
+    public class Buff
     {
         private Texture2D _icon;
-        private string _source;
+        private Consumable _source;
         private float _timer;
+        private List<Attribute> _attributes;
 
         public float SecondsRemaining
         {
@@ -16,7 +19,7 @@ namespace Bound.Models
 
         public string Source
         {
-            get { return _source; }
+            get { return _source.Name; }
         }
 
         public Texture2D Icon
@@ -24,11 +27,22 @@ namespace Bound.Models
             get { return _icon; }
         }
 
-        public Buff(Texture2D icon, string source, string name, int value, float duration) : base(name, value)
+        public List<Attribute> Attributes
+        {
+            get { return _attributes; }
+        }
+
+        public ConsumableTypes Type
+        {
+            get { return _source.ConsumableType; }
+        }
+
+        public Buff(Texture2D icon, Consumable source, List<Attribute> attributes, float duration)
         {
             _icon = icon;
             _source = source;
             _timer = duration;
+            _attributes = attributes;
         }
 
         public void DecrementTimer(float seconds) => _timer -= seconds;
@@ -36,7 +50,7 @@ namespace Bound.Models
         public override bool Equals(object obj)
         {
             var buff = obj as Buff;
-            return _source == buff.Source && _name == buff.Name;
+            return _source.Name == buff.Source;
         }
 
         public override int GetHashCode()

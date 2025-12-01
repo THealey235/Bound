@@ -3,7 +3,9 @@ using Bound.Models;
 using Bound.States;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 
 
 namespace Bound.Sprites
@@ -51,6 +53,17 @@ namespace Bound.Sprites
             }
         }
 
+        public new List<Buff> Buffs
+        {
+            set 
+            { 
+                _buffs = value;
+                if (_buffs.Count > 0)
+                    _buffs.ForEach(buff => Level.HUD.AddBuff(buff));
+            }
+        }
+
+
         public override Inventory Inventory
         {
             get { return Save.Inventory; }
@@ -74,6 +87,7 @@ namespace Bound.Sprites
             _spriteType = SpriteType.Player;
             _knockbackDamageDealtOut = 2f;
             _speed = 100f;
+            Layer = 0.75f;
 
             _keys = Keys;
             Scale = 0.8f;
@@ -126,7 +140,22 @@ namespace Bound.Sprites
                 spriteBatch.Draw(_texture, ScaledPosition, null, Colour, _rotation, Origin, FullScale, Effects, Layer);
 
             if (Game1.InDebug)
+            {
                 _debugRectangle.Draw(gameTime, spriteBatch);
+
+                spriteBatch.DrawString(
+                    _game.Textures.Font,
+                    $"Position: x: {Math.Round(Position.X, 0, MidpointRounding.AwayFromZero)}" + $", y: {Math.Round(Position.Y, 0, MidpointRounding.AwayFromZero)}",
+                    Game1.V2Transform,
+                    Game1.DebugColour,
+                    0f,
+                    Vector2.Zero,
+                    0.5f,
+                    SpriteEffects.None,
+                    0.91f
+                );
+
+            }
         }
 
         public override void Update(GameTime gameTime, List<Rectangle> surfaces, List<Sprite> sprites = null, List<Sprite> dealsKnocback = null)
@@ -215,18 +244,19 @@ namespace Bound.Sprites
 
         public void RemoveItemFromHotbar(string name) => Level.HUD.RemoveFromHotbar(name);
 
-        public override void GiveBuff(Buff buff)
+        public override bool GiveBuff(Buff buff)
         {
-            foreach (var i in _buffs)
-            {
-                if (buff.Equals(i))
-                {
-                    i.ResetTimer(buff.SecondsRemaining);
-                    return;
-                }
-            }
-            _buffs.Add(buff);
-            Level.HUD.AddBuff(buff);
+            var isNew = base.GiveBuff(buff);
+
+            if (isNew)
+                Level.HUD.AddBuff(buff);
+
+            return isNew;
+        }
+
+        public void FullReset()
+        {
+            _consumableBlacklist.Clear();
         }
     }
 }

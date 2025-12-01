@@ -181,6 +181,18 @@
 /processorParam:TextureFormat=Color
 /build:Backgrounds/Bordered.png
 
+#begin Backgrounds/BossBar.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Backgrounds/BossBar.png
+
 #begin Backgrounds/HotbarBG.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -648,7 +660,7 @@
 /processorParam:TextureFormat=Color
 /build:Mouse/MouseOutline.png
 
-#begin Sprites/Player/Standing.png
+#begin Sprites/Galahad/Idle.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -658,7 +670,19 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Sprites/Player/Standing.png
+/build:Sprites/Galahad/Idle.png
+
+#begin Sprites/Player/Idle.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Player/Idle.png
 
 #begin Sprites/Player/Walking-Sheet.png
 /importer:TextureImporter
@@ -672,7 +696,7 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/Player/Walking-Sheet.png
 
-#begin Sprites/Zombie/Standing.png
+#begin Sprites/Zombie/Idle.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -682,5 +706,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Sprites/Zombie/Standing.png
+/build:Sprites/Zombie/Idle.png
 

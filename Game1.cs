@@ -29,8 +29,8 @@ namespace Bound
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private static Rectangle _viewport;
+        private Player _player;
 
-        public Player Player;
         private List<string> _statesWithoutPlayer = new List<string>()
         {
             Names.MainMenu, Names.CharacterInit
@@ -53,6 +53,11 @@ namespace Bound
                 _screenWidth = value;
                 _viewport.Width = value;
             }
+        }
+
+        public Player Player
+        {
+            get { return _player; }
         }
 
         public static float ResScale;
@@ -189,11 +194,7 @@ namespace Bound
             }
 
             PlayerKeys = new Input(Settings.Settings.InputValues, this);
-            Player = new Player(Textures.Sprites["Player"].Statics["Standing"], PlayerKeys, this)
-            {
-                Layer = 0.75f,
-                Position = new Vector2(100, 0),
-            };
+            _player = new Player(Textures.Sprites["Player"].Statics["Idle"], PlayerKeys, this);
 
             BuffInfo.SetRedXTexture(Textures.RedX);
 
@@ -333,11 +334,6 @@ namespace Bound
 
         #region Other Methods
 
-        private void ChangeKeys(Dictionary<string, string> Keys)
-        {
-
-        }
-
         private void ChangeFullscreenMode()
         {
 
@@ -410,6 +406,8 @@ namespace Bound
 
             Player.Reset();
         }
+
+        public void ResetPlayer() => Player.FullReset();
 
         public List<List<int>> RetrieveLevelMap(int level)
         {

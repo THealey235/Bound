@@ -161,9 +161,10 @@ namespace Bound.States.Game
             foreach (var mcb in _choiceBoxes)
                 mcb.OnApply?.Invoke(mcb, new EventArgs());
 
-            _game.SavesManager.ActiveSave.ResetAttrs();
-            _game.SavesManager.ActiveSave.Level = "levelzero";
-            _game.ChangeState(new Level0(_game, _content, _game.Player));
+            _game.ActiveSave.ResetAttrs();
+            _game.ActiveSave.Level = "levelzero";
+            _game.Player.Buffs = _game.ActiveSave.Buffs;
+            _game.ChangeState(new Level0(_game, _content));
 
             _game.SavesManager.UploadSave(SaveIndex);
         }

@@ -116,6 +116,7 @@ namespace Bound.States
         private void Button_Continue_Clicked(object sender, EventArgs e)
         {
             _game.ChangeState(_game.SavesManager.GetState(_game.RecentSave, _game, _content, _graphics));
+            
         }
 
         private void Button_Saves_Clicked(object sender, EventArgs e)

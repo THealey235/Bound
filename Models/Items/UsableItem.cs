@@ -1,13 +1,12 @@
 ﻿using Bound.Managers;
 using Bound.Sprites;
 using Microsoft.Xna.Framework;
-using System.Transactions;
 
 namespace Bound.Models.Items
 {
     public abstract class UsableItem : Item
     {
-        public static bool InUse = false;
+        public bool InUse = false;
 
         protected Vector2 _offset = new Vector2(0, 0);
         protected Game1 _game;

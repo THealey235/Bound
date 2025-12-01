@@ -1,34 +1,51 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Bound.Models;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using static Bound.Managers.TextureManager;
 
 namespace Bound.Sprites
 {
     public class Mob : Sprite
     {
-        public Mob(Models.TextureCollection textures, Game1 game, float health, float stamina, float mana) : base(textures, game)
+        public Mob(Models.TextureCollection textures, Game1 game, MobInfo info) : base(textures, game)
         {
-            _speed = 75f;
             _spriteType = SpriteType.Mob;
+            _textures = textures;
+            SetAnimations(textures);
+            SetMobInfo(info);
+        }
+
+        public Mob(Game1 game, string name)
+        {
+            _spriteType = SpriteType.Mob;
+            MobInfo info;
+
+            if (game.Textures.Sprites.TryGetValue(name, out _textures) && game.Textures.GetMobInfo(name, out info))
+            {
+                SetValues(_textures.Statics["Idle"], game);
+                SetAnimations(_textures);
+                SetMobInfo(info);
+            }
+        }
+
+        private static void SetAnimations(TextureCollection textures)
+        {
             if (textures.Sheets.Count > 0)
             {
                 //set animationManager and animations
             }
-            _health = health;
-            _stamina = stamina;
-            _mana = mana;
-            _knockbackDamageDealtOut = 15f;
         }
 
-        public override void Update(GameTime gameTime, List<Rectangle> surfaces, List<Sprite> sprites, List<Sprite> dealsKnockabck)
-        { 
-            base.Update(gameTime, surfaces, sprites, dealsKnockabck);  
-        }
-
-        protected override void SurfaceTouched(string surfaceFace, Rectangle surface)
+        private void SetMobInfo(MobInfo info)
         {
-            base.SurfaceTouched(surfaceFace, surface);
+            _speed = info.Speed;
+            _health = info.Health;
+            _stamina = info.Stamina;
+            _mana = info.Mana;
+            _knockbackDamageDealtOut = info.KNBKDmg;
         }
+
 
         protected override void HandleMovements(ref bool inFreefall)
         {

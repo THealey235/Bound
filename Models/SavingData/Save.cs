@@ -1,6 +1,5 @@
 ﻿using Bound.Managers;
 using Bound.Sprites;
-using Bound.States;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -40,6 +39,7 @@ namespace Bound.Models
         private Inventory _inventory;
         private Dictionary<string, List<string>> _equippedItems = new Dictionary<string, List<string>>();
         private Dictionary<string, Attribute> _attributes;
+        private List<Buff> _buffs = new List<Buff>();
 
         public Dictionary<string, List<string>> EquippedItems
         {
@@ -49,6 +49,12 @@ namespace Bound.Models
         public Inventory Inventory
         {
             get { return _inventory; }
+        }
+
+        public List<Buff> Buffs
+        {
+            get { return _buffs; }
+            set { _buffs = value; }
         }
 
         public Dictionary<string, Attribute> Attributes
@@ -119,6 +125,8 @@ namespace Bound.Models
                     .Select(x => String.Join(';', x.Value
                         .Select( y => $"{x.Key}: {y}").ToArray()))
                     .ToList());
+            if (_buffs.Count > 0)
+                str += EncryptKeyListPair("Buffs", _buffs.Select(x => x.Source + ", " + x.SecondsRemaining).ToList());
 
             str += EncryptKeyListPair("Position", new List<string>() { Position.X.ToString(), Position.Y.ToString() });
 

@@ -147,7 +147,7 @@ namespace Bound.Managers
             return Saves[saveIndex].Level switch
             {
                 "newgame" => new CharacterInit(game, content, saveIndex),
-                "levelzero" => new Level0(game, content, _game.Player),
+                "levelzero" => new Level0(game, content),
                 _ => new MainMenu(game, content, graphics)
             };
         }

@@ -15,6 +15,56 @@ namespace Bound.States
 {
     public class Level : State
     {
+        protected enum TriggerType
+        {
+            None,
+            Position,
+            Time
+        }
+       
+        protected class UnspawnedMob 
+        {
+            public Sprite Sprite;
+            TriggerType Trigger;
+            Rectangle Bounds;
+            private double _timeCondition; //in seconds
+
+            public UnspawnedMob(Sprite sprite, TriggerType trigger, (Vector2 TopLeft, Vector2 BottomRight)? bounds, float timeCondition)
+            {
+                if (bounds == null)
+                {
+                    if (trigger == TriggerType.Position)
+                        Trigger = TriggerType.None;
+                    else Trigger = trigger;
+
+                    Bounds = new Rectangle(0, 0, 0, 0);
+                }
+                else
+                {
+                    Trigger = trigger;
+                    var realbounds = ((Vector2 TopLeft, Vector2 BottomRight))bounds;
+                    Bounds = new Rectangle((int)realbounds.TopLeft.X, (int)realbounds.TopLeft.Y, (int)(realbounds.BottomRight.X - realbounds.TopLeft.X), (int)(realbounds.BottomRight.Y - realbounds.TopLeft.Y));
+                }
+
+                Sprite = sprite;
+                _timeCondition = timeCondition;
+            }
+
+            public bool CheckSpawn(double timeElapsed, Player player)
+            {
+                switch (Trigger)
+                {
+                    case TriggerType.Position:
+                        return (Bounds.Contains((int)player.Position.X, (int)player.Position.Y));
+                    case TriggerType.Time:
+                        _timeCondition -= timeElapsed;
+                        return _timeCondition <= 0;
+                    default:
+                        return true;
+                }
+            }
+        }
+
         protected List<Block> _blocks;
         protected List<Rectangle> _blockRects;
         protected List<Sprite> _mobs;
@@ -22,6 +72,7 @@ namespace Bound.States
         protected List<Sprite> _sprites;
         protected List<Sprite> _projectiles;
         protected List<(Sprite Sprite, bool DamagedByPlayer)> _spritesToAdd = new List<(Sprite Sprite, bool DamagedByPlayer)>();
+        protected List<UnspawnedMob> _unspawnedMobs = new List<UnspawnedMob>();
         protected HeadsUpDisplay _HUD;
         protected (float Min, float Max) _mapBounds;
         protected (Vector2 Min, Vector2 Max) _cameraBounds;
@@ -30,7 +81,7 @@ namespace Bound.States
 
         public HeadsUpDisplay HUD
         {
-            get { return _HUD; }
+            get { return _HUD;}
         }
 
         public (float Min, float Max) MapBounds
@@ -43,18 +94,18 @@ namespace Bound.States
             get { return  _cameraBounds; }
         }
 
-        public Level(Game1 game, ContentManager content, Player player, int levelNum) : base(game, content)
+        public Level(Game1 game, ContentManager content, int levelNum) : base(game, content)
         {
+            game.ResetPlayer();
             Name = Game1.Names.Level0;
-            _player = player;
+            _player = game.Player;
             _game = game;
             _levelMap = _game.RetrieveLevelMap(levelNum);
             _scale = 1.5f;
 
             _player.UpdateAttributes(game.SaveIndex);
             _player.Save = game.SavesManager.ActiveSave;
-
-            LoadContent();
+            _game.Player.Buffs = _game.ActiveSave.Buffs;
         }
 
 
@@ -83,10 +134,7 @@ namespace Bound.States
                     _mapBounds.Max * Game1.ResScale - 0.5f * Game1.ScreenHeight + _player.Rectangle.Height * Game1.ResScale)
             );
 
-            _mobs = new List<Sprite>()
-            {
-                new Mob(_game.Textures.Sprites["Zombie"], _game, 10f, 10f, 10f)
-            };
+            _mobs = new List<Sprite>();
 
             _damagesMobs = new List<Sprite>() { _player };
 
@@ -95,7 +143,6 @@ namespace Bound.States
             _sprites.AddRange( _damagesMobs );
 
             _player.Level = this;
-            _mobs[0].Position = new Vector2(10, 100);
 
             _HUD = new HeadsUpDisplay(_game, _content, this);
             _HUD.LoadContent();
@@ -132,12 +179,6 @@ namespace Bound.States
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            foreach (var sprite in ToKill)
-            {
-                _sprites.Remove(sprite);
-                _mobs.Remove(sprite);
-                _damagesMobs.Remove(sprite);
-            }
 
             foreach (var p in Popups)
                 p.Draw(gameTime, spriteBatch);
@@ -155,26 +196,25 @@ namespace Bound.States
 
             _HUD.Draw(gameTime, spriteBatch);
 
-            if (Game1.InDebug)
-            {
-                var pos = new Vector2(0, 0);
-                var layer = 0.91f;
-                var scale = 0.5f;
-
-                spriteBatch.DrawString(
-                    _game.Textures.Font,
-                    $"Position: x: {Math.Round(_player.Position.X, 0, MidpointRounding.AwayFromZero)}" +
-                        $", y: {Math.Round(_player.Position.Y, 0, MidpointRounding.AwayFromZero)}",
-                    pos + Game1.V2Transform, Game1.DebugColour, 0f, Vector2.Zero, scale, SpriteEffects.None, layer
-                );
-            }
+            
         }
 
         public override void Update(GameTime gameTime)
         {
+            for (int i = 0; i < _unspawnedMobs.Count; i++)
+            {
+                var sprite = _unspawnedMobs[i];
+                if (sprite.CheckSpawn(gameTime.ElapsedGameTime.TotalSeconds, _player))
+                {
+                    _spritesToAdd.Add((sprite.Sprite, true));
+                    _unspawnedMobs.RemoveAt(i);
+                    i--;
+                }
+            }
+
             if (_spritesToAdd.Count > 0)
             {
-                foreach(var i in _spritesToAdd)
+                foreach (var i in _spritesToAdd)
                 {
                     if (i.DamagedByPlayer)
                         _mobs.Add(i.Sprite);
@@ -183,6 +223,17 @@ namespace Bound.States
                     _sprites.Add(i.Sprite);
                 }
                 _spritesToAdd.Clear();
+            }
+
+            for (int i = 0; i < _sprites.Count; i++)
+                if (_sprites[i].Health <= 0)
+                    _sprites[i].Kill(this); // don't immediately remove it in case there is a death animation
+
+            foreach (var sprite in ToKill)
+            {
+                _sprites.Remove(sprite);
+                _mobs.Remove(sprite);
+                _damagesMobs.Remove(sprite);
             }
 
             var count = Popups.Count;
@@ -217,10 +268,6 @@ namespace Bound.States
                 sprite.Update(gameTime, _blockRects, _sprites, _mobs);
             foreach (var sprite in _mobs)
                 sprite.Update(gameTime, _blockRects, _sprites, _damagesMobs);
-
-            for (int i = 0; i < _sprites.Count; i++)
-                if (_sprites[i].Health <= 0)
-                    _sprites[i].Kill(this);
         }
 
         protected List<Rectangle> UpdateBlockRects()
@@ -240,6 +287,12 @@ namespace Bound.States
         public void AddProjectile(Projectile projectile, bool damagesPlayer)
         {
             _spritesToAdd.Add((projectile, damagesPlayer));
+        }
+
+        protected void AddMob(Sprite sprite, Vector2 spawnPosition, TriggerType type, (Vector2, Vector2)? positionBounds = null, float time = 0)
+        {
+            sprite.Position = spawnPosition;
+            _unspawnedMobs.Add(new UnspawnedMob(sprite, type, positionBounds, time));
         }
     }
 }

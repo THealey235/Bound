@@ -94,7 +94,7 @@ namespace Bound.Models.Items
 
         public override void Use()
         {
-            if (!_hasTexture || _owner == null || (_isThrowable && _owner.BlockThrowables) || _owner.ConsumableBlacklistContains(Name)) return;
+            if (!_hasTexture || _owner == null || (_isThrowable && _owner.BlockThrowables) || InUse || _owner.ConsumableBlacklistContains(Name)) return;
             InUse = true;
             _rotation = 0;
             _offset = Vector2.Zero;
@@ -107,7 +107,7 @@ namespace Bound.Models.Items
                 //Current state will always be a level if an item is being used
                 (_game.CurrentState as Level).AddProjectile(new Projectile(_texture, Name, Owner, _game, Damage), Owner.Name != "player");
 
-                DecrementQuanity();
+                //Quantity--;
             }
             else 
             {
@@ -140,7 +140,7 @@ namespace Bound.Models.Items
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             if (InUse && !_isThrowable)
-                    spriteBatch.Draw(_texture, _position + _origin + _offset, null, Color.White, _rotation, _origin, _scale * Game1.ResScale, _owner.Effects, _layer);
+                spriteBatch.Draw(_texture, _position + _origin + _offset, null, Color.White, _rotation, _origin, _scale * Game1.ResScale, _owner.Effects, _layer);
         }
 
         public override void Update(GameTime gameTime, List<Sprite> sprites)
@@ -157,6 +157,7 @@ namespace Bound.Models.Items
                     {
                         _owner.BlockThrowables = false;
                         _owner.UnlockEffects();
+                        InUse = false;
                     }
                 }
                 else
@@ -171,10 +172,9 @@ namespace Bound.Models.Items
                         _owner.UnlockEffects();
                         if (_type != ConsumableTypes.NoCLDWNRecovery)
                         {
-                            foreach (var attribute in Attributes.Values)
-                                _owner.GiveBuff(new Buff(_texture, Name, attribute.Name, attribute.Value, _buffDuration));
+                            _owner.GiveBuff(new Buff(_texture, this, Attributes.Values.ToList(), _buffDuration));
                         }
-                        DecrementQuanity();
+                        //Quantity--;
                     }
                 }
             }
@@ -195,8 +195,5 @@ namespace Bound.Models.Items
 
             return newitem;
         }
-
-        private void DecrementQuanity() => SetRotationForEdible(); //Only here to remove quantity removal when debuging
-
     }
 }

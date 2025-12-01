@@ -103,6 +103,7 @@ namespace Bound.States
             var save = sender as SaveInterface;
             _game.RecentSave = _game.SaveIndex = save.Index;
             _game.Settings.Settings.General["MostRecentSave"] = save.Index.ToString();
+            _game.Player.Buffs = _game.ActiveSave.Buffs;
             SettingsManager.Save(_game.Settings);
             _game.ChangeState(_game.SavesManager.GetState(save.Index, _game, _content, _game.GraphicsManager));
         }

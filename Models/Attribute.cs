@@ -10,22 +10,6 @@ namespace Bound.Models
 {
     public class Attribute
     {
-        protected enum Type
-        {
-            Stat, Effect
-        };
-
-        protected enum Attributes
-        {
-            Vigor, Mind, Endurance, Strength, Dexterity, AmmoHandling, Precision, Arcane,
-            Focus, MovementSpeed, PhysicalAttack, PhysicalDefence, Stamina, Health, MoneyMultiplier,
-        };//Vigor is max HP, Health is current HP
-
-        protected enum Buffs
-        {
-            DoubleJump
-        }
-
         protected string _name;
         protected int _value;
 

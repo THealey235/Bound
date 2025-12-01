@@ -13,6 +13,7 @@ namespace Bound.Managers
 
         private Game1 _game;
         private Sprite _owner;
+
         private Dictionary<string, Item> _headgear = new Dictionary<string, Item>();
         private Dictionary<string, Item> _chestArmour = new Dictionary<string, Item>();
         private Dictionary<string, Item> _legArmour = new Dictionary<string, Item>();
@@ -22,8 +23,9 @@ namespace Bound.Managers
         private Dictionary<string, Item> _consumables = new Dictionary<string, Item>();
         private Dictionary<string, Item> _skills = new Dictionary<string, Item>();
         private List<Dictionary<string, Item>> _inventory;
-
         private static Item Blank = new Item(new Models.TextureCollection(), -1, "Blank", "null", ItemType.Unrecognised);
+
+        public int Money;
 
         public List<string> FlatInventory
         {
@@ -95,6 +97,12 @@ namespace Bound.Managers
                 args.Add(kvp[0], kvp[1]);
             }
 
+            if (args["Name"] == "Money")
+            {
+                Money = int.Parse(args["Ammount"]);
+                return;
+            }
+
             var newItem = _game.Items[args["Name"]].Clone();
             newItem.Owner = _owner;
             if (args.ContainsKey("Ammount")) newItem.Quantity = int.Parse(args["Ammount"]);
@@ -129,7 +137,7 @@ namespace Bound.Managers
                     output.Add(str);
                 }
             }
-
+            output.Add($"Name: Money, Ammount: {Money}");
             return output;
         }
 
