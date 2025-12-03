@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 
 
 namespace Bound.States
@@ -34,7 +35,7 @@ namespace Bound.States
                 if (bounds == null)
                 {
                     if (trigger == TriggerType.Position)
-                        Trigger = TriggerType.None;
+                        Trigger = TriggerType.Time;
                     else Trigger = trigger;
 
                     Bounds = new Rectangle(0, 0, 0, 0);
@@ -55,7 +56,9 @@ namespace Bound.States
                 switch (Trigger)
                 {
                     case TriggerType.Position:
-                        return (Bounds.Contains((int)player.Position.X, (int)player.Position.Y));
+                        if (Bounds.Contains((int)player.Position.X, (int)player.Position.Y))
+                            Trigger = TriggerType.Time;
+                        return false;
                     case TriggerType.Time:
                         _timeCondition -= timeElapsed;
                         return _timeCondition <= 0;
@@ -289,10 +292,14 @@ namespace Bound.States
             _spritesToAdd.Add((projectile, damagesPlayer));
         }
 
-        protected void AddMob(Sprite sprite, Vector2 spawnPosition, TriggerType type, (Vector2, Vector2)? positionBounds = null, float time = 0)
+        protected void AddMob(Sprite sprite, Vector2 spawnPosition, TriggerType type, (Vector2, Vector2)? positionBounds = null, float spawnDelay = 0)
         {
             sprite.Position = spawnPosition;
-            _unspawnedMobs.Add(new UnspawnedMob(sprite, type, positionBounds, time));
+            _unspawnedMobs.Add(new UnspawnedMob(sprite, type, positionBounds, spawnDelay));
         }
+
+        protected (Vector2, Vector2) GenerateTriggerBounds(Vector2 mobSpawn, Vector2 boundTranslation) => (mobSpawn -  boundTranslation, mobSpawn + boundTranslation);
+        protected (Vector2, Vector2) GenerateTriggerBounds(Vector2 mobSpawn, Vector2 boundTranslationTopLeft, Vector2 boundTranslationTopRight) => (mobSpawn + boundTranslationTopLeft, mobSpawn + boundTranslationTopRight);
+
     }
 }

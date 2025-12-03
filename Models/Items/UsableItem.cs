@@ -1,6 +1,7 @@
 ﻿using Bound.Managers;
 using Bound.Sprites;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace Bound.Models.Items
 {
@@ -34,6 +35,11 @@ namespace Bound.Models.Items
         }
 
         protected UsableItem(Game1 game, TextureCollection textures, int id, string name, string description, TextureManager.ItemType type, string attributes = "") : base(textures, id, name, description, type, attributes)
+        {
+            _game = game;
+        }
+
+        protected UsableItem(Game1 game, TextureCollection textures, int id, string name, string description, TextureManager.ItemType type, Dictionary<string, Attribute> attributes) : base(textures, id, name, description, type, attributes)
         {
             _game = game;
         }

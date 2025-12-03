@@ -45,16 +45,26 @@ namespace Bound.Models.Items
             } 
         }
 
-        private readonly WeaponTypes _weaponType;
+        private WeaponTypes _weaponType;
 
         public Weapon(Game1 game, TextureCollection textures, int id, string name, string description, TextureManager.ItemType type, string attributes = "") : base(game, textures, id, name, description, type, attributes)
+        {
+            name = SetValues(name);
+        }
+
+        public Weapon(Game1 game, TextureCollection textures, int id, string name, string description, TextureManager.ItemType type, Dictionary<string, Attribute> attributes) : base(game, textures, id, name, description, type, attributes)
+        {
+            name = SetValues(name);
+        }
+
+        private string SetValues(string name)
         {
             name = name.ToLower();
             if (name.Contains("sword") || name.Contains("axe"))
                 _weaponType = WeaponTypes.Sword;
             else if (name.Contains("bow"))
                 _weaponType = WeaponTypes.Bow;
-            else 
+            else
                 _weaponType = WeaponTypes.Unrecognised;
 
             _animations = _textures.Sheets
@@ -64,6 +74,7 @@ namespace Bound.Models.Items
             {
                 Loop = false,
             };
+            return name;
         }
 
         private void SetCollisionRectangle(string key = "Use")
@@ -186,8 +197,7 @@ namespace Bound.Models.Items
 
         public override Weapon Clone()
         {
-            var output = new Weapon(_game, Textures, Id, Name, Description, Type);
-            output.Attributes = Attributes;
+            var output = new Weapon(_game, Textures, Id, Name, Description, Type, Attributes);
             output.Quantity = Quantity;
 
             return output;

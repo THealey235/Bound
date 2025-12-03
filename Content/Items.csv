@@ -7,7 +7,7 @@ Super Cool Epic Chest Piece;ChestArmour;Amazing piece of chest armour definitely
 Healing Potion;Consumable;Heals for 15HP;HEAL 15;Recovery
 Stamina Potion;Consumable;Regens 15 Stamina;STAM 15;Buff
 Golden Mibu Water Balloon;Consumable;Increases Gold gathered by 1.5x;MONEYMULT 5;Buff
-Stone Potion;Consumable;Adds 15 Physical Defence;PDEF 15;Buff
+Stone Potion;Consumable;Adds 15 Physical Defence;PDEF 15, STR 2;Buff
 Magic Infused Potion;Consumable;Bewitched by the old people of the mountains;ARC 15;Buff
 Double Jump;Consumable;Single use double jump for extra height in a pinch!;DJMP 1;No CLDWN Recovery
 Rock;Consumable;Are you really this desperate?;PATK 1;Projectile

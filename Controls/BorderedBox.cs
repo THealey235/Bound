@@ -145,28 +145,9 @@ namespace Bound.Controls
                 }
             }
 
-            _border = new Texture2D(_graphics, Width, Height);
+            _border = new Texture2D(_graphics, Width > 0 ? Width : 1, Height);
             _border.SetData<Color>(colours.ToArray());
         }
-
-        //public void Tmp(GraphicsDevice graphics, Texture2D texture)
-        //{
-        //    var height = (int)(_texture.Height * _scale.Y);
-        //    var width = (int)(_texture.Width * _scale.X);
-
-        //    var coloursSide = Enumerable.Repeat(new Color(225, 225, 225), _barWidth * height).ToArray();
-        //    var coloursTop = Enumerable.Repeat(new Color(225, 225, 225), _barWidth * (width - _barWidth)).ToArray();
-
-        //    _borders = new List<Texture2D>()
-        //    {
-        //        new Texture2D(graphics, _barWidth, height),
-        //        new Texture2D(graphics, (width - _barWidth), _barWidth),
-        //    };
-
-        //    _borders[0].SetData<Color>(coloursSide);
-        //    _borders[1].SetData<Color>(coloursTop);
-        //}
-
         #endregion
     }
 }

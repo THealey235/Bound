@@ -122,6 +122,9 @@ namespace Bound.States.Popups.Game
             foreach (var c in _statusBoxes)
                 c.IgnoreCameraTransform = true;
 
+            foreach (var buff in _player.Save.Buffs)
+                AddBuff(buff);
+
             _currentStatusBoxesWidth = _statusBoxes.Select(x => x.Width).ToList();
 
         }

@@ -31,15 +31,6 @@ namespace Bound.Models.Items
         private Vector2 _origin = Vector2.Zero;
         private ConsumableTypes _type;
 
-        public float Damage
-        {
-            get
-            {
-                //This code be 5 lines of code instead and more readable
-                return _attackAttributes.Aggregate(0, (a, x) => Attributes.TryGetValue(x, out Attribute b) ? a + b.Value : a);
-            }
-        }
-
         public ConsumableTypes ConsumableType
         {
             get { return  _type; }
@@ -190,7 +181,7 @@ namespace Bound.Models.Items
 
         public override Item Clone()
         {
-            var newitem =  new Consumable(_game, Textures, Id, Name, Description, Type, _type, String.Join(',', Attributes.Select(x => $"{x.Key} {x.Value.Value}")));
+            var newitem =  new Consumable(_game, Textures, Id, Name, Description, Type, _type, String.Join(", ", Attributes.Select(x => $"{x.Key} {x.Value.Value}")));
             newitem.Quantity = Quantity;
 
             return newitem;

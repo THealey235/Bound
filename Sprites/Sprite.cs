@@ -17,7 +17,7 @@ namespace Bound.Sprites
         protected Dictionary<string, Animation> _animations;
         protected Dictionary<string, Attribute> _attributes;
         protected List<Buff> _buffs = new List<Buff>();
-        protected Dictionary<string, int> _buffAttributes = new Dictionary<string, int>();
+        protected Dictionary<string, float> _buffAttributes = new Dictionary<string, float>();
         protected AnimationManager _animationManager;
         protected Inventory _inventory;
         protected bool _useHitboxOverride;
@@ -71,6 +71,11 @@ namespace Bound.Sprites
         public List<Buff> Buffs
         {
             get { return _buffs; }
+        }
+
+        public Dictionary<string, float> ActiveBuffValues
+        {
+            get { return _buffAttributes; }
         }
 
         #endregion
@@ -569,7 +574,7 @@ namespace Bound.Sprites
                         else if (!(sprite.Type == SpriteType.Projectile))
                             Velocity.X = 0;
                     }
-                    if (Velocity.Y > 0 && IsTouchingTop(sprite))
+                    /*if (Velocity.Y > 0 && IsTouchingTop(sprite))
                     {
                         if (dealsKnockback.Contains(sprite))
                         {
@@ -578,8 +583,8 @@ namespace Bound.Sprites
                         }
                         else if (!(sprite.Type == SpriteType.Projectile))
                             Velocity.Y = 0;
-                    }
-                    else if (Velocity.Y < 0 && IsTouchingBottom(sprite))
+                    }*/
+                    if (Velocity.Y < 0 && IsTouchingBottom(sprite))
                     {
                         if (dealsKnockback.Contains(sprite))
                         {
@@ -759,10 +764,11 @@ namespace Bound.Sprites
             {
                 foreach (var attr in buff.Attributes)
                 {
+                    //More cases need to be added when more recovery items with new effects are added such as a mana/stamian recovery potion
                     switch (attr.Name)
                     {
                         case "GLD":
-                            Inventory.Money += attr.Value; break;
+                            Inventory.Money += (int)attr.Value; break;
                         case "HEAL":
                             _health += attr.Value; break;
                     }
@@ -786,9 +792,9 @@ namespace Bound.Sprites
             }
         }
 
-        private int GetAttributeValue(string name)
+        private float GetAttributeValue(string name)
         {
-            return _attributes[name].Value + (_buffAttributes.TryGetValue(name, out int value) ? value : 0);
+            return _attributes[name].Value + (_buffAttributes.TryGetValue(name, out float value) ? value : 0);
         }
 
 

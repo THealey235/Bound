@@ -11,19 +11,19 @@ namespace Bound.Models
     public class Attribute
     {
         protected string _name;
-        protected int _value;
+        protected float _value = 1f;
 
         public string Name
         {
             get { return _name; }
         }
-        public int Value
+        public float Value
         {
             get { return _value; }
             set { _value = value; }
         }
 
-        public Attribute(string name, int value)
+        public Attribute(string name, float value)
         {
             _name = name;
             _value = value;

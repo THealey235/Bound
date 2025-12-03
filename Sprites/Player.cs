@@ -58,8 +58,6 @@ namespace Bound.Sprites
             set 
             { 
                 _buffs = value;
-                if (_buffs.Count > 0)
-                    _buffs.ForEach(buff => Level.HUD.AddBuff(buff));
             }
         }
 

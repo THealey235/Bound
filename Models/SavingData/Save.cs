@@ -169,7 +169,7 @@ namespace Bound.Models
         private int GetMaxAttribute(string attrKey, List<int> levelAdditions)
         {
             var value = 0;
-            var limit = Attributes[attrKey].Value;
+            var limit = (int)Attributes[attrKey].Value;
             int overflow = (limit > levelAdditions.Count) ? limit - levelAdditions.Count : 0;
             for (int i = 0; i < limit - overflow; i++)
                 value += levelAdditions[i];
@@ -304,7 +304,7 @@ namespace Bound.Models
 
         private static string Encrypt(string s) => String.Join(String.Empty, s.Select(c => _encryptionTable[c]));
         private static string EncryptKVP(string id, string value) => Encrypt(id) + SEPERATOR + Encrypt(value) + "\n";
-        private static string EncryptKeyListPair(string id, List<string> list) => Encrypt(id) + SEPERATOR + String.Join(SEPERATOR, list.Select(x => Encrypt(x))) + "\n";
+        private static string EncryptKeyListPair(string id, List<string> list) => Encrypt(id) + SEPERATOR + String.Join(SEPERATOR, list.Select(x => Encrypt(x))) + "\n";//when this is decrypted, a semicolon will be between each item
 
         private static string Decrypt(string s) => String.Join(String.Empty, s.Chunk(_encryptedCharLength).ToList().Select(x => _decryptionTable[new string(x)]));
         private static (string Key, string Value) DecryptLine(string line)
@@ -385,6 +385,8 @@ namespace Bound.Models
                                 save.Mana = save.FloatTryParse(kvp.Value); break;
                             case "Stamina":
                                 save.Stamina = save.FloatTryParse(kvp.Value); break;
+                            case "Buffs":
+                                save.Buffs = kvp.Value.Split(';').Select(x => x.Split(", ")).Select(x => new Buff(game, x[0], float.Parse(x[1]))).ToList(); break;
                         }
                     }
                 }

@@ -78,7 +78,7 @@ namespace Bound.Managers
 
         private readonly Dictionary<string, MobInfo> _mobInfo = new Dictionary<string, MobInfo>()
         {
-            {"Zombie", new MobInfo(Health: 50) },
+            {"Zombie", new MobInfo(Health: 50, Speed: 20f) },
             {"Galahad", new MobInfo(Health: 100) },
         };
 

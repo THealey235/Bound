@@ -1,6 +1,7 @@
 ﻿using Bound.Models.Items;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.Linq;
 using static Bound.Models.Items.Consumable;
 
 namespace Bound.Models
@@ -43,6 +44,15 @@ namespace Bound.Models
             _source = source;
             _timer = duration;
             _attributes = attributes;
+        }
+
+        //Used when loading a new save from disk
+        public Buff (Game1 game, string source, float duration)
+        {
+            _source = (Consumable) game.Items[source];
+            _icon = _source.Textures.GetIcon();
+            _timer = duration;
+            _attributes = _source.Attributes.Values.ToList();
         }
 
         public void DecrementTimer(float seconds) => _timer -= seconds;

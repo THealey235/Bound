@@ -27,8 +27,17 @@ namespace Bound.States.Game
             rows.AddRange(Enumerable.Repeat((new List<TextureManager.CommonBlocks> { TextureManager.CommonBlocks.BlankTile }, Color.Black), 5));
             PadBottom(rows);
 
-            AddMob(new Mob(_game, "Zombie"), new Vector2(10, 100), TriggerType.Position, (new Vector2(300, 0), new Vector2(400, 400)));
-            AddMob(new Boss(_game, "Galahad"), new Vector2(200, 300), TriggerType.Time, null, 5f);
+            var sectionPositions = new List<Vector2>()
+            {
+                new Vector2(400, 175),
+                new Vector2(900, 175),
+                new Vector2(1200, 175)
+            };
+
+            for (int i = 0; i < 1; i++)
+                AddMob(new Mob(_game, "Zombie"), sectionPositions[0], TriggerType.Position, GenerateTriggerBounds(sectionPositions[0], new Vector2(100, 100)), (0.3f * i));
+
+            AddMob(new Boss(_game, "Galahad"), sectionPositions[2], TriggerType.Position, GenerateTriggerBounds(sectionPositions[2], new Vector2(-100, -50), new Vector2(100, 50)), 5f);
         }
     }
 }
