@@ -612,6 +612,18 @@
 /processorParam:TextureFormat=Color
 /build:Items/Weapons/Statics/Default-Icon.png
 
+#begin Items/Weapons/Statics/Mace-Icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Items/Weapons/Statics/Mace-Icon.png
+
 #begin Items/Weapons/Statics/Wooden Sword-Icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -635,30 +647,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:MissingTexture.png
-
-#begin Mouse/MouseFill.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Mouse/MouseFill.png
-
-#begin Mouse/MouseOutline.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Mouse/MouseOutline.png
 
 #begin Sprites/Galahad/Idle.png
 /importer:TextureImporter

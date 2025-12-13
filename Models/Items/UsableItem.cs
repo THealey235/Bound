@@ -12,7 +12,6 @@ namespace Bound.Models.Items
         protected Vector2 _offset = new Vector2(0, 0);
         protected Game1 _game;
         protected bool _previousPlaying;
-        protected float _scale;
         protected float _layer = 0.76f;
 
         public override Sprite Owner
@@ -28,10 +27,10 @@ namespace Bound.Models.Items
             }
         }
 
-        public virtual float Scale
+        public override float Scale
         {
-            get { return _scale; }
-            set { }
+            get { return _scale * Game1.ResScale; }
+            set { _scale = value; }
         }
 
         protected UsableItem(Game1 game, TextureCollection textures, int id, string name, string description, TextureManager.ItemType type, string attributes = "") : base(textures, id, name, description, type, attributes)

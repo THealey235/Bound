@@ -12,6 +12,7 @@ namespace Bound.Models.Items
     {
         protected AnimationManager _animationManager;
         protected Dictionary<string, Animation> _animations;
+        protected float _scale;
 
         public enum WeaponTypes
         {
@@ -27,7 +28,7 @@ namespace Bound.Models.Items
                     return;
                 _owner = value;
                 _animationManager.Layer = 0.76f;
-                _animationManager.Scale = Scale =  Game1.ResScale;
+                Scale = 1f;
                 _animationManager.Origin = _owner.Origin;
             }
         }
@@ -134,6 +135,7 @@ namespace Bound.Models.Items
             }
 
             _animationManager.Effects = _owner.Effects;
+            _animationManager.Scale = Scale * Game1.ResScale;
 
             //used to allign the animation with the leading hand
             _offset = new Vector2(0, (_owner.Rectangle.Height - _animationManager.CurrentAnimation.FrameHeight) / 2);

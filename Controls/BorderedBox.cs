@@ -145,7 +145,7 @@ namespace Bound.Controls
                 }
             }
 
-            _border = new Texture2D(_graphics, Width > 0 ? Width : 1, Height);
+            _border = new Texture2D(_graphics, Width, Height);
             _border.SetData<Color>(colours.ToArray());
         }
         #endregion

@@ -11,10 +11,13 @@ namespace Bound.States.Game
 {
     public class Level0 : Level
     {
+        private bool hasBeenLoaded;
+
         public Level0(Game1 game, ContentManager content) : base(game, content, 0)
         {
             Name = "level0";
         }
+
 
         public override void LoadContent()
         {
@@ -27,17 +30,23 @@ namespace Bound.States.Game
             rows.AddRange(Enumerable.Repeat((new List<TextureManager.CommonBlocks> { TextureManager.CommonBlocks.BlankTile }, Color.Black), 5));
             PadBottom(rows);
 
-            var sectionPositions = new List<Vector2>()
+            if(!hasBeenLoaded)
             {
-                new Vector2(400, 175),
-                new Vector2(900, 175),
-                new Vector2(1200, 175)
-            };
+                var sectionPositions = new List<(Vector2 TL, Vector2 BR)>()
+                {
+                    (new Vector2(409, 30), new Vector2(553, 269)),
+                    (new Vector2(625, 200), new Vector2(937, 270)),
+                    (new Vector2(1080, 214), new Vector2(1584, 270))
+                };
 
-            for (int i = 0; i < 1; i++)
-                AddMob(new Mob(_game, "Zombie"), sectionPositions[0], TriggerType.Position, GenerateTriggerBounds(sectionPositions[0], new Vector2(100, 100)), (0.3f * i));
+                _unspawnedMobs.Clear();
 
-            AddMob(new Boss(_game, "Galahad"), sectionPositions[2], TriggerType.Position, GenerateTriggerBounds(sectionPositions[2], new Vector2(-100, -50), new Vector2(100, 50)), 5f);
+                for (int i = 0; i < 1; i++)
+                    AddMob(new Mob(_game, "Zombie"), new Vector2(510, 258), TriggerType.Position, sectionPositions[0], (0.3f * i));
+
+                    AddMob(new Boss(_game, "Galahad"), new Vector2(1380, 250), TriggerType.Position, sectionPositions[2], 0f);
+                hasBeenLoaded = true;
+            }
         }
     }
 }

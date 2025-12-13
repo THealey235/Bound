@@ -797,7 +797,10 @@ namespace Bound.Sprites
             return _attributes[name].Value + (_buffAttributes.TryGetValue(name, out float value) ? value : 0);
         }
 
-
+        public virtual void ResetScaling()
+        {
+            _debugRectangle.Scale = FullScale;
+        }
 
         public void AddToConsumableBlacklist(string name) => _consumableBlacklist.Add(name);
         public bool ConsumableBlacklistContains(string name) => _consumableBlacklist.Contains(name);

@@ -1,4 +1,5 @@
 ﻿using Bound.Managers;
+using Bound.Models.Items;
 using Bound.Sprites;
 using Microsoft.Xna.Framework;
 using System;
@@ -24,6 +25,7 @@ namespace Bound.Models
         private float _health;
         private float _mana;
         private float _stamina;
+        private Game1 _game;
 
         //consider making these all private with a getter property
         public SaveManager Manager;
@@ -44,6 +46,30 @@ namespace Bound.Models
         public Dictionary<string, List<string>> EquippedItems
         {
             get { return _equippedItems; }
+        }
+
+        public Dictionary<string, float> ItemStatBoosts
+        {
+            get
+            {
+                var stats = new Dictionary<string, float>();
+                var equipped = new List<List<string>>() { _equippedItems["headgear"], _equippedItems["chestArmour"], _equippedItems["legArmour"], _equippedItems["footwear"] };
+                Item i;
+                foreach (var items in equipped)
+                {
+                    foreach (var item in items)
+                    {
+                        i = _game.Items[item];
+                        foreach (var attr in i.Attributes)
+                        {
+                            if (stats.TryAdd(attr.Key, attr.Value.Value))
+                                stats[attr.Key] += attr.Value.Value;
+                        }
+                    }
+                }
+
+                return stats;
+            }
         }
 
         public Inventory Inventory
@@ -325,6 +351,7 @@ namespace Bound.Models
 
         private Save(Game1 game, SaveManager manager)
         {
+            _game = game;
             _inventory = new Inventory(game, game.Player);
             Manager = manager;
             _attributes = new Dictionary<string, Attribute>();

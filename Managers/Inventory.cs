@@ -38,6 +38,29 @@ namespace Bound.Managers
             }
         }
 
+        public Dictionary<string, float> AllStatBoosts
+        {
+            get
+            {
+                var stats = new Dictionary<string, float>();
+                var dicts = new List<Dictionary<string, Item>>() { _headgear, _chestArmour, _legArmour, _footwear, _accessories };
+
+                foreach (var dict in dicts)
+                {
+                    foreach (var kvp in dict)
+                    {
+                        foreach (var stat in kvp.Value.Attributes)
+                        {
+                            if (!stats.TryAdd(stat.Key, stat.Value.Value))
+                                stats[stat.Key] += stat.Value.Value;
+                        }
+                    }
+                }
+
+                return stats;
+            }   
+        }
+
         public Sprite Owner
         {
             get { return _owner; }

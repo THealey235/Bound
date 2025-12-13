@@ -12,3 +12,4 @@ Magic Infused Potion;Consumable;Bewitched by the old people of the mountains;ARC
 Double Jump;Consumable;Single use double jump for extra height in a pinch!;DJMP 1;No CLDWN Recovery
 Rock;Consumable;Are you really this desperate?;PATK 1;Projectile
 Wooden Sword;Weapon;Basic weapon which is suprisingly sturdy;PATK 4
+Mace;Weapon;A worn-down mace with dull spikes, only really good for bluegeoning;PATK 4;

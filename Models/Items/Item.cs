@@ -20,11 +20,14 @@ namespace Bound.Models.Items
         protected Dictionary<string, float> _attackAttrs = new Dictionary<string, float> { { "PATK", 0f }, { "MATK", 0f } };
         protected int _quantity = 1;
         protected Dictionary<string, Attribute> _attributes = new Dictionary<string, Attribute>();
+        protected float _scale;
 
         public int Id { get; }
         public string Name { get; }
         public string Description { get; }
         public virtual Sprite Owner { get; set; }
+
+        public virtual float Scale { get; set; } //used for usable-items
 
         public Dictionary<string, Attribute> Attributes
         {

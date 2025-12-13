@@ -1,6 +1,4 @@
-﻿using Bound.Controls.Game;
-using Bound.Managers;
-using Bound.Models.Items;
+﻿using Bound.Managers;
 using Bound.Sprites;
 using Bound.States.Popups.Game;
 using Microsoft.Xna.Framework;
@@ -9,7 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 
 
 namespace Bound.States
@@ -79,6 +76,7 @@ namespace Bound.States
         protected HeadsUpDisplay _HUD;
         protected (float Min, float Max) _mapBounds;
         protected (Vector2 Min, Vector2 Max) _cameraBounds;
+        private bool hasBeenLoaded = false;
 
         public List<Sprite> ToKill = new List<Sprite>();
 
@@ -111,7 +109,6 @@ namespace Bound.States
             _game.Player.Buffs = _game.ActiveSave.Buffs;
         }
 
-
         public override void LoadContent()
         {
             _blocks = new List<Block>();
@@ -137,18 +134,35 @@ namespace Bound.States
                     _mapBounds.Max * Game1.ResScale - 0.5f * Game1.ScreenHeight + _player.Rectangle.Height * Game1.ResScale)
             );
 
-            _mobs = new List<Sprite>();
+            if (hasBeenLoaded)
+            {
+                //if it has been loaded before, this means that it is being loaded again due to a change in resolution
+                //so, not everything needs to be reset.
 
-            _damagesMobs = new List<Sprite>() { _player };
+                foreach (var sprite in _sprites)
+                    sprite.ResetScaling();
 
-            _sprites = new List<Sprite>();
-            _sprites.AddRange( _mobs );
-            _sprites.AddRange( _damagesMobs );
+                _HUD.LoadContent();
+            }
+            else
+            {
+                _mobs = new List<Sprite>();
 
-            _player.Level = this;
+                _damagesMobs = new List<Sprite>() { _player };
 
-            _HUD = new HeadsUpDisplay(_game, _content, this);
-            _HUD.LoadContent();
+                _sprites = new List<Sprite>();
+                _sprites.AddRange(_mobs);
+                _sprites.AddRange(_damagesMobs);
+
+                _player.Level = this;
+
+                _HUD = new HeadsUpDisplay(_game, _content, this);
+                _HUD.LoadContent();
+
+                hasBeenLoaded = true;
+            }
+
+            
         }
 
         //pad bottom with rows of tiles so that it looks nice.
@@ -209,7 +223,7 @@ namespace Bound.States
                 var sprite = _unspawnedMobs[i];
                 if (sprite.CheckSpawn(gameTime.ElapsedGameTime.TotalSeconds, _player))
                 {
-                    _spritesToAdd.Add((sprite.Sprite, true));
+                     _spritesToAdd.Add((sprite.Sprite, true));
                     _unspawnedMobs.RemoveAt(i);
                     i--;
                 }
@@ -256,6 +270,14 @@ namespace Bound.States
                     i--;
                 }
             }
+            
+            if (_game.PlayerKeys.IsPressed("Menu", false) && Popups.Count == 0)
+            {
+                var options = new Options(_game, _game.Content, this);
+                Popups.Add(options);
+                options.Layer = _game.Player.Layer + 0.001f;
+                options.LoadContent();
+            }
 
             _HUD.Update(gameTime);
 
@@ -297,9 +319,5 @@ namespace Bound.States
             sprite.Position = spawnPosition;
             _unspawnedMobs.Add(new UnspawnedMob(sprite, type, positionBounds, spawnDelay));
         }
-
-        protected (Vector2, Vector2) GenerateTriggerBounds(Vector2 mobSpawn, Vector2 boundTranslation) => (mobSpawn -  boundTranslation, mobSpawn + boundTranslation);
-        protected (Vector2, Vector2) GenerateTriggerBounds(Vector2 mobSpawn, Vector2 boundTranslationTopLeft, Vector2 boundTranslationTopRight) => (mobSpawn + boundTranslationTopLeft, mobSpawn + boundTranslationTopRight);
-
     }
 }

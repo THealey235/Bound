@@ -260,13 +260,6 @@ namespace Bound
                     settings.LoadContent();
                     settings.LoadMenuButton();
                 }
-                else if (_currentState.Name != Names.CharacterInit && PlayerKeys.IsPressed("Menu", false))
-                {
-                    var options = new States.Popups.Game.Options(this, Content, _currentState);
-                    _currentState.Popups.Add(options);
-                    options.Layer = Player.Layer + 0.1f;
-                    options.LoadContent();
-                }
             }
 
 
@@ -293,6 +286,7 @@ namespace Bound
                 V2Transform = Vector2.Zero;
         }
 
+        //check wether a rectangle intersects with the viewport. If it doesn't, it doesn't need to be drawn this frame.
         public bool ToCull(Rectangle rect)
         {
             return Viewport.Left > rect.Right || 
@@ -358,15 +352,16 @@ namespace Bound
 
         private void ToggleFullScreen()
         {
-            _graphics.ToggleFullScreen();
-            if (_graphics.IsFullScreen)
+            if (Settings.Settings.General["Fullscreen"] == "No")
             {
+                _graphics.IsFullScreen = true;
                 ScreenHeight = _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
                 ScreenWidth = _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
                 Settings.Settings.General["Fullscreen"] = "Yes";
             }
             else
             {
+                _graphics.IsFullScreen = false;
                 ScreenHeight = _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
                 ScreenWidth = _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
                 Settings.Settings.General["Fullscreen"] = "No";
@@ -384,7 +379,10 @@ namespace Bound
         {
             ResScale = (float)ScreenHeight / (float)DefaultHeight;
 
-            if (!_statesWithoutPlayer.Contains(_currentState.Name))
+
+            _currentState.LoadContent();
+
+            if (_currentState.Name != Names.MainMenu && _currentState.Popups.Count > 0)
                 CenterCamera();
 
             _currentState.LoadContent();
@@ -395,13 +393,8 @@ namespace Bound
             if (_currentState.Name != Names.MainMenu && _currentState.Popups.Count > 0)
             {
                 CenterCamera(); //This may seem redundant but when changing up resolution, without this, the settings menu becomes off center (to the right)
-                Player.Reset();
-                if (_currentState.Popups.Count > 0 && _currentState.Popups[^1].Name == Names.Settings )
-                {
-                    var settings = (_currentState.Popups[^1] as Settings);
-                    settings.LoadContent();
-                    settings.LoadMenuButton();
-                }
+                foreach (var state in _currentState.Popups)
+                    state.LoadContent();
             }
 
             Player.Reset();
