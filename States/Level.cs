@@ -1,4 +1,5 @@
 ﻿using Bound.Managers;
+using Bound.Models.Items;
 using Bound.Sprites;
 using Bound.States.Popups.Game;
 using Microsoft.Xna.Framework;
@@ -13,7 +14,7 @@ namespace Bound.States
 {
     public class Level : State
     {
-        protected enum TriggerType
+        public enum TriggerType
         {
             None,
             Position,
@@ -244,7 +245,7 @@ namespace Bound.States
 
             for (int i = 0; i < _sprites.Count; i++)
                 if (_sprites[i].Health <= 0)
-                    _sprites[i].Kill(this); // don't immediately remove it in case there is a death animation
+                    _sprites[i].Kill(this); // don't immediately remove it in case there is a death animation/process
 
             foreach (var sprite in ToKill)
             {
@@ -252,6 +253,7 @@ namespace Bound.States
                 _mobs.Remove(sprite);
                 _damagesMobs.Remove(sprite);
             }
+            ToKill.Clear();
 
             var count = Popups.Count;
             if (count > 0)
@@ -319,5 +321,27 @@ namespace Bound.States
             sprite.Position = spawnPosition;
             _unspawnedMobs.Add(new UnspawnedMob(sprite, type, positionBounds, spawnDelay));
         }
+
+        protected void AddContainer(string textureName, List<(string ItemName, int Count)> inventory, Vector2 blockwisePosition)
+        {
+            var blockWidth = _game.Textures.BlockWidth * _scale;
+            _spritesToAdd.Add((   
+                new Container(
+                    _game,
+                    textureName,
+                    inventory,
+                    new Vector2(blockwisePosition.X * blockWidth, blockwisePosition.Y * blockWidth)
+                ),
+                true
+                )
+            );
+        }
+
+        public void DropItem(Item item, Vector2 position)
+        {
+            _spritesToAdd.Add((new DroppedItem(_game, item, position), true));
+        }
+
+        
     }
 }

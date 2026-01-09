@@ -15,7 +15,7 @@ namespace Bound.Sprites
 
         protected Models.TextureCollection _textures;
         protected Dictionary<string, Animation> _animations;
-        protected Dictionary<string, Attribute> _attributes;
+        protected AttributeList _attributes;
         protected List<Buff> _buffs = new List<Buff>();
         protected Dictionary<string, float> _buffAttributes = new Dictionary<string, float>();
         protected AnimationManager _animationManager;
@@ -36,6 +36,7 @@ namespace Bound.Sprites
 
         protected Color _colour;
         protected SpriteEffects _spriteEffects;
+        protected bool IsCollideable = true;
 
         private float _scale { get; set; }
 
@@ -65,7 +66,9 @@ namespace Bound.Sprites
             Player,
             Mob,
             Sprite,
-            Projectile
+            Projectile,
+            Container,
+            DroppedItem
         }
 
         public List<Buff> Buffs
@@ -522,7 +525,7 @@ namespace Bound.Sprites
                 }
             }
 
-            CheckSpriteCollision(sprites, ref dealsKnockback);
+            CheckSpriteCollision(sprites, dealsKnockback);
 
             CheckJump(inFreefall);
 
@@ -544,14 +547,14 @@ namespace Bound.Sprites
             }
         }
 
-        private void CheckSpriteCollision(List<Sprite> sprites, ref List<Sprite> dealsKnockback)
+        protected virtual void CheckSpriteCollision(List<Sprite> sprites, List<Sprite> dealsKnockback)
         {
             dealsKnockback = dealsKnockback ?? new List<Sprite>();
             if (sprites != null)
             {
                 foreach (var sprite in sprites)
                 {
-                    if (sprite == this)
+                    if (sprite == this || (Type != SpriteType.Projectile && sprite.Type == SpriteType.Container) || sprite.Type == SpriteType.DroppedItem)
                         continue;
 
                     if (Velocity.X > 0 && IsTouchingLeft(sprite))
@@ -574,16 +577,16 @@ namespace Bound.Sprites
                         else if (!(sprite.Type == SpriteType.Projectile))
                             Velocity.X = 0;
                     }
-                    /*if (Velocity.Y > 0 && IsTouchingTop(sprite))
-                    {
-                        if (dealsKnockback.Contains(sprite))
-                        {
-                            StartKnocback("up", sprite.KnockbackDamageDealtOut);
-                            sprite.StartKnocback("down", _knockbackDamageDealtOut);
-                        }
-                        else if (!(sprite.Type == SpriteType.Projectile))
-                            Velocity.Y = 0;
-                    }*/
+                    //if (Velocity.Y > 0 && IsTouchingTop(sprite))
+                    //{
+                    //    if (dealsKnockback.Contains(sprite))
+                    //    {
+                    //        StartKnocback("up", sprite.KnockbackDamageDealtOut);
+                    //        sprite.StartKnocback("down", _knockbackDamageDealtOut);
+                    //    }
+                    //    else if (!(sprite.Type == SpriteType.Projectile))
+                    //        Velocity.Y = 0;
+                    //}
                     if (Velocity.Y < 0 && IsTouchingBottom(sprite))
                     {
                         if (dealsKnockback.Contains(sprite))
@@ -717,7 +720,7 @@ namespace Bound.Sprites
 
         public virtual void Kill(Level level) => level.RemoveMob(this);
 
-        public virtual void Damage(float damage) => _health -= (damage >= 0) ? damage : 0f;
+        public virtual void Damage(float damage) => _health -= ((damage >= 0) ? damage : 0f);
 
         public bool UseStamina(float staminaToUse)
         {
@@ -742,9 +745,9 @@ namespace Bound.Sprites
         public void UpdateAttribute(Attribute attr)
         {
             if (!_attributes.ContainsKey(attr.Name))
-                _attributes.Add(attr.Name, attr);
+                _attributes.Add(attr.Name, attr.Value);
             else
-                _attributes[attr.Name].Value += attr.Value;
+                _attributes[attr.Name] += attr.Value;
         }
 
         public virtual bool GiveBuff(Buff buff)
@@ -794,7 +797,7 @@ namespace Bound.Sprites
 
         private float GetAttributeValue(string name)
         {
-            return _attributes[name].Value + (_buffAttributes.TryGetValue(name, out float value) ? value : 0);
+            return _attributes[name] + (_buffAttributes.TryGetValue(name, out float value) ? value : 0);
         }
 
         public virtual void ResetScaling()

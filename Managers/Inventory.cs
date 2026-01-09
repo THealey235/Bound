@@ -38,6 +38,16 @@ namespace Bound.Managers
             }
         }
 
+        public List<Item> AllItems
+        {
+            get
+            {
+                var output = new List<Item>();
+                _inventory.ForEach(x => output.AddRange(x.Values));
+                return output;
+            }
+        }
+
         public Dictionary<string, float> AllStatBoosts
         {
             get
@@ -90,7 +100,10 @@ namespace Bound.Managers
             if (index >= _inventory.Count)
                 return;
 
-            _inventory[index].Add(item.Name, item.Clone());
+            if (_inventory[index].ContainsKey(item.Name))
+                _inventory[index][item.Name].Quantity += item.Quantity;
+            else
+                _inventory[index].Add(item.Name, item.Clone());
             _inventory[index].Values.ToArray()[^1].Owner = _owner;
         }
 

@@ -87,7 +87,7 @@ namespace Bound.Models.Items
             switch (_weaponType)
             {
                 case WeaponTypes.Sword:
-                    _collisionRectangle = new Rectangle(0, 0, anim.FrameWidth, anim.FrameHeight);
+                    _collisionRectangle = new Rectangle(0, 2, anim.FrameWidth - 5, anim.FrameHeight - 4);
                     break;
                 default:
                     _collisionRectangle = new Rectangle(0, 0, 1, 1); break;
@@ -98,7 +98,7 @@ namespace Bound.Models.Items
                 _collisionRectangle,
                 _game.GraphicsDevice,
                 _animationManager.Layer + 0.001f,
-                Scale
+                Game1.ResScale * _scale
             )
             {
                 BorderColour = Color.Red

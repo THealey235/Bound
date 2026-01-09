@@ -82,7 +82,7 @@ namespace Bound.Managers
                 {
                     using (var reader = new StreamReader(new FileStream(path, FileMode.Open)))
                     {
-                        Saves[i] = (Save.ImportSave(this, reader.ReadToEnd().Split("\n").ToList(), _game));
+                        Saves[i] = (Save.ImportSave(this, reader.ReadToEnd().ReplaceLineEndings().Split("\r\n").ToList(), _game));
                     }
                 }
             }

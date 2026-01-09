@@ -418,6 +418,9 @@ namespace Bound.Models
                     }
                 }
 
+                if (save.PlayerName == null) //if the save was blank
+                    return null;
+
                 return save;
             }
             catch (Exception e)

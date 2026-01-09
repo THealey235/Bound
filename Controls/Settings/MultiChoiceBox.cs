@@ -56,7 +56,7 @@ namespace Bound.Controls.Settings
         {
             get
             {
-                return new Vector2(_centerOfArrows - _font.MeasureString(Choices[CurIndex]).X / 2, Position.Y + 5);
+                return new Vector2(_centerOfArrows - _font.MeasureString(Choices[CurIndex]).X / 2, _textPosition.Y);
             }
         }
 
@@ -109,49 +109,40 @@ namespace Bound.Controls.Settings
 
         private void Load(BorderedBox background, float allignment)
         {
-            //TODO: rewrite BorderdBox constructor so i may rewrite this method
-            //Note: this code is some hot garbage
+            int longestChoice;
+            float fullScale, arrowLength, gap;
+            SetValues(out longestChoice, out fullScale, out arrowLength, out gap);
 
-            var longestChoice = Choices.Aggregate(0, (a, c) => (int)(a > _font.MeasureString(c).X ? a : _font.MeasureString(c).X));
-
-            _components = new List<Component>();
-
-            var fullScale = TextureScale * Game1.ResScale;
-            var arrowLength = (float)(_texture.Width * 2.8 * fullScale);
-            var gap = 8f * Game1.ResScale;
-            //Dont ask me why it needs this, idc anymore: who even uses 720p anyway?
-            if (Game1.ScreenHeight == 720)
-                gap -= 3;
-
-            var longestName = 0;
-            if (Type == "Video")
-                longestName = (int)_font.MeasureString(Text).X;
-
-            FullWidth = (int)(longestName + gap + arrowLength * 2 + longestChoice + gap);
-            FullHeight = (int)(_font.MeasureString(Text).Y + 10);
             Position = new Vector2
             (
                 background.Position.X + allignment,
                 background.Position.Y + background.Height / 6 - FullHeight / 2 + (FullHeight + 10 * Scale) * Order + yOffset * Scale
             );
 
+            SetComponents(longestChoice, fullScale, arrowLength, gap);
+        }
+
+        private void SetComponents(int longestChoice, float fullScale, float arrowLength, float gap)
+        {
+            var dims = _font.MeasureString("X");
+
             _box = new BorderedBox
-                (
-                    _game.Textures.BaseBackground,
-                    _game.GraphicsDevice,
-                    Color.White,
-                    Position,
-                    Layer,
-                    FullWidth,
-                    FullHeight
-                );
+            (
+                _game.Textures.BaseBackground,
+                _game.GraphicsDevice,
+                Color.White,
+                Position,
+                Layer,
+                FullWidth,
+                FullHeight
+            );
 
             _components.Add(_box);
 
-            _textPosition = new Vector2(Position.X + 10, Position.Y + 5);
+            _textPosition = new Vector2(Position.X + 10, Position.Y + (_box.Height - dims.Y) / 2);
 
             _leftArrowPosition = new Vector2(_textPosition.X + _font.MeasureString(Text).X + gap, Position.Y + (FullHeight - _texture.Height * fullScale) / 2f);
-            _rightArrowPosition = new Vector2(_leftArrowPosition.X + arrowLength + gap + longestChoice + gap, Position.Y + (FullHeight - _texture.Height * fullScale) / 2f);
+            _rightArrowPosition = new Vector2(_leftArrowPosition.X + arrowLength + gap / 2 + longestChoice + gap / 2, _leftArrowPosition.Y);
 
             _components.Add(
                 new Button(_texture, _font)
@@ -179,70 +170,37 @@ namespace Bound.Controls.Settings
             _centerOfArrows = (_leftArrowPosition.X + _texture.Width * (_components[1] as Button).Scale + _rightArrowPosition.X) / 2;
         }
 
-        public void LoadContent(Game1 _game, Vector2 center)
+        private void SetValues(out int longestChoice, out float fullScale, out float arrowLength, out float gap)
         {
-
-            var longestChoice = Choices.Aggregate(0, (a, c) => (int)(a > _font.MeasureString(c).X ? a : _font.MeasureString(c).X));
-
+            longestChoice = Choices.Aggregate(0, (a, c) => (int)(a > _font.MeasureString(c).X ? a : _font.MeasureString(c).X));
             _components = new List<Component>();
-            var fullScale = TextureScale * Game1.ResScale;
-            var arrowLength = _texture.Width * 2 * fullScale;
-            var gap = 8f * fullScale;
+            FullHeight = (int)(_font.MeasureString(Text).Y + 4 * Game1.ResScale);
+            TextureScale = _font.MeasureString(Text).Y / (Game1.ResScale * _texture.Height);
+
+            fullScale = TextureScale * Game1.ResScale;
+            arrowLength = (float)(_texture.Width * 2.8 * fullScale);
+            gap = 8f * Game1.ResScale;
             if (Game1.ScreenHeight == 720)
                 gap -= 3;
 
-            var longestName = (int)_font.MeasureString(Text).X;
+            FullWidth = (int)(_font.MeasureString(Text).X + gap + arrowLength * 2 + longestChoice + gap);
+        }
 
-            FullWidth = (int)(longestName + gap + arrowLength * 2 + longestChoice + gap);
-            FullHeight = (int)(_font.MeasureString(Text).Y + 10);
+        public void LoadContent(Game1 game, Vector2 center)
+        {
+            int longestChoice;
+            float fullScale, arrowLength, gap;
+            SetValues(out longestChoice, out fullScale, out arrowLength, out gap);
+
+            _game = game;
+
             Position = new Vector2
             (
                 center.X - (FullWidth / 2),
                 center.Y - FullHeight / 2
             );
 
-            _box = new BorderedBox
-                (
-                    _game.Textures.BaseBackground,
-                    _game.GraphicsDevice,
-                    Color.White,
-                    Position,
-                    Layer - 0.1f,
-                    FullWidth,
-                    FullHeight
-                );
-
-            _components.Add(_box);
-
-            _textPosition = new Vector2(Position.X + 10, Position.Y + 5);
-
-            _leftArrowPosition = new Vector2(_textPosition.X + _font.MeasureString(Text).X + gap, Position.Y + (FullHeight - _texture.Height * fullScale) / 2f);
-            _rightArrowPosition = new Vector2(_leftArrowPosition.X + arrowLength + gap + longestChoice + gap, Position.Y + (FullHeight - _texture.Height * fullScale) / 2f);
-
-            _components.Add(
-                new Button(_texture, _font)
-                {
-                    Text = "",
-                    Position = _leftArrowPosition,
-                    Click = new EventHandler(LeftArrow_Clicked),
-                    Layer = Layer + 0.1f,
-                    TextureScale = TextureScale,
-                }
-            );
-
-            _components.Add(
-                new Button(_texture, _font)
-                {
-                    Text = "",
-                    Position = _rightArrowPosition,
-                    Click = new EventHandler(RightArrow_Clicked),
-                    Layer = Layer + 0.1f,
-                    TextureScale = TextureScale,
-                    Effect = SpriteEffects.FlipHorizontally
-                }
-            );
-
-            _centerOfArrows = (_leftArrowPosition.X + _texture.Width * (_components[1] as Button).Scale + _rightArrowPosition.X) / 2;
+            SetComponents(longestChoice, fullScale, arrowLength, gap);
         }
 
 

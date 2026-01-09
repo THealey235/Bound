@@ -55,10 +55,10 @@ namespace Bound.States.Popups.Game
 
             var i = 2;
             var spacing = _game.Textures.Font.MeasureString("t").Y + 1 * Game1.ResScale;
-            foreach (var attribute in _game.Player.Attributes)
+            foreach (var attribute in _game.Player.Attributes.Dictionary)
             {
                 _playerStats.Add(
-                    ($"{attribute.Value.Name}{attribute.Value.Value.ToString().PadLeft(stringLength - attribute.Value.Name.Length)}",
+                    ($"{attribute.Key}{attribute.Value.ToString().PadLeft(stringLength - attribute.Key.Length)}",
                     new Vector2(textStartingPosition.X, textStartingPosition.Y + spacing * i)));
                 i++;
             }

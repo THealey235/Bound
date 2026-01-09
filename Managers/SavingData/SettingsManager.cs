@@ -44,8 +44,8 @@ namespace Bound.Managers
         {
             try
             {
-                var settings = output.Split("\n\n")
-                                .Select(x => x.Split("\n"))
+                var settings = output.ReplaceLineEndings().Split("\r\n\r\n")
+                                .Select(x => x.Split("\r\n"))
                                     .Select(x => x.Select(y => y.Split(": ").ToList()).ToList()).ToList();
 
                 Settings = new SettingsModel()

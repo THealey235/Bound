@@ -28,6 +28,11 @@ namespace Bound.Managers
             "Grass", "Path", "OakPlank", "OakLog", "Glass", "DoorA", "DoorB", "OakSlab", "BlankTile", "DirtGradient0", "DirtGradient1", "DirtGradient2"
         };
 
+        public readonly List<string> ContainersKeys = new List<string>()
+        {
+            "Pot"
+        };
+
         public string GetAtlasKey(int i, string s) => GetAtlasInformation(s).AtlasKeys[i];
             
         public readonly Dictionary<int, Rectangle> SpecialShapeBlocks = new Dictionary<int, Rectangle>()
@@ -119,6 +124,7 @@ namespace Bound.Managers
         public List<SpriteFont> Fonts;
 
         private Dictionary<string, Texture2D> CommonBlockAtlas = new Dictionary<string, Texture2D>();
+        private Dictionary<string, Texture2D> Containers = new Dictionary<string, Texture2D>();
 
         
 
@@ -178,6 +184,7 @@ namespace Bound.Managers
             #region Game Elements
 
             LoadBlockDirectory("Content/Atlases/Common", "common");
+            LoadBlockDirectory("Content/Atlases/Containers", "containers");
             HotbarBG = content.Load<Texture2D>("Backgrounds/HotbarBG");
             HotbarSelectedSlot = content.Load<Texture2D>("Backgrounds/HotbarSelectedBG");
             BossBar = content.Load<Texture2D>("Backgrounds/BossBar");
@@ -383,6 +390,8 @@ namespace Bound.Managers
         {
             switch (atlasName.ToLower())
             {
+                case "containers":
+                    return (ContainersKeys, Containers);
                 default:
                     return (CommonBlocksKey, CommonBlockAtlas);
             }
@@ -447,10 +456,16 @@ namespace Bound.Managers
 
         public string GetItemName(int ID) => (ID < IdToName.Count) ? IdToName[ID] : "Default";
 
-        public Texture2D GetBlock(int index, string name)
+        public Texture2D GetBlock(string atlasName, int index)
         {
-            var info = GetAtlasInformation(name);
+            var info = GetAtlasInformation(atlasName);
             return info.Atlas[info.AtlasKeys[index]];
+        }
+
+        public Texture2D GetBlock(string atlasName, string key)
+        {
+            var info = GetAtlasInformation(atlasName);
+            return info.Atlas[key];
         }
 
         public bool GetProjectileInfo(string name, out ProjectileInfo info) => _projectileInfo.TryGetValue(name, out info);

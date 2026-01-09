@@ -68,7 +68,7 @@ namespace Bound.Sprites
         {
             _name = "block";
 
-            _texture = textures.GetBlock(index, "common");
+            _texture = textures.GetBlock("common", index);
 
             _sourceRectangle = new Rectangle(0, 0, textures.BlockWidth, textures.BlockWidth);
 
@@ -97,7 +97,7 @@ namespace Bound.Sprites
 
             Position = position;
 
-            _texture = textures.GetBlock(index, "common");
+            _texture = textures.GetBlock("common", index);
 
             _sourceRectangle = new Rectangle(0, 0, _texture.Width, _texture.Height);
 

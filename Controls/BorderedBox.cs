@@ -121,9 +121,10 @@ namespace Bound.Controls
 
         #region Other Methods
 
-        public void SetRectangleTexture()
+        //TODO: instead have 4 textures one for each side
+        private void SetRectangleTexture()
         {
-
+            
             var colours = new List<Color>();
 
             for (int y = 0; y < Height; y++)
@@ -145,6 +146,8 @@ namespace Bound.Controls
                 }
             }
 
+            if (_border != null)
+                _border.Dispose();
             _border = new Texture2D(_graphics, Width, Height);
             _border.SetData<Color>(colours.ToArray());
         }

@@ -35,9 +35,9 @@ namespace Bound.Sprites
             set { _game.ActiveSave.Stamina = value; }
         }
 
-        public Dictionary<string, Models.Attribute> Attributes
+        public AttributeList Attributes
         {
-            get { return _attributes; }
+            get => _attributes;
         }
 
         public float Speed
@@ -105,7 +105,7 @@ namespace Bound.Sprites
                 Save = null;
 
             if (Save != null)
-                _attributes = Save.Attributes;
+                _attributes = new AttributeList(Save.Attributes);
 
             if (_game.Textures.Sprites.ContainsKey("Player"))
             {
@@ -237,7 +237,7 @@ namespace Bound.Sprites
 
         public void UpdateAttributes(int saveIndex)
         {
-            _attributes = _game.SavesManager.Saves[saveIndex].Attributes;
+            _attributes = new AttributeList(_game.SavesManager.Saves[saveIndex].Attributes);
         }
 
         public void RemoveItemFromHotbar(string name) => Level.HUD.RemoveFromHotbar(name);

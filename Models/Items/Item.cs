@@ -126,7 +126,7 @@ namespace Bound.Models.Items
         {
             foreach (var sprite in sprites)
             {
-                if (sprite.IsImmune || _spriteBlacklist.Contains(sprite))
+                if (sprite.IsImmune || _spriteBlacklist.Contains(sprite) || sprite.Type == Sprite.SpriteType.DroppedItem)
                     continue;
 
                 if (sprite.IsTouchingLeft(_collisionRectangle))

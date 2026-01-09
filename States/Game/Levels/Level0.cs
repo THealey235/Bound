@@ -32,6 +32,8 @@ namespace Bound.States.Game
 
             if(!hasBeenLoaded)
             {
+                hasBeenLoaded = true;
+
                 var sectionPositions = new List<(Vector2 TL, Vector2 BR)>()
                 {
                     (new Vector2(409, 30), new Vector2(553, 269)),
@@ -44,8 +46,12 @@ namespace Bound.States.Game
                 for (int i = 0; i < 1; i++)
                     AddMob(new Mob(_game, "Zombie"), new Vector2(510, 258), TriggerType.Position, sectionPositions[0], (0.3f * i));
 
-                    AddMob(new Boss(_game, "Galahad"), new Vector2(1380, 250), TriggerType.Position, sectionPositions[2], 0f);
-                hasBeenLoaded = true;
+                AddMob(new Boss(_game, "Galahad"), new Vector2(1380, 250), TriggerType.Position, sectionPositions[2], 0f);
+
+                AddContainer("Pot", new List<(string, int)>() { ("Throwing Dagger", 10) }, new Vector2(10, 11));
+                AddContainer("Pot", new List<(string, int)>() { ("Throwing Dagger", 10) }, new Vector2(6, 11));
+                AddContainer("Pot", new List<(string, int)>() { ("Throwing Dagger", 10) }, new Vector2(2, 11));
+
             }
         }
     }
