@@ -68,7 +68,7 @@ namespace Bound.Managers
 
         public record ProjectileInfo(float Scale, bool HasProjTexture, float TextureRotation);
         public record SpriteSheetInfo(int Width, float Speed);
-        public record MobInfo(int Health = 10, int Stamina = 10, int Mana = 10, float KNBKDmg = 15f, float Speed = 10f);
+        public record MobInfo(int Health = 10, int Stamina = 10, int Mana = 10, float KNBKDmg = 15f, float Speed = 10f, int EXP = 1);
 
         private readonly Dictionary<string, SpriteSheetInfo> _spriteSheetConstants = new Dictionary<string, SpriteSheetInfo>()
         {
@@ -83,8 +83,8 @@ namespace Bound.Managers
 
         private readonly Dictionary<string, MobInfo> _mobInfo = new Dictionary<string, MobInfo>()
         {
-            {"Zombie", new MobInfo(Health: 50, Speed: 20f) },
-            {"Galahad", new MobInfo(Health: 100) },
+            {"Zombie", new MobInfo(Health: 20, Speed: 20f, EXP: 10) },
+            {"Galahad", new MobInfo(Health: 100, EXP: 30) },
         };
 
         #endregion

@@ -190,13 +190,8 @@ namespace Bound.Controls.Settings
 
         private string FormatKey(string key)
         {
-            if ((from item in _blackList
-                where key.Contains(item)
-                select item).ToArray().Length > 0) //if the key contains any blacklisted phrase stop it
-                //it works
-            {
+            if (_blackList.Contains(key)) //if the key contains any blacklisted phrase stop it
                 return "invalid";
-            }
             if (Input.SpecialKeyMap.ContainsKey(key))
             {
                 key = Input.SpecialKeyMap[key];

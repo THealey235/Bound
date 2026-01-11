@@ -364,7 +364,7 @@ namespace Bound.States.Game
 
             (_components[0] as TextInput).LoadContent(_game, origin);
             for (int i = 0; i < _choiceBoxes.Count; i++)
-                _choiceBoxes[i].LoadContent(_game, new Vector2(origin.X, origin.Y + ((25f * Game1.ResScale) * (i + 2))));
+                _choiceBoxes[i].LoadContent(_game, new Vector2(origin.X, origin.Y + ((25f * Game1.ResScale) * (i + 2))), true);
         }
 
 

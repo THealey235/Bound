@@ -37,7 +37,7 @@ namespace Bound.Models.Items
         public TextureManager.ItemType Type { get; }
         public TextureCollection Textures { get { return _textures; } }
 
-        public float Damage
+        public float PATK
         {
             get
             {
@@ -47,7 +47,21 @@ namespace Bound.Models.Items
                     physicalMult = _owner.ActiveBuffValues.TryGetValue("STR", out physicalMult) ? physicalMult : 1f;
                 }
 
-                return _attackAttrs["PATK"] * physicalMult + _attackAttrs["MATK"];
+                return _attackAttrs["PATK"] * physicalMult;
+            }
+        }
+
+        public float MATK
+        {
+            get
+            {
+                float mult = 1f;
+                if (_owner != null)
+                {
+                    mult = _owner.ActiveBuffValues.TryGetValue("+MATK", out mult) ? mult : 1f;
+                }
+
+                return _attackAttrs["MATK"] * mult;
             }
         }
 
@@ -130,13 +144,13 @@ namespace Bound.Models.Items
                     continue;
 
                 if (sprite.IsTouchingLeft(_collisionRectangle))
-                    sprite.StartKnocback("left", Damage);
+                    sprite.Damage("left", PATK, MATK);
                 else if (sprite.IsTouchingRight(_collisionRectangle))
-                    sprite.StartKnocback("right", Damage);
+                    sprite.Damage("right", PATK, MATK);
                 else if (sprite.IsTouchingTop(_collisionRectangle))
-                    sprite.StartKnocback("up", Damage);
+                    sprite.Damage("up", PATK, MATK);
                 else if (sprite.IsTouchingBottom(_collisionRectangle))
-                    sprite.StartKnocback("down", Damage);
+                    sprite.Damage("down", PATK, MATK);
 
                 //sprite will now be immune if it was hit
                 if (sprite.IsImmune)

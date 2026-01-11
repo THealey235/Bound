@@ -1,5 +1,6 @@
 ﻿using Bound.Controls;
 using Bound.Managers;
+using Bound.States;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Linq;
 
 namespace Bound.Sprites
 {
-    public class Boss : Sprite
+    public class Boss : Mob
     {
         private BorderedBox _healthBar;
         private Vector2 _bossBarPosition;
@@ -18,7 +19,7 @@ namespace Bound.Sprites
         private Vector2 _namePosition;
         private float _nameScale = 0.9f;
 
-        public Boss(Game1 game, string name)
+        public Boss(Game1 game, string name) : base(game, name)
         {
             _name = name;
 
@@ -65,9 +66,9 @@ namespace Bound.Sprites
             spriteBatch.DrawString(_font, Name, _namePosition + Game1.V2Transform, Color.White, 0f, Vector2.Zero, _nameScale, SpriteEffects.None, _healthBar.Layer + 0.00001f);
         }
 
-        public override void Damage(float damage)
+        public override void Damage(string direction, float PATK, float MATK)
         {
-            base.Damage(damage);
+            base.Damage(direction, PATK, MATK);
             if (Health > 0)
                 _healthBar.Width = (int)(_bossBarFullWidth * (Health / _maxHealth));
             else _healthBar.Width = 1;

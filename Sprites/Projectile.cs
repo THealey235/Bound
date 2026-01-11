@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using static Bound.Managers.TextureManager;
 
 namespace Bound.Sprites
@@ -14,6 +15,11 @@ namespace Bound.Sprites
         private bool _lockPhysics = false;
         private Vector2 _embeddedLength;
         private float _textureRoatation = 0f;
+        private float _patk;
+        private float _matk;
+        private List<Sprite> _collisionBlacklist = new List<Sprite>();
+        private int _punchThrough = 1;
+
 
         public Sprite Owner { get { return _owner; } }
 
@@ -25,13 +31,14 @@ namespace Bound.Sprites
             }
         }
 
-        public Projectile(Texture2D texture, string name, Sprite owner, Game1 game, float damage, float throwVelocity = 700f) : base(texture, game)
+        public Projectile(Texture2D texture, string name, Sprite owner, Game1 game, float PATK, float MATK, float throwVelocity = 700f) : base(texture, game)
         {
             _throwVelocity = new Vector2(throwVelocity, 0);
             _owner = owner;
             _spriteType = SpriteType.Projectile;
             _name = name;
-            _knockbackDamageDealtOut = damage;
+            _patk = PATK;
+            _matk = MATK;
 
             _health = 1;
             Position = _owner.Position;
@@ -92,14 +99,10 @@ namespace Bound.Sprites
             if (Game1.InDebug && _debugRectangle != null)
                 _debugRectangle.Draw(gameTime, spriteBatch);
         }
+
         protected override void Knockback()
         {
             return;
-        }
-
-        public override void StartKnocback(string direction, float damage = 1)
-        {
-            Destroy();
         }
 
         protected override void HandleMovements(ref bool inFreefall)
@@ -108,7 +111,7 @@ namespace Bound.Sprites
             Velocity += _throwVelocity;
         }
 
-        public void Destroy() => Damage(1);
+        public void Destroy() => Damage(100, true);
 
         protected override void SurfaceTouched(string surfaceFace, Rectangle surface)
         {
@@ -125,6 +128,32 @@ namespace Bound.Sprites
             }
 
             _lockPhysics = true;
+        }
+
+        protected override void CheckSpriteCollision(List<Sprite> sprites, List<Sprite> dealsKnockback)
+        {
+            dealsKnockback = dealsKnockback ?? new List<Sprite>();
+            foreach (var sprite in dealsKnockback)
+            {
+                if (sprite.IsImmune || sprite == this || sprite.Type == Sprite.SpriteType.DroppedItem || _collisionBlacklist.Contains(sprite))
+                    continue;
+
+                if (sprite.IsTouchingLeft(Rectangle))
+                    sprite.Damage("left", _patk, _matk);
+                else if (sprite.IsTouchingRight(Rectangle))
+                    sprite.Damage("right", _patk, _matk);
+                else if (sprite.IsTouchingTop(Rectangle))
+                    sprite.Damage("up", _patk, _matk);
+                else if (sprite.IsTouchingBottom(Rectangle))
+                    sprite.Damage("down", _patk, _matk);
+
+                if (sprite.IsImmune)
+                {
+                    _collisionBlacklist.Add(sprite);
+                    if (--_punchThrough == 0)
+                        _health = 0;
+                }
+            }
         }
     }
 }

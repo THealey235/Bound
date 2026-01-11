@@ -162,7 +162,7 @@ namespace Bound.States.Popups
                 },
                 new Button(_game.Textures.Button, _game.Textures.Font)
                 {
-                    Text = "Clear",
+                    Text = "Unequip",
                     Click = new EventHandler(Button_Clear_Clicked),
                     Layer = Layer + 0.01f,
                     TextureScale = textureScale,

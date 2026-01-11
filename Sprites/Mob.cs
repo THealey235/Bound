@@ -1,13 +1,15 @@
 ﻿using Bound.Models;
+using Bound.States;
 using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
 using static Bound.Managers.TextureManager;
 
 namespace Bound.Sprites
 {
     public class Mob : Sprite
     {
+        protected int _exp;
+
         public Mob(Models.TextureCollection textures, Game1 game, MobInfo info) : base(textures, game)
         {
             _spriteType = SpriteType.Mob;
@@ -44,6 +46,7 @@ namespace Bound.Sprites
             _stamina = info.Stamina;
             _mana = info.Mana;
             _knockbackDamageDealtOut = info.KNBKDmg;
+            _exp = info.EXP;
         }
 
 
@@ -55,6 +58,12 @@ namespace Bound.Sprites
                 Velocity -= new Vector2(_speed, 0);
             else if ((int)_game.Player.Position.X > (int)Position.X)
                 Velocity += new Vector2(_speed, 0);
+        }
+
+        public override void Kill(Level level)
+        {
+            base.Kill(level);
+            _game.ActiveSave.EXP += _exp;
         }
     }
 }

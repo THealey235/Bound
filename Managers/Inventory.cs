@@ -23,6 +23,7 @@ namespace Bound.Managers
         private Dictionary<string, Item> _consumables = new Dictionary<string, Item>();
         private Dictionary<string, Item> _skills = new Dictionary<string, Item>();
         private List<Dictionary<string, Item>> _inventory;
+        private Dictionary<string, float> _statBoosts = new Dictionary<string, float>() { {"PDEF", 0f}, { "MDEF", 0 } };
         private static Item Blank = new Item(new Models.TextureCollection(), -1, "Blank", "null", ItemType.Unrecognised);
 
         public int Money;
@@ -48,26 +49,11 @@ namespace Bound.Managers
             }
         }
 
-        public Dictionary<string, float> AllStatBoosts
+        public Dictionary<string, float> StatBoosts
         {
             get
             {
-                var stats = new Dictionary<string, float>();
-                var dicts = new List<Dictionary<string, Item>>() { _headgear, _chestArmour, _legArmour, _footwear, _accessories };
-
-                foreach (var dict in dicts)
-                {
-                    foreach (var kvp in dict)
-                    {
-                        foreach (var stat in kvp.Value.Attributes)
-                        {
-                            if (!stats.TryAdd(stat.Key, stat.Value.Value))
-                                stats[stat.Key] += stat.Value.Value;
-                        }
-                    }
-                }
-
-                return stats;
+                return new Dictionary<string, float>(_statBoosts);
             }   
         }
 
@@ -105,6 +91,8 @@ namespace Bound.Managers
             else
                 _inventory[index].Add(item.Name, item.Clone());
             _inventory[index].Values.ToArray()[^1].Owner = _owner;
+
+            UpdateStats(item.Type, item, true);
         }
 
         public void Add(string name, int numberTaken = 1)
@@ -120,6 +108,8 @@ namespace Bound.Managers
                 _inventory[index].Add(name, item);
             else
                 _inventory[index][item.Name].Quantity += numberTaken;
+
+            UpdateStats(item.Type, item, true);
         }
 
         //For importing items from saves
@@ -148,8 +138,7 @@ namespace Bound.Managers
                 return;
 
             _inventory[index].Add(newItem.Name, newItem);
-
-
+            UpdateStats(newItem.Type, newItem, true);
         }
 
         public List<Item> GetParts(List<ItemType> types)
@@ -179,8 +168,9 @@ namespace Bound.Managers
 
         public Item GetItem(TextureManager.ItemType type, string name)
         {
+            //Checks for invalid ItemType
             if ((int)type > _inventory.Count)
-                return null;
+                return Blank;
             else if (type == TextureManager.ItemType.HoldableItem)
             {
                 if (_consumables.ContainsKey(name))
@@ -192,7 +182,6 @@ namespace Bound.Managers
                 return _inventory[(int)type][name];
 
             return Blank;
-            
         }
 
         public void RemoveItem(string name)
@@ -202,6 +191,7 @@ namespace Bound.Managers
                     if (kvp.Key == name)
                     {
                         dict.Remove(kvp.Key);
+                        UpdateStats(kvp.Value.Type, kvp.Value, false);
                         return;
                     }
         }
@@ -212,6 +202,19 @@ namespace Bound.Managers
                 if (dict.ContainsKey(name))
                     return true;
             return false;
+        }
+
+        private void UpdateStats(ItemType type, Item item, bool isAdded)
+        {
+            if (type == ItemType.HeadGear || type == ItemType.ChestArmour || type == ItemType.LegArmour || type == ItemType.Footwear || type == ItemType.Accessory)
+            {
+                foreach (var attribute in item.Attributes)
+                {
+                    if (_statBoosts.ContainsKey(attribute.Key))
+                        _statBoosts[attribute.Key] += (isAdded ? 1 : -1) * attribute.Value.Value;
+                    else _statBoosts[attribute.Key] = attribute.Value.Value;
+                }
+            }
         }
     }
 }

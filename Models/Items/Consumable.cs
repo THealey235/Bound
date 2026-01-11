@@ -96,7 +96,7 @@ namespace Bound.Models.Items
             {
                 _owner.BlockThrowables = true;
                 //Current state will always be a level if an item is being used
-                (_game.CurrentState as Level).AddProjectile(new Projectile(_texture, Name, Owner, _game, Damage), Owner.Name != "player");
+                (_game.CurrentState as Level).AddProjectile(new Projectile(_texture, Name, Owner, _game, PATK, MATK), Owner.Name != "player");
 
                 //Quantity--;
             }

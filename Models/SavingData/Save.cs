@@ -25,6 +25,7 @@ namespace Bound.Models
         private float _health;
         private float _mana;
         private float _stamina;
+        private int _exp = 0;
         private Game1 _game;
 
         //consider making these all private with a getter property
@@ -125,6 +126,16 @@ namespace Bound.Models
             get { return GetMaxAttribute("Endurance", _defaultLevels); }
         }
 
+        public int EXP
+        {
+            get { return _exp; }
+            set
+            {
+                if (value >= 0)
+                    _exp = value;
+            }
+        }
+
         public void ResetAttrs()
         {
             _health = MaxHealth;
@@ -137,12 +148,10 @@ namespace Bound.Models
             var str = EncryptKVP(Game1.Names.ID_PlayerName, PlayerName);
             str += EncryptKVP(Game1.Names.ID_CurrentLevel, Level);
 
-            foreach (var item in Attributes)
-                str += EncryptKVP(item.Key, item.Value.Value.ToString());
-
             str += EncryptKVP("Health", _health.ToString());
             str += EncryptKVP("Mana", _mana.ToString());
             str += EncryptKVP("Stamina", _stamina.ToString());
+            str += EncryptKVP("Exp", _exp.ToString());
 
             if (Inventory.FlatInventory.Count > 0)
                 str += EncryptKeyListPair("Inventory", Inventory.FormatForSave());
@@ -151,10 +160,11 @@ namespace Bound.Models
                     .Select(x => String.Join(';', x.Value
                         .Select( y => $"{x.Key}: {y}").ToArray()))
                     .ToList());
+
             if (_buffs.Count > 0)
                 str += EncryptKeyListPair("Buffs", _buffs.Select(x => x.Source + ", " + x.SecondsRemaining).ToList());
-
             str += EncryptKeyListPair("Position", new List<string>() { Position.X.ToString(), Position.Y.ToString() });
+            str += EncryptKeyListPair("Attributes", Attributes.Select(x => x.Key + ", " + x.Value.Value.ToString()).ToList());
 
             return str;
         }
@@ -362,7 +372,7 @@ namespace Bound.Models
             var save = new Save(game, manager)
             {
                 Level = "newgame",
-                PlayerName = "_",
+                PlayerName = "",
             };
 
             AddMissingKeys(manager, save, manager.DefaultAttributes.Keys.ToList());
@@ -384,37 +394,37 @@ namespace Bound.Models
                 foreach (var line in lines)
                 {
                     var kvp = DecryptLine(line);
-
-                    if (AttributeKeys.Contains(kvp.Key))
-                        save.Attributes.Add(kvp.Key, new Attribute(kvp.Key, int.Parse(kvp.Value)));
-                    else
+                    switch (kvp.Key)
                     {
-                        switch (kvp.Key)
-                        {
-                            case "Inventory":
-                                var inventory = kvp.Value.Split(';').ToList();
-                                foreach (var item in inventory)
-                                    save.Inventory.Import(item);
-                                break;
-                            case "Position":
-                                var pos = kvp.Value.Split(';');
-                                save.Position = new Vector2(float.Parse(pos[0]), float.Parse(pos[1]));
-                                break;
-                            case "Level":
-                                save.Level = kvp.Value; break;
-                            case "PlayerName":
-                                save.PlayerName = kvp.Value; break;
-                            case "EquippedItems":
-                                save.SetEquippedItems(kvp.Value); break;
-                            case "Health":
-                                save.Health = save.FloatTryParse(kvp.Value); break;
-                            case "Mana":
-                                save.Mana = save.FloatTryParse(kvp.Value); break;
-                            case "Stamina":
-                                save.Stamina = save.FloatTryParse(kvp.Value); break;
-                            case "Buffs":
-                                save.Buffs = kvp.Value.Split(';').Select(x => x.Split(", ")).Select(x => new Buff(game, x[0], float.Parse(x[1]))).ToList(); break;
-                        }
+                        case "Inventory":
+                            var inventory = kvp.Value.Split(';').ToList();
+                            foreach (var item in inventory)
+                                save.Inventory.Import(item);
+                            break;
+                        case "Position":
+                            var pos = kvp.Value.Split(';');
+                            save.Position = new Vector2(float.Parse(pos[0]), float.Parse(pos[1]));
+                            break;
+                        case "Attributes":
+                            var attrs = kvp.Value.Split(";");
+                            save.Attributes = attrs.Select(x => x.Split(", ")).Select(x => (x[0], new Attribute(x[0], int.Parse(x[1])))).ToDictionary(x => x.Item1, x => x.Item2);
+                            break;
+                        case "Level":
+                            save.Level = kvp.Value; break;
+                        case "PlayerName":
+                            save.PlayerName = kvp.Value; break;
+                        case "EquippedItems":
+                            save.SetEquippedItems(kvp.Value); break;
+                        case "Health":
+                            save.Health = save.FloatTryParse(kvp.Value); break;
+                        case "Mana":
+                            save.Mana = save.FloatTryParse(kvp.Value); break;
+                        case "Stamina":
+                            save.Stamina = save.FloatTryParse(kvp.Value); break;
+                        case "Buffs":
+                            save.Buffs = kvp.Value.Split(';').Select(x => x.Split(", ")).Select(x => new Buff(game, x[0], float.Parse(x[1]))).ToList(); break;
+                        case "Exp":
+                            save.EXP = int.Parse(kvp.Value); break;
                     }
                 }
 

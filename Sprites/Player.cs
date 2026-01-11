@@ -220,6 +220,13 @@ namespace Bound.Sprites
             }
             if (_keys.IsPressed("Use", true))
             {
+                var mousePos = _game.PlayerKeys.MousePosition + Game1.V2Transform;
+                var thisPos = ScaledPosition + (TextureCenter * FullScale);
+                if (mousePos.X < thisPos.X)
+                    Effects = SpriteEffects.FlipHorizontally;
+                else
+                    Effects = SpriteEffects.None;
+
                 _lockEffects = Level.HUD.UseItem();
             }
         }

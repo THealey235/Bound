@@ -13,6 +13,7 @@ namespace Bound.Controls.Settings
         private BorderedBox _box;
         private SpriteFont _font;
         private List<Component> _components;
+        private List<Component> _arrows = new List<Component>();
         private float _centerOfArrows; //the x co-ordinate of the center
 
         private Vector2 _textPosition;
@@ -21,6 +22,8 @@ namespace Bound.Controls.Settings
         private BorderedBox _parentBackground;
         private Game1 _game;
         private float _allignment;
+        private bool _isBordered;
+        private bool _isCarousel;
 
         public List<string> Choices;
         public string Text;
@@ -52,7 +55,7 @@ namespace Bound.Controls.Settings
             }
         }
 
-        public Vector2 _choicePosition
+        public Vector2 ChoicePosition
         {
             get
             {
@@ -60,7 +63,22 @@ namespace Bound.Controls.Settings
             }
         }
 
-        public MultiChoiceBox(Texture2D texture, Texture2D arrow, SpriteFont font, int index)
+        public string CurrentChoice
+        {
+            get { return Choices[CurIndex]; }
+        }
+
+        public Color BackgroundColour
+        {
+            get { return _box.Colour; }
+            set 
+            {  
+                if (_box != null)
+                    _box.Colour = value; 
+            }
+        }
+
+        public MultiChoiceBox(Texture2D bgTexture, Texture2D arrow, SpriteFont font, int index, bool border = true, bool isCarousel = false, Color? choiceColour = null, int fullWidth = 0)
         {
             _texture = arrow;
             _font = font;
@@ -71,9 +89,13 @@ namespace Bound.Controls.Settings
             };
 
             TextureScale = 0.2f;
-            PenColour = ChoicePenColour = Color.Black;
+            PenColour = Color.Black;
+            ChoicePenColour = (choiceColour == null) ? Color.Black : (Color)choiceColour;
 
             CurIndex = index;
+            _isBordered = border;
+            _isCarousel = isCarousel;
+            FullWidth = fullWidth;
         }
 
 
@@ -82,21 +104,32 @@ namespace Bound.Controls.Settings
             foreach (var component in _components)
                 component.Draw(gameTime, spriteBatch);
 
-            if (!string.IsNullOrEmpty(Text))
+            if (_isCarousel)
             {
-                spriteBatch.DrawString(_font, Text, _textPosition, PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
+                if (CurIndex != 0)
+                    _arrows[0].Draw(gameTime, spriteBatch);
+                if (CurIndex + 1 != Choices.Count)
+                    _arrows[1].Draw(gameTime, spriteBatch);
             }
+            else _arrows.ForEach(x => x.Draw(gameTime, spriteBatch));
 
-            var x = _leftArrowPosition.X + _texture.Width * (_components[1] as Button).Scale;
-
-            spriteBatch.DrawString(_font, Choices[CurIndex], _choicePosition, ChoicePenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
-
+            spriteBatch.DrawString(_font, Text, _textPosition, PenColour, 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
+            spriteBatch.DrawString(_font, Choices[CurIndex], ChoicePosition, (_isCarousel && CurIndex > 0 ? ChoicePenColour : PenColour), 0f, Vector2.Zero, 1f, SpriteEffects.None, Layer + 0.01f);
         }
 
         public override void Update(GameTime gameTime)
         {
             foreach (var component in _components)
                 component.Update(gameTime);
+
+            if (_isCarousel)
+            {
+                if (CurIndex != 0)
+                    _arrows[0].Update(gameTime);
+                if (CurIndex + 1 != Choices.Count)
+                    _arrows[1].Update(gameTime);
+            }
+            else _arrows.ForEach(x => x.Update(gameTime));
         }
 
         public override void LoadContent(Game1 game, BorderedBox background, float allignment)
@@ -135,16 +168,20 @@ namespace Bound.Controls.Settings
                 Layer,
                 FullWidth,
                 FullHeight
-            );
+            )
+            {
+                IsBordered = _isBordered
+            };
 
-            _components.Add(_box);
+            _components = new List<Component>() { _box };
 
-            _textPosition = new Vector2(Position.X + 10, Position.Y + (_box.Height - dims.Y) / 2);
+            _textPosition = new Vector2(Position.X + 3 * Game1.ResScale, Position.Y + (_box.Height - dims.Y) / 2);
 
-            _leftArrowPosition = new Vector2(_textPosition.X + _font.MeasureString(Text).X + gap, Position.Y + (FullHeight - _texture.Height * fullScale) / 2f);
-            _rightArrowPosition = new Vector2(_leftArrowPosition.X + arrowLength + gap / 2 + longestChoice + gap / 2, _leftArrowPosition.Y);
+            //positions calculated from the end of control in the case of a fixed full width which leads to the gap between the Text and arrows/choice to be variable
+            _rightArrowPosition = Position + new Vector2(FullWidth - (gap / 1.5f) - _texture.Width * fullScale, (FullHeight - _texture.Height * fullScale) / 2f);
+            _leftArrowPosition = new Vector2(_rightArrowPosition.X - (gap * 2) - (_texture.Width * fullScale) - longestChoice, _rightArrowPosition.Y);
 
-            _components.Add(
+            _arrows.Add(
                 new Button(_texture, _font)
                 {
                     Text = "",
@@ -155,7 +192,7 @@ namespace Bound.Controls.Settings
                 }
             );
 
-            _components.Add(
+            _arrows.Add(
                 new Button(_texture, _font)
                 {
                     Text = "",
@@ -167,7 +204,7 @@ namespace Bound.Controls.Settings
                 }
             );
 
-            _centerOfArrows = (_leftArrowPosition.X + _texture.Width * (_components[1] as Button).Scale + _rightArrowPosition.X) / 2;
+            _centerOfArrows = (_leftArrowPosition.X + _texture.Width * (_arrows[0] as Button).Scale + _rightArrowPosition.X) / 2;
         }
 
         private void SetValues(out int longestChoice, out float fullScale, out float arrowLength, out float gap)
@@ -178,15 +215,16 @@ namespace Bound.Controls.Settings
             TextureScale = _font.MeasureString(Text).Y / (Game1.ResScale * _texture.Height);
 
             fullScale = TextureScale * Game1.ResScale;
-            arrowLength = (float)(_texture.Width * 2.8 * fullScale);
+            arrowLength = (float)(_texture.Width * 2 * fullScale);
             gap = 8f * Game1.ResScale;
             if (Game1.ScreenHeight == 720)
                 gap -= 3;
 
-            FullWidth = (int)(_font.MeasureString(Text).X + gap + arrowLength * 2 + longestChoice + gap);
+            if (FullWidth == 0)
+                FullWidth = (int)(_font.MeasureString(Text).X + gap + arrowLength * 2 + longestChoice + gap);
         }
 
-        public void LoadContent(Game1 game, Vector2 center)
+        public void LoadContent(Game1 game, Vector2 position, bool isCenter = false)
         {
             int longestChoice;
             float fullScale, arrowLength, gap;
@@ -194,15 +232,18 @@ namespace Bound.Controls.Settings
 
             _game = game;
 
-            Position = new Vector2
-            (
-                center.X - (FullWidth / 2),
-                center.Y - FullHeight / 2
-            );
+            if (isCenter)
+            {
+                Position = new Vector2
+                (
+                    position.X - (FullWidth / 2),
+                    position.Y - FullHeight / 2
+                );
+            }
+            else Position = position;
 
             SetComponents(longestChoice, fullScale, arrowLength, gap);
         }
-
 
         private void LeftArrow_Clicked(object sender, EventArgs e)
         {
@@ -217,6 +258,7 @@ namespace Bound.Controls.Settings
                 CurIndex = 0;
         }
 
+        //the fact position is public here makes me sick
         public override void UpdatePosition(Vector2 position)
         {
             Position = position;

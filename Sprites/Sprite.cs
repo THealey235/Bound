@@ -554,7 +554,7 @@ namespace Bound.Sprites
             {
                 foreach (var sprite in sprites)
                 {
-                    if (sprite == this || (Type != SpriteType.Projectile && sprite.Type == SpriteType.Container) || sprite.Type == SpriteType.DroppedItem)
+                    if (sprite == this || sprite.Type == SpriteType.Projectile || sprite.Type == SpriteType.DroppedItem || sprite.Type == SpriteType.Container)
                         continue;
 
                     if (Velocity.X > 0 && IsTouchingLeft(sprite))
@@ -601,7 +601,7 @@ namespace Bound.Sprites
             }
         }
 
-        public virtual void StartKnocback(string direction, float damage = 1f)
+        public virtual void StartKnocback(string direction, float damage = 1f, bool isPhsysical = true)
         {
             if (IsImmune)
             {
@@ -619,7 +619,7 @@ namespace Bound.Sprites
             _knockbackDirection = direction;
             _inKnockback = true;
             _immunityTimer = 0.25f; //seconds
-            Damage(damage);
+            Damage(damage, isPhsysical);
 
             switch (direction)
             {
@@ -720,7 +720,20 @@ namespace Bound.Sprites
 
         public virtual void Kill(Level level) => level.RemoveMob(this);
 
-        public virtual void Damage(float damage) => _health -= ((damage >= 0) ? damage : 0f);
+        //https://gamedev.stackexchange.com/questions/104227/calculating-damage-reduction-of-armor-parts
+        //if not physical than magical
+        protected virtual void Damage(float damage, bool isPhysical)
+        {
+            if (damage != 0)
+                _health -= (damage * damage) / (damage + Inventory.StatBoosts[isPhysical ? "PDEF" : "MDEF"]);
+        }
+
+        public virtual void Damage(string direction, float PATK, float MATK)
+        {
+            StartKnocback(direction.ToLower(), 0);
+            Damage(PATK, true);
+            Damage(MATK, false);
+        }
 
         public bool UseStamina(float staminaToUse)
         {

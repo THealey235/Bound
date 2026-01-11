@@ -48,9 +48,10 @@ namespace Bound.States.Game
 
                 AddMob(new Boss(_game, "Galahad"), new Vector2(1380, 250), TriggerType.Position, sectionPositions[2], 0f);
 
-                AddContainer("Pot", new List<(string, int)>() { ("Throwing Dagger", 10) }, new Vector2(10, 11));
-                AddContainer("Pot", new List<(string, int)>() { ("Throwing Dagger", 10) }, new Vector2(6, 11));
-                AddContainer("Pot", new List<(string, int)>() { ("Throwing Dagger", 10) }, new Vector2(2, 11));
+                AddContainer("Pot", new List<(string, int)>() { ("Throwing Dagger", 10) }, new Vector2(10, 12));
+                AddContainer("Pot", new List<(string, int)>() { ("Throwing Dagger", 10) }, new Vector2(6, 12));
+                AddContainer("Pot", new List<(string, int)>() { ("Throwing Dagger", 10) }, new Vector2(2, 12));
+                AddContainer("Pot", new List<(string ItemName, int Count)> { ("Super Cool Epic Chest Piece", 1) }, new Vector2(20, 12));
 
             }
         }
