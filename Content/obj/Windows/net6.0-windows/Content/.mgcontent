@@ -5,6 +5,7 @@
   <Config />
   <SourceFiles>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/BlankTile.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/Brown.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DirtGradient0.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DirtGradient1.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DirtGradient2.png</File>
@@ -12,6 +13,8 @@
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/DoorB.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/Glass.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/Grass.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/GrassCorner.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/GrassCornerConnection.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/OakLog.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/OakPlank.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/OakSlab.png</File>
@@ -64,8 +67,13 @@
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Player/Idle.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Player/Walking-Sheet.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Zombie/Idle.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Zombie/Moving-Sheet.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

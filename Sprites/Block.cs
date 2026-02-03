@@ -11,10 +11,8 @@ namespace Bound.Sprites
         #region Fields & Properties
 
         private Texture2D _texture;
-        private Rectangle _sourceRectangle;
         private SpriteEffects _spriteEffects;
         private Vector2 _origin = Vector2.Zero;
-        private int _blockWidth;
         private DebugRectangle _debugRectangle;
         private float _scale;
         private string _name;
@@ -23,7 +21,7 @@ namespace Bound.Sprites
         public float Layer;
         public float Rotation = 0f;
         public Color Colour = Color.White;
-        public int Index;
+        
         public Vector2 Position { get; set; }
 
         public string Name
@@ -35,7 +33,7 @@ namespace Bound.Sprites
         {
             get
             {
-                return new Rectangle((int)(Position.X) + _shapeRectangle.X, (int)(Position.Y) + _shapeRectangle.Y, (int)(_shapeRectangle.Width * _scale), (int)(_shapeRectangle.Height * _scale));
+                return new Rectangle((int)(Position.X) + (int)(_shapeRectangle.X * _scale), (int)(Position.Y) + (int)(_shapeRectangle.Y * _scale), (int)(_shapeRectangle.Width * _scale), (int)(_shapeRectangle.Height * _scale));
             }
         }
 
@@ -43,7 +41,7 @@ namespace Bound.Sprites
         {
             get
             {
-                return new Rectangle((int)(ScaledPosition.X), (int)(ScaledPosition.Y), (int)(_shapeRectangle.Width * Scale), (int)(_shapeRectangle.Height * Scale));
+                return new Rectangle((int)(ScaledPosition.X + _shapeRectangle.X * Scale), (int)(ScaledPosition.Y + _shapeRectangle.Y * Scale), (int)(_shapeRectangle.Width * Scale), (int)(_shapeRectangle.Height * Scale));
             }
         }
 
@@ -64,42 +62,14 @@ namespace Bound.Sprites
         }
 
         #endregion
-        public Block(TextureManager textures, int index, Vector2 position, float scale, float layer, GraphicsDevice graphics)
+        public Block(TextureManager textures, GraphicsDevice graphics, string blockName, Vector2 position, float scale, float layer, bool isBlockwisePos = false)
         {
-            _name = "block";
-
-            _texture = textures.GetBlock("common", index);
-
-            _sourceRectangle = new Rectangle(0, 0, textures.BlockWidth, textures.BlockWidth);
-
-            Position = position;
-
-            _scale = scale;
-
-            Layer = layer;
-            
-            Index = index;
-
-            _blockWidth = textures.BlockWidth;
-
-            if (textures.SpecialShapeBlocks.ContainsKey(Index))
-                _shapeRectangle = textures.SpecialShapeBlocks[Index];
-            else _shapeRectangle = _sourceRectangle;
-
-            if (!textures.GhostBlocks.Contains(Index))
-                _debugRectangle = new DebugRectangle(ScaledRectangle, graphics, layer + 0.1f, Scale);
+            SetValues(textures, graphics, blockName, position, scale, layer, isBlockwisePos);
 
         }
 
-        public Block(TextureManager textures, GraphicsDevice graphics, int index, Vector2 position, Color colour, float rotation, Vector2 origin, float scale, SpriteEffects spriteEffects, float layer)
+        public Block(TextureManager textures, GraphicsDevice graphics, string blockName, Vector2 position, Color colour, float rotation, Vector2 origin, float scale, SpriteEffects spriteEffects, float layer, bool isBlockwisePos = false)
         {
-            _name = "block";
-
-            Position = position;
-
-            _texture = textures.GetBlock("common", index);
-
-            _sourceRectangle = new Rectangle(0, 0, _texture.Width, _texture.Height);
 
             Colour = colour;
 
@@ -107,21 +77,30 @@ namespace Bound.Sprites
 
             _origin = origin;
 
-            _scale = scale;
-
             _spriteEffects = spriteEffects;
+
+            SetValues(textures, graphics, blockName, position, scale, layer, isBlockwisePos);
+        }
+
+        private void SetValues(TextureManager textures, GraphicsDevice graphics, string blockName, Vector2 position, float scale, float layer, bool isBlockwisePos)
+        {
+            _name = blockName;
+
+            _texture = textures.GetBlock(blockName);
+
+            Position = position;
+            if (isBlockwisePos)
+                Position *= textures.BlockWidth * Game1.ResScale * Game1.BlockScale;
+
+            _scale = scale;
 
             Layer = layer;
 
-            _blockWidth = textures.BlockWidth;
+            if (textures.SpecialShapeBlocks.ContainsKey(_name))
+                _shapeRectangle = textures.SpecialShapeBlocks[_name];
+            else _shapeRectangle = new Rectangle(0, 0, _texture.Width, _texture.Width);
 
-            Index = index;
-
-            if (textures.SpecialShapeBlocks.ContainsKey(Index))
-                _shapeRectangle = textures.SpecialShapeBlocks[Index];
-            else _shapeRectangle = new Rectangle(0, 0, _sourceRectangle.Width, _sourceRectangle.Height);
-
-            if (!textures.GhostBlocks.Contains(Index))
+            if (!textures.GhostBlocks.Contains(_name))
                 _debugRectangle = new DebugRectangle(ScaledRectangle, graphics, layer + 0.1f, 1f);
         }
 

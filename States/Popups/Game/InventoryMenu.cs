@@ -237,7 +237,7 @@ namespace Bound.States.Popups.Game
             if (isHotbar)
             {
                 var level = (Level)(_game.CurrentState);
-                level.HUD.UpdateHotbarSlot(_game.CurrentInventory.GetItem(type, item), _selectedBoxIndex);
+                level.HUD.UpdateHotbarSlot(_game.CurrentInventory.GetItem(item), _selectedBoxIndex);
             }
 
             _selectedBoxIndex = 0;

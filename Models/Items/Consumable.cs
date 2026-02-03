@@ -98,7 +98,7 @@ namespace Bound.Models.Items
                 //Current state will always be a level if an item is being used
                 (_game.CurrentState as Level).AddProjectile(new Projectile(_texture, Name, Owner, _game, PATK, MATK), Owner.Name != "player");
 
-                //Quantity--;
+                Quantity--;
             }
             else 
             {
@@ -165,7 +165,7 @@ namespace Bound.Models.Items
                         {
                             _owner.GiveBuff(new Buff(_texture, this, Attributes.Values.ToList(), _buffDuration));
                         }
-                        //Quantity--;
+                        Quantity--;
                     }
                 }
             }

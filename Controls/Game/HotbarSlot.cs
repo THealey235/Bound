@@ -86,7 +86,7 @@ namespace Bound.Controls.Game
             _background = neutralTexture;
             _activeBackground = activeTexture;
             if (item != "Default")
-                _item = _game.SavesManager.ActiveSave.Inventory.GetItem(TextureManager.ItemType.HoldableItem, item);
+                _item = _game.SavesManager.ActiveSave.Inventory.GetItem(item);
             Position = position;
             IsSelected = false;
         }
@@ -101,19 +101,6 @@ namespace Bound.Controls.Game
                 if (_item.Quantity > 1)
                     spriteBatch.DrawString(_font, $"x{_item.Quantity}", _quantityPosition + Game1.V2Transform, Color.Black, 0f, Vector2.Zero, _quantityScale, SpriteEffects.None, Layer + 0.0002f);
             }
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-
-        }
-
-        public void UpdateItem(TextureManager.ItemType type, string name)
-        {
-            _item = _game.SavesManager.ActiveSave.Inventory.GetItem(type, name);
-            Position = _hotbarPosition;
-            if (_item != null)
-                SetQuantityPosition();
         }
 
         private void SetQuantityPosition()
@@ -132,6 +119,10 @@ namespace Bound.Controls.Game
             {
                 //_itemPosition -= new Vector2(3, 3) * ItemScale;
             }
+        }
+
+        public override void Update(GameTime gameTime)
+        {
         }
     }
 }

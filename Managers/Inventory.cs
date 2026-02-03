@@ -3,7 +3,6 @@ using Bound.Models.Items;
 using Bound.Sprites;
 using System.Collections.Generic;
 using System.Linq;
-
 using static Bound.Managers.TextureManager;
 
 namespace Bound.Managers
@@ -24,7 +23,17 @@ namespace Bound.Managers
         private Dictionary<string, Item> _skills = new Dictionary<string, Item>();
         private List<Dictionary<string, Item>> _inventory;
         private Dictionary<string, float> _statBoosts = new Dictionary<string, float>() { {"PDEF", 0f}, { "MDEF", 0 } };
-        private static Item Blank = new Item(new Models.TextureCollection(), -1, "Blank", "null", ItemType.Unrecognised);
+        private static Item Default = new Item(new Models.TextureCollection(), -1, "Default", "null", ItemType.Unrecognised);
+        private Dictionary<string, List<Item>> _equippedItems = new Dictionary<string, List<Item>>()
+        {
+            { "headgear", new List<Item>()},
+            { "chestarmour", new List<Item>()},
+            { "legarmour", new List<Item>()},
+            { "footwear", new List<Item>()},
+            { "accessory", new List<Item>()},
+            { "hotbar", new List<Item>()},
+            { "skills", new List<Item>()},
+        };
 
         public int Money;
 
@@ -47,6 +56,11 @@ namespace Bound.Managers
                 _inventory.ForEach(x => output.AddRange(x.Values));
                 return output;
             }
+        }
+
+        public Dictionary<string, List<Item>> EquippedItems
+        {
+            get { return _equippedItems; }
         }
 
         public Dictionary<string, float> StatBoosts
@@ -91,8 +105,6 @@ namespace Bound.Managers
             else
                 _inventory[index].Add(item.Name, item.Clone());
             _inventory[index].Values.ToArray()[^1].Owner = _owner;
-
-            UpdateStats(item.Type, item, true);
         }
 
         public void Add(string name, int numberTaken = 1)
@@ -108,8 +120,6 @@ namespace Bound.Managers
                 _inventory[index].Add(name, item);
             else
                 _inventory[index][item.Name].Quantity += numberTaken;
-
-            UpdateStats(item.Type, item, true);
         }
 
         //For importing items from saves
@@ -138,7 +148,6 @@ namespace Bound.Managers
                 return;
 
             _inventory[index].Add(newItem.Name, newItem);
-            UpdateStats(newItem.Type, newItem, true);
         }
 
         public List<Item> GetParts(List<ItemType> types)
@@ -166,22 +175,11 @@ namespace Bound.Managers
             return output;
         }
 
-        public Item GetItem(TextureManager.ItemType type, string name)
+        public Item GetItem(string name)
         {
-            //Checks for invalid ItemType
-            if ((int)type > _inventory.Count)
-                return Blank;
-            else if (type == TextureManager.ItemType.HoldableItem)
-            {
-                if (_consumables.ContainsKey(name))
-                    return _consumables[name]; 
-                else if (_weapons.ContainsKey(name))
-                    return _weapons[name]; 
-            }
-            else if (_inventory[(int)type].ContainsKey(name))
-                return _inventory[(int)type][name];
-
-            return Blank;
+            foreach (var dict in _inventory)
+                if (dict.ContainsKey(name)) return dict[name]; 
+            return Default;
         }
 
         public void RemoveItem(string name)
@@ -191,7 +189,7 @@ namespace Bound.Managers
                     if (kvp.Key == name)
                     {
                         dict.Remove(kvp.Key);
-                        UpdateStats(kvp.Value.Type, kvp.Value, false);
+                        UpdateStats(dict[kvp.Key].Type, dict[kvp.Key], false);
                         return;
                     }
         }
@@ -204,14 +202,35 @@ namespace Bound.Managers
             return false;
         }
 
-        private void UpdateStats(ItemType type, Item item, bool isAdded)
+        public bool EquipItem(string key, string name)
         {
-            if (type == ItemType.HeadGear || type == ItemType.ChestArmour || type == ItemType.LegArmour || type == ItemType.Footwear || type == ItemType.Accessory)
+            if ((!Contains(name) && !(name == "Default")) || !_equippedItems.ContainsKey(key))
+                return false;
+
+            if (name == "Default")
+                _equippedItems[key].Add(Default);
+
+            var item = GetItem(name);
+            _equippedItems[key].Add(item);
+
+            UpdateStats(item.Type, item, true);
+            return true;
+        }
+
+        public void ClearEquippedItems()
+        {
+            foreach (var item in _equippedItems)
+                item.Value.Clear();
+        }
+
+        private void UpdateStats(ItemType type, Item item, bool toAdd)
+        {
+            if (_equippedItems.Any(x => x.Value.Contains(item)) && (type == ItemType.HeadGear || type == ItemType.ChestArmour || type == ItemType.LegArmour || type == ItemType.Footwear || type == ItemType.Accessory))
             {
                 foreach (var attribute in item.Attributes)
                 {
                     if (_statBoosts.ContainsKey(attribute.Key))
-                        _statBoosts[attribute.Key] += (isAdded ? 1 : -1) * attribute.Value.Value;
+                        _statBoosts[attribute.Key] += (toAdd ? 1 : -1) * attribute.Value.Value;
                     else _statBoosts[attribute.Key] = attribute.Value.Value;
                 }
             }

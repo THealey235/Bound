@@ -1,4 +1,5 @@
 ﻿using Bound.Managers;
+using Bound.Models;
 using Bound.Models.Items;
 using Bound.Sprites;
 using Bound.States.Popups.Game;
@@ -19,51 +20,6 @@ namespace Bound.States
             None,
             Position,
             Time
-        }
-       
-        protected class UnspawnedMob 
-        {
-            public Sprite Sprite;
-            TriggerType Trigger;
-            Rectangle Bounds;
-            private double _timeCondition; //in seconds
-
-            public UnspawnedMob(Sprite sprite, TriggerType trigger, (Vector2 TopLeft, Vector2 BottomRight)? bounds, float timeCondition)
-            {
-                if (bounds == null)
-                {
-                    if (trigger == TriggerType.Position)
-                        Trigger = TriggerType.Time;
-                    else Trigger = trigger;
-
-                    Bounds = new Rectangle(0, 0, 0, 0);
-                }
-                else
-                {
-                    Trigger = trigger;
-                    var realbounds = ((Vector2 TopLeft, Vector2 BottomRight))bounds;
-                    Bounds = new Rectangle((int)realbounds.TopLeft.X, (int)realbounds.TopLeft.Y, (int)(realbounds.BottomRight.X - realbounds.TopLeft.X), (int)(realbounds.BottomRight.Y - realbounds.TopLeft.Y));
-                }
-
-                Sprite = sprite;
-                _timeCondition = timeCondition;
-            }
-
-            public bool CheckSpawn(double timeElapsed, Player player)
-            {
-                switch (Trigger)
-                {
-                    case TriggerType.Position:
-                        if (Bounds.Contains((int)player.Position.X, (int)player.Position.Y))
-                            Trigger = TriggerType.Time;
-                        return false;
-                    case TriggerType.Time:
-                        _timeCondition -= timeElapsed;
-                        return _timeCondition <= 0;
-                    default:
-                        return true;
-                }
-            }
         }
 
         protected List<Block> _blocks;
@@ -103,7 +59,7 @@ namespace Bound.States
             _player = game.Player;
             _game = game;
             _levelMap = _game.RetrieveLevelMap(levelNum);
-            _scale = 1.5f;
+            _scale = Game1.BlockScale;
 
             _player.UpdateAttributes(game.SaveIndex);
             _player.Save = game.SavesManager.ActiveSave;
@@ -122,7 +78,7 @@ namespace Bound.States
                     if (index == -1)
                         continue;
                     var position = new Vector2(_game.Textures.BlockWidth * j * _scale, _game.Textures.BlockWidth * i * _scale);
-                    _blocks.Add(new Block(_game.Textures, _game.GraphicsDevice, index, position, Color.White, 0f, Vector2.Zero, _scale, SpriteEffects.None, 0.1f));
+                    _blocks.Add(new Block(_game.Textures, _game.GraphicsDevice, "common/" + _game.Textures.CommonBlocksKey[index], position, Color.White, 0f, Vector2.Zero, _scale, SpriteEffects.None, 0.1f));
                 }
             }
             _blockRects = UpdateBlockRects();
@@ -167,7 +123,7 @@ namespace Bound.States
         }
 
         //pad bottom with rows of tiles so that it looks nice.
-        protected void PadBottom(List<(List<TextureManager.CommonBlocks> Block, Color Colour)> rows)
+        protected void PadBottom(List<(List<string> Block, Color Colour)> rows)
         {
             var index = 0;
             for (int row = 0; row < rows.Count; row++)
@@ -182,7 +138,7 @@ namespace Bound.States
                     _blocks.Add(new Block(
                         _game.Textures,
                         _game.GraphicsDevice,
-                        (int)rows[row].Block[index],
+                        rows[row].Block[index],
                         new Vector2(_game.Textures.BlockWidth * i * _scale, _game.Textures.BlockWidth * (_levelMap.Count + row) * _scale),
                         rows[row].Colour,
                         0f,
@@ -201,7 +157,7 @@ namespace Bound.States
             foreach (var p in Popups)
                 p.Draw(gameTime, spriteBatch);
 
-            var toDraw = _blocks.Select(x => _game.ToCull(x.ScaledRectangle) ? null : x).ToList();
+            var toDraw = _blocks.Select(block => _game.ToCull(block.ScaledRectangle) ? null : block).ToList();
             toDraw.RemoveAll(x => x == null);
             foreach (var block in toDraw)
                 block.Draw(gameTime, spriteBatch);
@@ -277,7 +233,7 @@ namespace Bound.States
             {
                 var options = new Options(_game, _game.Content, this);
                 Popups.Add(options);
-                options.Layer = _game.Player.Layer + 0.001f;
+                options.Layer = _game.Player.Layer + 0.01f;
                 options.LoadContent();
             }
 
@@ -302,7 +258,7 @@ namespace Bound.States
             List<Rectangle> rects = new List<Rectangle>();
             foreach (var block in _blocks)
             {
-                if (_game.Textures.GhostBlocks.Contains(block.Index))
+                if (_game.Textures.GhostBlocks.Contains(block.Name))
                     continue;
                 rects.Add(block.Rectangle);
             }
@@ -342,6 +298,22 @@ namespace Bound.States
             _spritesToAdd.Add((new DroppedItem(_game, item, position), true));
         }
 
-        
+        protected void AddBlock(Block block)
+        {
+            _blocks.Add(block);
+            _blockRects.Add(block.ScaledRectangle);
+        }
+
+        protected void AddBlock(Block block, Rectangle blockRectangle)
+        {
+            _blocks.Add(block);
+            _blockRects.Add(blockRectangle);
+        }
+
+        protected void AddBlock(Block block, List<Rectangle> blockRectangles)
+        {
+            _blocks.Add(block);
+            _blockRects.AddRange(blockRectangles);
+        }
     }
 }

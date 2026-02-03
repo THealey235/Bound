@@ -40,37 +40,12 @@ namespace Bound.Models
         public int SkillSlots;
 
         private Inventory _inventory;
-        private Dictionary<string, List<string>> _equippedItems = new Dictionary<string, List<string>>();
         private Dictionary<string, Attribute> _attributes;
         private List<Buff> _buffs = new List<Buff>();
 
-        public Dictionary<string, List<string>> EquippedItems
+        private Dictionary<string, List<string>> _equippedItems
         {
-            get { return _equippedItems; }
-        }
-
-        public Dictionary<string, float> ItemStatBoosts
-        {
-            get
-            {
-                var stats = new Dictionary<string, float>();
-                var equipped = new List<List<string>>() { _equippedItems["headgear"], _equippedItems["chestArmour"], _equippedItems["legArmour"], _equippedItems["footwear"] };
-                Item i;
-                foreach (var items in equipped)
-                {
-                    foreach (var item in items)
-                    {
-                        i = _game.Items[item];
-                        foreach (var attr in i.Attributes)
-                        {
-                            if (stats.TryAdd(attr.Key, attr.Value.Value))
-                                stats[attr.Key] += attr.Value.Value;
-                        }
-                    }
-                }
-
-                return stats;
-            }
+            get { return Inventory.EquippedItems.ToDictionary(x => x.Key, x => x.Value.Select(item => item.Name).ToList()); }
         }
 
         public Inventory Inventory
@@ -155,8 +130,8 @@ namespace Bound.Models
 
             if (Inventory.FlatInventory.Count > 0)
                 str += EncryptKeyListPair("Inventory", Inventory.FormatForSave());
-            if (EquippedItems.Count > 0)
-                str += EncryptKeyListPair("EquippedItems", EquippedItems
+            if (_equippedItems.Count > 0)
+                str += EncryptKeyListPair("EquippedItems", _equippedItems
                     .Select(x => String.Join(';', x.Value
                         .Select( y => $"{x.Key}: {y}").ToArray()))
                     .ToList());
@@ -177,27 +152,23 @@ namespace Bound.Models
                 if (!save.Attributes.ContainsKey(key))
                     save.Attributes.Add(key, new Attribute(key, manager.DefaultAttributes[key]));
             }
-
-            save.EquippedItems.Add("hotbar", Enumerable.Repeat("Default", 3).ToList());
         }
 
         public void SetEquippedItems(string input)
         {
             var items = input.Split(';').Select(x => x.Split(": "));
-            EquippedItems.Clear();
+            Inventory.ClearEquippedItems();
             foreach (var item in items)
             {
-                if (EquippedItems.ContainsKey(item[0]))
-                    EquippedItems[item[0]].Add(item[1]);
-                else
-                    EquippedItems.Add(item[0], new List<string>() { item[1] });
+                if (item.Length == 2)
+                    Inventory.EquipItem(item[0], item[1]);
             }
         }
 
         public string GetEquippedItem(string id, int index = 0)
         {
-            if (EquippedItems.ContainsKey(id))
-                return EquippedItems[id][index];
+            if (_equippedItems.ContainsKey(id) && index < _equippedItems[id].Count)
+                return _equippedItems[id][index];
             else
                 return "Default";
         }
@@ -214,20 +185,18 @@ namespace Bound.Models
 
         public void Update()
         {
-            string name;
-            foreach (var dict in EquippedItems)
-                for (int i = 0; i < dict.Value.Count; i++)
+            var hotbar = _equippedItems["hotbar"];
+            for (int i = 0; i < hotbar.Count; i++)
+            {
+                var name = hotbar[i];
+                if (name != "Default" && !Inventory.Contains(name))
                 {
-                    name = dict.Value[i];
-                    if (name != "Default" && !Inventory.Contains(name))
-                    {
-                            if (dict.Key == "hotbar")
-                            _player.RemoveItemFromHotbar(name);
-                        dict.Value[i] = "Default";
-                        i--;
-                            
-                    }
+                    _player.RemoveItemFromHotbar(name);
+                    hotbar[i] = "Default";
+                    i--;
+
                 }
+            }
         }
 
         public static void SetPlayer(Player player)
@@ -439,7 +408,6 @@ namespace Bound.Models
                 return null;
             }
         }
-
 
         private float FloatTryParse(string input)
         {

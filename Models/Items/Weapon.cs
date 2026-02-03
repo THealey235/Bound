@@ -28,6 +28,7 @@ namespace Bound.Models.Items
                     return;
                 _owner = value;
                 _animationManager.Layer = 0.76f;
+                _layer = _animationManager.Layer = _owner.Layer + 0.001f;
                 Scale = 1f;
                 _animationManager.Origin = _owner.Origin;
             }

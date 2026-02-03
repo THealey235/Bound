@@ -94,7 +94,7 @@ namespace Bound.Sprites
             if (_animationManager != null && _animationManager.IsPlaying == true)
                 _animationManager.Draw(spriteBatch);
             else if (_texture != null)
-                spriteBatch.Draw(_texture, ScaledPosition + TextureCenter, null, Colour, Rotation, TextureCenter, FullScale, Effects, Layer);
+                spriteBatch.Draw(_texture, ScaledPosition + TextureCenter * FullScale, null, Colour, Rotation, TextureCenter, FullScale, Effects, Layer);
 
             if (Game1.InDebug && _debugRectangle != null)
                 _debugRectangle.Draw(gameTime, spriteBatch);

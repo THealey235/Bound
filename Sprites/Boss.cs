@@ -80,5 +80,10 @@ namespace Bound.Sprites
 
             SetHealthBar(_game, Name);
         }
+
+        public override void StartKnocback(string direction, float damage = 1, bool isPhsysical = true)
+        {
+            base.StartKnocback(direction, damage, isPhsysical);
+        }
     }
 }

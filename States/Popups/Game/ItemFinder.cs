@@ -100,11 +100,10 @@ namespace Bound.States.Popups
             );
 
             _items = _game.CurrentInventory.GetParts(_filter);
-            var equipped = _game.SavesManager.ActiveSave.EquippedItems;
-            var equippedExists = equipped.ContainsKey(_slotID);
+            var equipped = _game.SavesManager.ActiveSave.Inventory.EquippedItems;
             for (int i = 0; i < _items.Count; i++)
             {
-                if (equippedExists && equipped[_slotID].Contains(_items[i].Name))
+                if (equipped.ContainsKey(_slotID) && equipped[_slotID].Contains(_items[i]))
                 {
                     _items.RemoveAt(i);
                     i--;

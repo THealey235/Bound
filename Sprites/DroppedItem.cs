@@ -17,6 +17,12 @@ namespace Bound.Sprites
             _health = 1;
             Scale = 0.5f;
 
+            _debugRectangle = new Models.DebugRectangle(
+                Rectangle,
+                _game.GraphicsDevice,
+                Layer + 0.01f,
+                FullScale
+            );
             Reset();
         }
 

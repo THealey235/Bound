@@ -23,11 +23,11 @@ namespace Bound.States.Game
         {
             base.LoadContent();
 
-            var rows = new List<(List<TextureManager.CommonBlocks>, Color)>()
+            var rows = new List<(List<string>, Color)>()
             {
-                (new List<TextureManager.CommonBlocks>{TextureManager.CommonBlocks.DirtGradient0, TextureManager.CommonBlocks.DirtGradient1, TextureManager.CommonBlocks.DirtGradient2 }, Color.White),
+                (new List<string>{"common/DirtGradient0", "common/DirtGradient1", "common/DirtGradient2"}, Color.White),
             };
-            rows.AddRange(Enumerable.Repeat((new List<TextureManager.CommonBlocks> { TextureManager.CommonBlocks.BlankTile }, Color.Black), 5));
+            rows.AddRange(Enumerable.Repeat((new List<string> { "common/BlankTile"}, Color.Black), 5));
             PadBottom(rows);
 
             if(!hasBeenLoaded)
@@ -52,7 +52,6 @@ namespace Bound.States.Game
                 AddContainer("Pot", new List<(string, int)>() { ("Throwing Dagger", 10) }, new Vector2(6, 12));
                 AddContainer("Pot", new List<(string, int)>() { ("Throwing Dagger", 10) }, new Vector2(2, 12));
                 AddContainer("Pot", new List<(string ItemName, int Count)> { ("Super Cool Epic Chest Piece", 1) }, new Vector2(20, 12));
-
             }
         }
     }

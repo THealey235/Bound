@@ -75,7 +75,7 @@ namespace Bound.States.Popups.Game
                         _game,
                         Layer,
                         hotbarScale,
-                        save.EquippedItems["hotbar"][i]
+                        save.GetEquippedItem("hotbar", i)
                     )
                 );
             }
@@ -175,7 +175,7 @@ namespace Bound.States.Popups.Game
         public void UpdateHotbarSlot(Item item, int index)
         {
             if (!(index > _hotbarSlots.Count))
-                _hotbarSlots[index].Item = (item.Name == "Blank") ? null : item;
+                _hotbarSlots[index].Item = (item.Name == "Default") ? null : item;
         }
 
         public bool UseItem()

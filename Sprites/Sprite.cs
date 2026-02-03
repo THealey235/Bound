@@ -507,13 +507,14 @@ namespace Bound.Sprites
 
 
             Knockback();
+
             foreach (var surface in surfaces)
             {
                 if ((Velocity.X > 0 && IsTouchingLeft(surface)))
                     SurfaceTouched("left", surface);
                 else if (Velocity.X < 0 && IsTouchingRight(surface))
                     SurfaceTouched("right", surface);
-                if ((Velocity.Y > 0 && IsTouchingTop(surface)) ||
+                else if ((Velocity.Y > 0 && IsTouchingTop(surface)) ||
                      (Velocity.Y < 0 && IsTouchingBottom(surface)))
                 {
                     if (Velocity.Y > 0)
@@ -577,16 +578,16 @@ namespace Bound.Sprites
                         else if (!(sprite.Type == SpriteType.Projectile))
                             Velocity.X = 0;
                     }
-                    //if (Velocity.Y > 0 && IsTouchingTop(sprite))
-                    //{
-                    //    if (dealsKnockback.Contains(sprite))
-                    //    {
-                    //        StartKnocback("up", sprite.KnockbackDamageDealtOut);
-                    //        sprite.StartKnocback("down", _knockbackDamageDealtOut);
-                    //    }
-                    //    else if (!(sprite.Type == SpriteType.Projectile))
-                    //        Velocity.Y = 0;
-                    //}
+                    if (Velocity.Y > 0 && IsTouchingTop(sprite))
+                    {
+                        if (dealsKnockback.Contains(sprite))
+                        {
+                            StartKnocback("up", sprite.KnockbackDamageDealtOut);
+                            sprite.StartKnocback("down", _knockbackDamageDealtOut);
+                        }
+                        else if (!(sprite.Type == SpriteType.Projectile))
+                            Velocity.Y = 0;
+                    }
                     if (Velocity.Y < 0 && IsTouchingBottom(sprite))
                     {
                         if (dealsKnockback.Contains(sprite))
@@ -816,6 +817,8 @@ namespace Bound.Sprites
         public virtual void ResetScaling()
         {
             _debugRectangle.Scale = FullScale;
+            if (_animationManager != null)
+                _animationManager.Scale = FullScale;
         }
 
         public void AddToConsumableBlacklist(string name) => _consumableBlacklist.Add(name);

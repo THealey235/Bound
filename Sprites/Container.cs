@@ -37,6 +37,7 @@ namespace Bound.Sprites
 
         protected override void CheckSpriteCollision(List<Sprite> sprites, List<Sprite> dealsKnockback)
         {
+            ResetScaling();
             return;
         }
 

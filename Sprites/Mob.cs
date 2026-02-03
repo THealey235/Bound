@@ -1,7 +1,9 @@
 ﻿using Bound.Models;
 using Bound.States;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Linq;
 using static Bound.Managers.TextureManager;
 
 namespace Bound.Sprites
@@ -31,12 +33,12 @@ namespace Bound.Sprites
             }
         }
 
-        private static void SetAnimations(TextureCollection textures)
+        private void SetAnimations(Models.TextureCollection textures)
         {
-            if (textures.Sheets.Count > 0)
-            {
-                //set animationManager and animations
-            }
+            _animationManager = new Managers.AnimationManager();
+            _animations = _textures.Sheets.Select(x => (x.Key, new Animation(x.Value, _textures.FrameCount(x.Key), _textures.FrameSpeed(x.Key)))).ToDictionary(x => x.Key, x => x.Item2);
+            if (_animations.ContainsKey("Moving"))
+                _animationManager.Play(_animations["Moving"]);
         }
 
         private void SetMobInfo(MobInfo info)
@@ -46,7 +48,9 @@ namespace Bound.Sprites
             _stamina = info.Stamina;
             _mana = info.Mana;
             _knockbackDamageDealtOut = info.KNBKDmg;
+            _knockbackInitialVelocity = info.KNBKVelocity;
             _exp = info.EXP;
+            Scale = info.Scale;
         }
 
 
@@ -55,9 +59,15 @@ namespace Bound.Sprites
             var distance = (_game.Player.Position - Position).Length();
 
             if ((int)_game.Player.Position.X < (int)Position.X)
+            {
                 Velocity -= new Vector2(_speed, 0);
+                Effects = SpriteEffects.FlipHorizontally;
+            }
             else if ((int)_game.Player.Position.X > (int)Position.X)
+            {
                 Velocity += new Vector2(_speed, 0);
+                Effects = SpriteEffects.None;
+            }
         }
 
         public override void Kill(Level level)

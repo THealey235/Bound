@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 
 //A "State" is the current level of the game this can be the main menu, character creation or even a boss arena
 //A "Component" is the abstract class of all objects which will be drawn/updated
@@ -30,6 +31,7 @@ namespace Bound
         private SpriteBatch _spriteBatch;
         private static Rectangle _viewport;
         private Player _player;
+        private static float _blockScale = 1.5f;
 
         private List<string> _statesWithoutPlayer = new List<string>()
         {
@@ -139,6 +141,11 @@ namespace Bound
             {
                 return SavesManager.ActiveSave;
             }
+        }
+
+        public static float BlockScale
+        {
+            get { return _blockScale; }
         }
 
         #endregion
@@ -289,10 +296,22 @@ namespace Bound
         //check wether a rectangle intersects with the viewport. If it doesn't, it doesn't need to be drawn this frame.
         public bool ToCull(Rectangle rect)
         {
-            return Viewport.Left > rect.Right || 
-                Viewport.Right < rect.Left ||
-                Viewport.Bottom < rect.Top|| 
-                Viewport.Top > rect.Bottom;
+            return !((Viewport.Right > rect.Left &&
+                Viewport.Left < rect.Left &&
+                Viewport.Bottom > rect.Top &&
+                Viewport.Top < rect.Bottom) || //IsTouchingLeft
+                (Viewport.Left < rect.Right &&
+                Viewport.Right > rect.Right &&
+                Viewport.Bottom > rect.Top &&
+                Viewport.Top < rect.Bottom) || //IsTouchingRight
+                (Viewport.Bottom > rect.Top &&
+                Viewport.Top < rect.Top &&
+                Viewport.Right > rect.Left &&
+                Viewport.Left < rect.Right) || //IsTouchingTop
+                (Viewport.Top < rect.Bottom &&
+                Viewport.Bottom > rect.Bottom &&
+                Viewport.Right > rect.Left &&
+                Viewport.Left < rect.Right)); //IsTouchingBottom
         }
 
         public void ChangeState(State state)

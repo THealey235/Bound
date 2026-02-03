@@ -1,6 +1,7 @@
 ﻿using Bound.Models;
 using Bound.Models.Items;
 using Bound.Sprites;
+using Bound.States;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace Bound.Managers
 {
@@ -17,15 +19,9 @@ namespace Bound.Managers
 
         public int BlockWidth = 16;
 
-        //Name corresponding to the index of a texture in the block atlas
-        public enum CommonBlocks
-        {
-            Grass, Path, OakPlank, OakLog, Glass, DoorA, DoorB, OakSlab, BlankTile, DirtGradient0, DirtGradient1, DirtGradient2
-        }
-
         public readonly List<string> CommonBlocksKey = new List<string>()
         {
-            "Grass", "Path", "OakPlank", "OakLog", "Glass", "DoorA", "DoorB", "OakSlab", "BlankTile", "DirtGradient0", "DirtGradient1", "DirtGradient2"
+            "Grass", "Path", "OakPlank", "OakLog", "Glass", "DoorA", "DoorB", "OakSlab", "BlankTile", "DirtGradient0", "DirtGradient1", "DirtGradient2", "GrassCorner", "GrassCornerConnection", "Brown"
         };
 
         public readonly List<string> ContainersKeys = new List<string>()
@@ -33,16 +29,21 @@ namespace Bound.Managers
             "Pot"
         };
 
-        public string GetAtlasKey(int i, string s) => GetAtlasInformation(s).AtlasKeys[i];
-            
-        public readonly Dictionary<int, Rectangle> SpecialShapeBlocks = new Dictionary<int, Rectangle>()
+        public readonly List<string> Level0Keys = new List<string>()
         {
-            {(int)CommonBlocks.OakSlab, new Rectangle(0, 8, 16, 8)}
+            "Mound"
         };
 
-        public List<int> GhostBlocks = new List<int>() //contains blocks that you can walk through (no hitbox)
+        public string GetAtlasKey(int i, string s) => GetAtlasInformation(s).AtlasKeys[i];
+            
+        public readonly Dictionary<string, Rectangle> SpecialShapeBlocks = new Dictionary<string, Rectangle>()
         {
-            (int)CommonBlocks.DoorA, (int)CommonBlocks.DoorB, (int)CommonBlocks.BlankTile, (int)CommonBlocks.DirtGradient0, (int)CommonBlocks.DirtGradient1, (int)CommonBlocks.DirtGradient2
+            {"common/OakSlab", new Rectangle(0, 8, 16, 8)}
+        };
+
+        public List<string> GhostBlocks = new List<string>() //contains blocks that you can walk through (no hitbox)
+        {
+            "common/DoorA", "common/DoorB", "common/BlankTile", "common/DirtGradient0", "common/DirtGradient1", "common/DirtGradient2"
         };
 
         public enum ItemTextureType
@@ -67,12 +68,13 @@ namespace Bound.Managers
         }
 
         public record ProjectileInfo(float Scale, bool HasProjTexture, float TextureRotation);
-        public record SpriteSheetInfo(int Width, float Speed);
-        public record MobInfo(int Health = 10, int Stamina = 10, int Mana = 10, float KNBKDmg = 15f, float Speed = 10f, int EXP = 1);
+        public record SpriteSheetInfo(int Width, float Speed = 0.2f);
+        public record MobInfo(int Health = 10, int Stamina = 10, int Mana = 10, float KNBKDmg = 15f, float Speed = 10f, int EXP = 1, float Scale = 1f, float KNBKVelocity = 5f);
 
         private readonly Dictionary<string, SpriteSheetInfo> _spriteSheetConstants = new Dictionary<string, SpriteSheetInfo>()
         {
             {"Wooden Sword-Use",  new SpriteSheetInfo(42, 0.45f / 18f)},
+            {"Zombie/Moving-Sheet", new SpriteSheetInfo(34) }
         };
 
         private readonly Dictionary<string, ProjectileInfo> _projectileInfo = new Dictionary<string, ProjectileInfo>()
@@ -83,8 +85,8 @@ namespace Bound.Managers
 
         private readonly Dictionary<string, MobInfo> _mobInfo = new Dictionary<string, MobInfo>()
         {
-            {"Zombie", new MobInfo(Health: 20, Speed: 20f, EXP: 10) },
-            {"Galahad", new MobInfo(Health: 100, EXP: 30) },
+            {"Zombie", new MobInfo(Health: 30, Speed: 20f, EXP: 10, Scale: 0.9f, KNBKVelocity: 2.5f) },
+            {"Galahad", new MobInfo(Health: 100, EXP: 30, KNBKVelocity: 3f, Speed: 15f) },
         };
 
         #endregion
@@ -125,6 +127,7 @@ namespace Bound.Managers
 
         private Dictionary<string, Texture2D> CommonBlockAtlas = new Dictionary<string, Texture2D>();
         private Dictionary<string, Texture2D> Containers = new Dictionary<string, Texture2D>();
+        private Dictionary<string, Texture2D> Level0Atlas = new Dictionary<string, Texture2D>();
 
         
 
@@ -185,6 +188,8 @@ namespace Bound.Managers
 
             LoadBlockDirectory("Content/Atlases/Common", "common");
             LoadBlockDirectory("Content/Atlases/Containers", "containers");
+            LoadBlockDirectory("Content/Atlases/Level0", "level0");
+
             HotbarBG = content.Load<Texture2D>("Backgrounds/HotbarBG");
             HotbarSelectedSlot = content.Load<Texture2D>("Backgrounds/HotbarSelectedBG");
             BossBar = content.Load<Texture2D>("Backgrounds/BossBar");
@@ -392,6 +397,8 @@ namespace Bound.Managers
             {
                 case "containers":
                     return (ContainersKeys, Containers);
+                case "level0":
+                    return (Level0Keys, Level0Atlas);
                 default:
                     return (CommonBlocksKey, CommonBlockAtlas);
             }
@@ -420,46 +427,18 @@ namespace Bound.Managers
             return newTexture;
         }
 
-        public Texture2D GetItemIcon(string itemName, bool nullAsMissing = true, ItemType type = ItemType.Item)
-        {
-            try
-            {
-                var texture = Items[itemName].GetIcon(nullAsMissing);
-                if (texture.Name == null && !nullAsMissing)
-                {
-                    type = (itemName == "Default") ? type : _game.Items[itemName].Type;
-                    texture = SortedItems[type].ToList()[0].Value.GetIcon(nullAsMissing);
-                }
-                return texture;
-                
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return nullAsMissing ? Null : Blank;
-            }
-        }
-
-        public Rectangle GetSourceRectangle(ItemType itemType, ItemTextureType textureType = ItemTextureType.Icon)
-        {
-            if ((int)(itemType) < 4)
-            {
-                return textureType switch
-                {
-                    ItemTextureType.PlayerModel => new Rectangle(32, 0, 32, 32),
-                    _ => new Rectangle(0, 0, 32, 32),
-                };
-            }
-
-            return new Rectangle(0, 0, 32, 32);
-        }
-
-        public string GetItemName(int ID) => (ID < IdToName.Count) ? IdToName[ID] : "Default";
-
         public Texture2D GetBlock(string atlasName, int index)
         {
             var info = GetAtlasInformation(atlasName);
             return info.Atlas[info.AtlasKeys[index]];
+        }
+
+        public Texture2D GetBlock(string blockDir)
+        {
+            var x = blockDir.Split('/');
+            if (x.Length > 1)
+                return GetBlock(x[0], x[1]);
+            return Blank;
         }
 
         public Texture2D GetBlock(string atlasName, string key)

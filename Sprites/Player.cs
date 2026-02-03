@@ -263,5 +263,10 @@ namespace Bound.Sprites
         {
             _consumableBlacklist.Clear();
         }
+
+        public override void StartKnocback(string direction, float damage = 1, bool isPhsysical = true)
+        {
+            base.StartKnocback(direction, damage * 5, isPhsysical);
+        }
     }
 }

@@ -2,6 +2,7 @@
 using Bound.Managers;
 using Microsoft.Xna.Framework;
 using Bound.Models.Items;
+using System.Collections.Generic;
 
 namespace Bound.Controls.Game
 {
@@ -39,8 +40,8 @@ namespace Bound.Controls.Game
             set
             {
                 _containedItem = value;
-                _texture = _game.Textures.GetItemIcon(value, false, ItemType);
-                ChangeQuantity(value, ItemType);
+                _texture = value == "Default" ? _game.Textures.Blank :_game.Items[value].Textures.GetIcon();
+                ChangeQuantity(value);
             }
         }
 
@@ -84,14 +85,14 @@ namespace Bound.Controls.Game
             );
 
             ContainedItem = containedItem;
-            ChangeQuantity(containedItem, type);
+            ChangeQuantity(containedItem);
         }
 
-        private void ChangeQuantity(string containedItem, TextureManager.ItemType type)
+        private void ChangeQuantity(string containedItem)
         {
             if (_containedItem != "Default")
             {
-                _item = _game.SavesManager.ActiveSave.Inventory.GetItem(type, containedItem);
+                _item = _game.SavesManager.ActiveSave.Inventory.GetItem(containedItem);
                 _quantity = $"x{_item.Quantity}";
                 _showQuantity = _item.Quantity > 1;
                 _quantityPosition = null;
