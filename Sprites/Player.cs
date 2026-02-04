@@ -169,9 +169,6 @@ namespace Bound.Sprites
                 if (_keys.IsPressed($"Hotbar {i}", false))
                     HotbarSlot = i;
             }
-
-            if (Save.Health == 0)
-                Kill();
             
             if (_animationManager != null)
                 SetAnimation();
@@ -231,10 +228,10 @@ namespace Bound.Sprites
             }
         }
 
-        public void Kill()
+        public override void Kill(Level level)
         {
+            Position = new Vector2(90, 10);
             Save.ResetAttrs();
-            Position = new Vector2(0, 0);
         }
 
         public void UpdateWhileStatic(GameTime gameTime)

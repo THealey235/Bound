@@ -185,7 +185,11 @@ namespace Bound.States.Popups.Game
                     for (int j = 0; j < _attrIndexes.Count; j++)
                     {
                         if (j == i) continue;
-                        _attributes[j].Choices = Enumerable.Range(int.Parse(_attributes[j].Choices[0]), 1 + MaxIncrements(int.Parse(_attributes[j].Choices[0]), _exp)).Select(x => x.ToString()).ToList(); 
+                        List<string> nChoices = new List<string>();
+                        if (_attrIndexes[j] > 0)
+                            nChoices = _attributes[j].Choices.Take(_attrIndexes[j]).ToList();
+                        nChoices.AddRange(Enumerable.Range(int.Parse(_attributes[j].Choices[_attrIndexes[j]]), 1 + MaxIncrements(int.Parse(_attributes[j].Choices[0]), _exp)).Select(x => x.ToString()));
+                        _attributes[j].Choices = nChoices;
                     }
                     
                     _attrIndexes[i] = _attributes[i].CurIndex;
