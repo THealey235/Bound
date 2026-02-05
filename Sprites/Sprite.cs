@@ -629,9 +629,9 @@ namespace Bound.Sprites
                 case "down":
                     _knockbackVelocity = new Vector2(0, _knockbackInitialVelocity); break;
                 case "left":
-                    _knockbackVelocity = new Vector2(-_knockbackInitialVelocity, 1); break;
+                    _knockbackVelocity = new Vector2(-_knockbackInitialVelocity, -1); break;
                 case "right":
-                    _knockbackVelocity = new Vector2(_knockbackInitialVelocity, 1); break;
+                    _knockbackVelocity = new Vector2(_knockbackInitialVelocity, -1); break;
                 default:
                     return;
             }

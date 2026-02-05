@@ -188,7 +188,6 @@ namespace Bound.Managers
 
             LoadBlockDirectory("Content/Atlases/Common", "common");
             LoadBlockDirectory("Content/Atlases/Containers", "containers");
-            LoadBlockDirectory("Content/Atlases/Level0", "level0");
 
             HotbarBG = content.Load<Texture2D>("Backgrounds/HotbarBG");
             HotbarSelectedSlot = content.Load<Texture2D>("Backgrounds/HotbarSelectedBG");
