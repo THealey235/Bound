@@ -26,8 +26,6 @@ namespace Bound.Sprites
             TextureManager.MobInfo info;
             if (game.Textures.Sprites.TryGetValue(name, out _textures) && game.Textures.GetMobInfo(name, out info))
             {
-                SetValues(_textures.Statics["Idle"], game);
-
                 _health = _maxHealth = info.Health;
                 SetHealthBar(game, name);
             }
@@ -59,7 +57,11 @@ namespace Bound.Sprites
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             base.Draw(gameTime, spriteBatch);
+            DrawHealthBar(gameTime, spriteBatch);
+        }
 
+        protected void DrawHealthBar(GameTime gameTime, SpriteBatch spriteBatch)
+        {
             if (Health > 0)
                 _healthBar.Draw(gameTime, spriteBatch);
             spriteBatch.Draw(_game.Textures.BossBar, _bossBarPosition + Game1.V2Transform, null, Color.White, 0f, Vector2.Zero, Game1.ResScale, _spriteEffects, _healthBar.Layer - 0.00001f);
@@ -79,11 +81,6 @@ namespace Bound.Sprites
             base.ResetScaling();
 
             SetHealthBar(_game, Name);
-        }
-
-        public override void StartKnocback(string direction, float damage = 1, bool isPhsysical = true)
-        {
-            base.StartKnocback(direction, damage, isPhsysical);
         }
     }
 }

@@ -492,7 +492,7 @@ namespace Bound.Sprites
             Velocity = new Vector2(0, 0);
             var inFreefall = true;
 
-            if (!IsImmune)
+            if (!IsImmune || Type != SpriteType.Player)
                 HandleMovements(ref inFreefall);
             Velocity *= _dTime;
 
@@ -708,9 +708,9 @@ namespace Bound.Sprites
 
             _debugRectangle = new DebugRectangle
             (
-                new Rectangle((int)ScaledPosition.X, (int)ScaledPosition.Y, width, height)
-                , _game.GraphicsDevice
-                , Layer + 0.01f,
+                new Rectangle((int)ScaledPosition.X, (int)ScaledPosition.Y, width, height),
+                _game.GraphicsDevice,
+                0.76f, //Player.Layer + 0.01f
                 FullScale
             );
             if (_animationManager != null)

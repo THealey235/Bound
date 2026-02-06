@@ -205,6 +205,18 @@
 /processorParam:TextureFormat=Color
 /build:Atlases/Containers/Pot.png
 
+#begin Atlases/Level0/Trunk0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Atlases/Level0/Trunk0.png
+
 #begin Backgrounds/BaseBackground.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -696,7 +708,7 @@
 /processorParam:TextureFormat=Color
 /build:MissingTexture.png
 
-#begin Sprites/Galahad/Idle.png
+#begin Sprites/Dwarfroot/Idle.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -706,7 +718,19 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Sprites/Galahad/Idle.png
+/build:Sprites/Dwarfroot/Idle.png
+
+#begin Sprites/Dwarfroot/Walking-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/Dwarfroot/Walking-Sheet.png
 
 #begin Sprites/Player/Idle.png
 /importer:TextureImporter

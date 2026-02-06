@@ -86,7 +86,7 @@ namespace Bound.Sprites
         {
             _name = blockName;
 
-            _texture = textures.GetBlock(blockName);
+            _texture = textures.GetAtlasItem(blockName);
 
             Position = position;
             if (isBlockwisePos)

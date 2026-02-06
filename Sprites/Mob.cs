@@ -31,11 +31,15 @@ namespace Bound.Sprites
                 SetAnimations(_textures);
                 SetMobInfo(info);
             }
+            base.ResetScaling();
         }
 
         private void SetAnimations(Models.TextureCollection textures)
         {
             _animationManager = new Managers.AnimationManager();
+            {
+                Layer = _game.Player.Layer;
+            }
             _animations = _textures.Sheets.Select(x => (x.Key, new Animation(x.Value, _textures.FrameCount(x.Key), _textures.FrameSpeed(x.Key)))).ToDictionary(x => x.Key, x => x.Item2);
             if (_animations.ContainsKey("Moving"))
                 _animationManager.Play(_animations["Moving"]);

@@ -1,4 +1,6 @@
 ﻿using Bound.Controls;
+using Bound.Managers;
+using Bound.States.Game;
 using Bound.States.Popups;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -14,6 +16,8 @@ namespace Bound.States
         private List<Component> _components;
 
         private GraphicsDeviceManager _graphics;
+
+        private Background _background;
 
         public Color colour;
 
@@ -74,6 +78,7 @@ namespace Bound.States
             };
 
             if (_game.RecentSave != -1)
+            {
                 _components.Add(new Button(buttonTexture, font)
                 {
                     Text = "Continue",
@@ -83,10 +88,24 @@ namespace Bound.States
                     Layer = layer,
                     TextureScale = textureScale,
                 });
+
+                switch (_game.SavesManager.Saves[_game.RecentSave].Level)
+                {
+                    case "levelzero":
+                        _background = Level0.GetBackground(_game, Game1.UnscaledViewport.Height); break;
+                    default:
+                        _background = new Background(new List<Models.Layer>());
+                        break;
+                }
+
+            }
+            else _background = new Background(new List<Models.Layer>());
         }
 
         public override void Update(GameTime gameTime)
         {
+            _background.Update(gameTime);
+
             if (Popups.Count == 0)
             {
                 foreach (var component in _components)
@@ -101,11 +120,14 @@ namespace Bound.States
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
+            _background.Draw(gameTime, spriteBatch);
+
             foreach (var component in _components)
                 component.Draw(gameTime, spriteBatch);
 
             foreach (var state in Popups)
                 state.Draw(gameTime, spriteBatch);
+
 
         }
 

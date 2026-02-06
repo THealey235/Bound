@@ -119,6 +119,7 @@ namespace Bound.Sprites
                 _animationManager = new Managers.AnimationManager()
                 {
                     Scale = FullScale,
+                    Layer = _layer
                 };
             }
         }

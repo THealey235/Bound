@@ -20,6 +20,7 @@
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/OakSlab.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Common/Path.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Containers/Pot.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Atlases/Level0/Trunk0.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Backgrounds/BaseBackground.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Backgrounds/Bordered.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Backgrounds/BossBar.png</File>
@@ -63,13 +64,16 @@
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Weapons/Statics/Mace-Icon.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Items/Weapons/Statics/Wooden Sword-Icon.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/MissingTexture.png</File>
-    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Galahad/Idle.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Dwarfroot/Idle.png</File>
+    <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Dwarfroot/Walking-Sheet.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Player/Idle.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Player/Walking-Sheet.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Zombie/Idle.png</File>
     <File>C:/Users/Tomga/OneDrive - wqeic.ac.uk/Computer Science/Programming/Bound/Content/Sprites/Zombie/Moving-Sheet.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

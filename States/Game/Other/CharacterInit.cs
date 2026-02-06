@@ -164,6 +164,7 @@ namespace Bound.States.Game
             _game.ActiveSave.ResetAttrs();
             _game.ActiveSave.Level = "levelzero";
             _game.Player.Buffs = _game.ActiveSave.Buffs;
+            _game.Player.Position = new Vector2(25, 200);
             _game.ChangeState(new Level0(_game, _content));
 
             _game.SavesManager.UploadSave(SaveIndex);

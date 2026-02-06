@@ -31,7 +31,7 @@ namespace Bound.Managers
 
         public readonly List<string> Level0Keys = new List<string>()
         {
-            "Mound"
+            "Trunk0"
         };
 
         public string GetAtlasKey(int i, string s) => GetAtlasInformation(s).AtlasKeys[i];
@@ -69,12 +69,13 @@ namespace Bound.Managers
 
         public record ProjectileInfo(float Scale, bool HasProjTexture, float TextureRotation);
         public record SpriteSheetInfo(int Width, float Speed = 0.2f);
-        public record MobInfo(int Health = 10, int Stamina = 10, int Mana = 10, float KNBKDmg = 15f, float Speed = 10f, int EXP = 1, float Scale = 1f, float KNBKVelocity = 5f);
+        public record MobInfo(int Health = 10, int Stamina = 10, int Mana = 10, float KNBKDmg = 15f, float Speed = 10f, int EXP = 1, float Scale = 1f, float KNBKVelocity = 0f);
 
         private readonly Dictionary<string, SpriteSheetInfo> _spriteSheetConstants = new Dictionary<string, SpriteSheetInfo>()
         {
-            {"Wooden Sword-Use",  new SpriteSheetInfo(42, 0.45f / 18f)},
-            {"Zombie/Moving-Sheet", new SpriteSheetInfo(34) }
+            {"Wooden Sword-Use",  new SpriteSheetInfo(42, 0.015f)},
+            {"Zombie/Moving-Sheet", new SpriteSheetInfo(34) },
+            {"Dwarfroo/Walking-Sheet", new SpriteSheetInfo(76, 0.2f) },
         };
 
         private readonly Dictionary<string, ProjectileInfo> _projectileInfo = new Dictionary<string, ProjectileInfo>()
@@ -85,8 +86,8 @@ namespace Bound.Managers
 
         private readonly Dictionary<string, MobInfo> _mobInfo = new Dictionary<string, MobInfo>()
         {
-            {"Zombie", new MobInfo(Health: 30, Speed: 20f, EXP: 10, Scale: 0.9f, KNBKVelocity: 2.5f) },
-            {"Galahad", new MobInfo(Health: 100, EXP: 30, KNBKVelocity: 3f, Speed: 15f) },
+            {"Zombie", new MobInfo(Health: 30, Speed: 20f, EXP: 10, Scale: 0.9f) },
+            {"Dwarfroot", new MobInfo(Health: 200, EXP: 30, Speed: 15f, Scale: 1.5f) },
         };
 
         #endregion
@@ -188,6 +189,7 @@ namespace Bound.Managers
 
             LoadBlockDirectory("Content/Atlases/Common", "common");
             LoadBlockDirectory("Content/Atlases/Containers", "containers");
+            LoadBlockDirectory("Content/Atlases/Level0", "level0");
 
             HotbarBG = content.Load<Texture2D>("Backgrounds/HotbarBG");
             HotbarSelectedSlot = content.Load<Texture2D>("Backgrounds/HotbarSelectedBG");
@@ -426,21 +428,21 @@ namespace Bound.Managers
             return newTexture;
         }
 
-        public Texture2D GetBlock(string atlasName, int index)
+        public Texture2D GetAtlasItem(string atlasName, int index)
         {
             var info = GetAtlasInformation(atlasName);
             return info.Atlas[info.AtlasKeys[index]];
         }
 
-        public Texture2D GetBlock(string blockDir)
+        public Texture2D GetAtlasItem(string blockDir)
         {
             var x = blockDir.Split('/');
             if (x.Length > 1)
-                return GetBlock(x[0], x[1]);
+                return GetAtlasItem(x[0], x[1]);
             return Blank;
         }
 
-        public Texture2D GetBlock(string atlasName, string key)
+        public Texture2D GetAtlasItem(string atlasName, string key)
         {
             var info = GetAtlasInformation(atlasName);
             return info.Atlas[key];

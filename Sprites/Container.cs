@@ -9,13 +9,13 @@ namespace Bound.Sprites
 {
     public class Container : Sprite
     {
-        private List<Item> _containedItems;
-        public Container(Game1 game, string textureName, List<(string ItemName, int Count)> inventory, Vector2 position) : base(game.Textures.GetBlock("containers", textureName), game)
+        public Container(Game1 game, string textureName, List<(string ItemName, int Count)> inventory, Vector2 position) : base(game.Textures.GetAtlasItem("containers", textureName), game)
         {
             _spriteType = SpriteType.Container;
             _inventory = new Managers.Inventory(game, this);
             inventory.ForEach(x => _inventory.Add(x.ItemName, x.Count));
             Scale = 0.6f;
+            _layer = 0.1f;
 
             _position = position;
             _health = textureName.ToLower() switch

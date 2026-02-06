@@ -33,6 +33,7 @@ namespace Bound.States
         protected HeadsUpDisplay _HUD;
         protected (float Min, float Max) _mapBounds;
         protected (Vector2 Min, Vector2 Max) _cameraBounds;
+        protected Background _background;
         private bool hasBeenLoaded = false;
 
         public List<Sprite> ToKill = new List<Sprite>();
@@ -119,7 +120,9 @@ namespace Bound.States
                 hasBeenLoaded = true;
             }
 
-            
+            _game.CenterCamera();
+            if (_background == null)
+                _background = new Background(new List<Layer>());
         }
 
         //pad bottom with rows of tiles so that it looks nice.
@@ -167,6 +170,8 @@ namespace Bound.States
 
             foreach (var sprite in _mobs)
                 sprite.Draw(gameTime, spriteBatch);
+
+            _background.Draw(gameTime, spriteBatch);
 
             _HUD.Draw(gameTime, spriteBatch);
 
@@ -238,6 +243,7 @@ namespace Bound.States
             }
 
             _HUD.Update(gameTime);
+            _background.Update(gameTime);
 
             var item = _HUD.HeldItem;
             if (item != null)

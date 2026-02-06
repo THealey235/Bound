@@ -37,7 +37,9 @@ namespace Bound
         {
             Names.MainMenu, Names.CharacterInit
         };
-        public int DefaultHeight = 360;
+
+        private static int _defaultHeight = 360;
+        private static int _defaultWidth = 640; 
 
         public static int ScreenHeight
         {
@@ -99,6 +101,11 @@ namespace Bound
         public static Rectangle Viewport
         {
             get { return _viewport; }
+        }
+
+        public static Rectangle UnscaledViewport
+        {
+            get { return new Rectangle((int)(_viewport.X / Game1.ResScale), (int)(_viewport.Y / Game1.ResScale), _defaultWidth, _defaultHeight); }
         }
 
         public TextureManager Textures;
@@ -185,7 +192,7 @@ namespace Bound
             _graphics.ApplyChanges();
 
             //Scale used to change the size of textures based on the resolution. Defalut = 640x360.
-            ResScale = (float)ScreenHeight / (float)DefaultHeight;
+            ResScale = (float)ScreenHeight / (float)_defaultHeight;
 
             RecentSave = SaveIndex = int.Parse(Settings.Settings.General["MostRecentSave"]);
 
@@ -217,6 +224,8 @@ namespace Bound
 
             V2Transform = Vector2.Zero;
 
+            _currentState.LoadContent();
+
             ResetState();
         }
 
@@ -230,7 +239,6 @@ namespace Bound
             Items = Textures.LoadItems();
 
             _currentState = new MainMenu(this, Content, _graphics);
-            _currentState.LoadContent();
 
             _nextState = null;
 
@@ -278,7 +286,7 @@ namespace Bound
                 _mouse.Position = PlayerKeys.MousePosition + Game1.V2Transform;
         }
 
-        private void CenterCamera()
+        public void CenterCamera()
         {
             Camera.Follow(Player);
             if (_currentState.Name.Contains("level"))
@@ -396,7 +404,7 @@ namespace Bound
         //the textures and popups have correctly scaled textures since LoadContent is only typically ran once
         public void ResetState()
         {
-            ResScale = (float)ScreenHeight / (float)DefaultHeight;
+            ResScale = (float)ScreenHeight / (float)_defaultHeight;
 
 
             _currentState.LoadContent();
