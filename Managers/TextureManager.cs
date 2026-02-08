@@ -75,7 +75,8 @@ namespace Bound.Managers
         {
             {"Wooden Sword-Use",  new SpriteSheetInfo(42, 0.015f)},
             {"Zombie/Moving-Sheet", new SpriteSheetInfo(34) },
-            {"Dwarfroo/Walking-Sheet", new SpriteSheetInfo(76, 0.2f) },
+            {"Dwarfroot/Walking-Sheet", new SpriteSheetInfo(76, 0.2f) },
+            {"Dwarfroot/Clobber-Sheet", new SpriteSheetInfo(140, 0.1f) },
         };
 
         private readonly Dictionary<string, ProjectileInfo> _projectileInfo = new Dictionary<string, ProjectileInfo>()
@@ -87,7 +88,7 @@ namespace Bound.Managers
         private readonly Dictionary<string, MobInfo> _mobInfo = new Dictionary<string, MobInfo>()
         {
             {"Zombie", new MobInfo(Health: 30, Speed: 20f, EXP: 10, Scale: 0.9f) },
-            {"Dwarfroot", new MobInfo(Health: 200, EXP: 30, Speed: 15f, Scale: 1.5f) },
+            {"Dwarfroot", new MobInfo(Health: 200, EXP: 30, Speed: 15f, Scale: 1.5f, KNBKDmg: 7) },
         };
 
         #endregion
@@ -359,7 +360,7 @@ namespace Bound.Managers
                 SpriteSheetInfo x;
                 foreach (var kvp in textures)
                 {
-                    if (_spriteSheetConstants.TryGetValue(kvp.Value.Split('\\')[^1], out x))
+                    if (_spriteSheetConstants.TryGetValue(String.Join("/", kvp.Value.Split('\\').TakeLast(2)), out x))
                         sheetConstants.Add(kvp.Key, x);
                 }
                     

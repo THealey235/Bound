@@ -321,5 +321,11 @@ namespace Bound.States
             _blocks.Add(block);
             _blockRects.AddRange(blockRectangles);
         }
+
+        public void ResetBackground()
+        {
+            _game.CenterCamera();
+            _background.Reset();
+        }
     }
 }

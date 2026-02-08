@@ -15,6 +15,7 @@ namespace Bound.Models
         private float _sparsity;
         private float _layer;
         private float _previousViewportX;
+        private (float Min, float Max) _scrollSpeedMultiplier;
 
         public float BottomVariance = 0;
         public Color Colour = Color.White;
@@ -41,23 +42,9 @@ namespace Bound.Models
             _bottom = bottom;
             _sparsity = spacing;
             _constantSpeed = constantSpeed;
+            _scrollSpeedMultiplier = scrollingSpeedMultiplier;
 
-            var viewport = Game1.UnscaledViewport;
-            var x = 0f;
-            var SSM = scrollingSpeedMultiplier;
-            while (x < viewport.Width)
-            {
-                var texture = textures[Game1.Random.Next(_scales.Count)].Item1;
-                var xPos = x + (x == 0 ? _sparsity / 2 : _sparsity) * (float)Game1.Random.NextDouble();
-
-                _elements.Add(new Element(
-                    texture,
-                    new Vector2(xPos + viewport.X, _bottom - (texture.Height * _scales[texture]) + ((Game1.Random.Next(3) - 1) * BottomVariance * (float)Game1.Random.NextDouble())),
-                    SSM.Min + ((SSM.Max - SSM.Min) * (float)Game1.Random.NextDouble())
-                ));
-                x = xPos + texture.Width * _scales[texture] + 1;
-            }
-            _previousViewportX = Game1.UnscaledViewport.X;
+            Reset();
         }
 
         public Layer(List<(Texture2D Texture, float Scale)> scales, List<(Texture2D Texture, Vector2 Position)> textures, float layer, float bottom, float spacing, float scrollingSpeedMultiplier, float constantSpeed = 0f)
@@ -97,6 +84,29 @@ namespace Bound.Models
             }
 
             _previousViewportX =  viewport.X;
+        }
+        
+        public void Reset()
+        {
+            var viewport = Game1.UnscaledViewport;
+            var x = 0f;
+            var SSM = _scrollSpeedMultiplier;
+            var textures = _scales.Select(x => (x.Key, x.Value)).ToList();
+
+            _elements.Clear();
+            while (x < viewport.Width)
+            {
+                var texture = textures[Game1.Random.Next(_scales.Count)].Item1;
+                var xPos = x + (x == 0 ? _sparsity / 2 : _sparsity) * (float)Game1.Random.NextDouble();
+
+                _elements.Add(new Element(
+                    texture,
+                    new Vector2(xPos + viewport.X, _bottom - (texture.Height * _scales[texture]) + ((Game1.Random.Next(3) - 1) * BottomVariance * (float)Game1.Random.NextDouble())),
+                    SSM.Min + ((SSM.Max - SSM.Min) * (float)Game1.Random.NextDouble())
+                ));
+                x = xPos + texture.Width * _scales[texture] + 1;
+            }
+            _previousViewportX = Game1.UnscaledViewport.X;
         }
     }
 }

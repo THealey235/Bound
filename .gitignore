@@ -6,3 +6,4 @@ obj/
 Content/obj
 EncryptionTableBackup.txt
 desktop.ini
+*.aseprite

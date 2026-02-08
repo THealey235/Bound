@@ -1,6 +1,7 @@
 ﻿using Bound.Managers;
 using Bound.Models;
 using Bound.States;
+using Bound.States.Game;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -233,6 +234,7 @@ namespace Bound.Sprites
         {
             Position = new Vector2(90, 10);
             Save.ResetAttrs();
+            _game.ChangeState(new Level0(_game, _game.Content));    
         }
 
         public void UpdateWhileStatic(GameTime gameTime)

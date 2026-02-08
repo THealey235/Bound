@@ -34,5 +34,11 @@ namespace Bound.Managers
             foreach (var layer in _layers)
                 layer.Update(gameTime);
         }
+
+        public void Reset()
+        {
+            foreach (var layer in _layers)
+                layer.Reset();
+        }
     }
 }

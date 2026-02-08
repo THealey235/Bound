@@ -163,7 +163,7 @@ namespace Bound.Sprites
             }
         }
 
-        public Vector2 Position
+        public virtual Vector2 Position
         {
             get
             {
@@ -186,7 +186,7 @@ namespace Bound.Sprites
             }
         }
 
-        public Rectangle Rectangle
+        public virtual Rectangle Rectangle
         {
             get
             {

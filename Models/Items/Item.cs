@@ -158,7 +158,6 @@ namespace Bound.Models.Items
             }
 
             return (_spriteBlacklist.Count > _spriteBlacklist.Count) ? true : false;
-
         }
 
         public virtual void Use()
@@ -174,5 +173,20 @@ namespace Bound.Models.Items
         public virtual void Update(GameTime gameTime, List<Sprite> sprites)
         {
         }
+
+        public void UpdateCollisionRectangle(object sender, Rectangle rectangle)
+        {
+            if (sender != Owner)
+                return;
+            _collisionRectangle = rectangle;
+        }
+
+        public void CheckCollision(object sender, List<Sprite> sprites)
+        {
+            if (sender == Owner)
+                CheckCollision(sprites);
+        }
+
+        public void ClearBlacklist() => _spriteBlacklist.Clear();
     }
 }
