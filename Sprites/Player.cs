@@ -74,8 +74,6 @@ namespace Bound.Sprites
             set
             {
                 _level = value;
-                _health = _game.ActiveSave.MaxHealth;
-
             }
         }
 

@@ -16,11 +16,12 @@ namespace Bound.Sprites
             Velocity = new Vector2((float)Game1.Random.NextDouble() * 2f, (float)Game1.Random.NextDouble() * 2f);
             _health = 1;
             Scale = 0.5f;
+            Layer = _game.Player.Layer;
 
             _debugRectangle = new Models.DebugRectangle(
                 Rectangle,
                 _game.GraphicsDevice,
-                Layer + 0.01f,
+                _game.Player.Layer + 0.01f,
                 FullScale
             );
             Reset();

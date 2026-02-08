@@ -39,6 +39,7 @@ namespace Bound.Sprites
             _name = name;
             _patk = PATK;
             _matk = MATK;
+            _layer = _game.Player.Layer;
 
             _health = 1;
             Position = _owner.Position;

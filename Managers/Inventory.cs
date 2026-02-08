@@ -188,8 +188,8 @@ namespace Bound.Managers
                 foreach (var kvp in dict)
                     if (kvp.Key == name)
                     {
-                        dict.Remove(kvp.Key);
                         UpdateStats(dict[kvp.Key].Type, dict[kvp.Key], false);
+                        dict.Remove(kvp.Key);
                         return;
                     }
         }

@@ -86,7 +86,11 @@ namespace Bound.Controls.Game
             _background = neutralTexture;
             _activeBackground = activeTexture;
             if (item != "Default")
+            {
                 _item = _game.SavesManager.ActiveSave.Inventory.GetItem(item);
+                if (_item.Name == "Default")
+                    _item = null;
+            }
             Position = position;
             IsSelected = false;
         }

@@ -2,7 +2,6 @@
 using Bound.States;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Linq;
 using static Bound.Managers.TextureManager;
 

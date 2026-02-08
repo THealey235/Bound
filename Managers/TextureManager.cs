@@ -69,7 +69,7 @@ namespace Bound.Managers
 
         public record ProjectileInfo(float Scale, bool HasProjTexture, float TextureRotation);
         public record SpriteSheetInfo(int Width, float Speed = 0.2f);
-        public record MobInfo(int Health = 10, int Stamina = 10, int Mana = 10, float KNBKDmg = 15f, float Speed = 10f, int EXP = 1, float Scale = 1f, float KNBKVelocity = 0f);
+        public record MobInfo(int Health = 10, int Stamina = 10, int Mana = 10, float KNBKDmg = 15f, float Speed = 10f, int EXP = 1, float Scale = 1f, float KNBKVelocity = 3f);
 
         private readonly Dictionary<string, SpriteSheetInfo> _spriteSheetConstants = new Dictionary<string, SpriteSheetInfo>()
         {
