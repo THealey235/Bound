@@ -1,11 +1,11 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+﻿using Bound.Managers;
 using Bound.Models;
+using Bound.Models.Items;
+using Bound.States;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
-using Bound.Managers;
-using Bound.States;
-using Bound.Models.Items;
 
 namespace Bound.Sprites
 {
@@ -27,7 +27,7 @@ namespace Bound.Sprites
 
         protected Vector2 _origin { get; set; }
 
-        protected Vector2 _position { get; set; }
+        protected Vector2 _position;
 
         protected float _rotation { get; set; }
         protected virtual float _health { get; set; }
@@ -604,19 +604,6 @@ namespace Bound.Sprites
 
         public virtual void StartKnocback(string direction, float damage = 1f, bool isPhsysical = true)
         {
-            if (IsImmune)
-            {
-                switch (direction)
-                {
-                    case "down":
-                    case "up":
-                        Velocity.Y = 0; break;
-                    case "left":
-                    case "right":
-                        Velocity.X = 0; break;
-                }
-            }
-
             _knockbackDirection = direction;
             _inKnockback = true;
             _immunityTimer = 0.25f; //seconds
@@ -823,6 +810,11 @@ namespace Bound.Sprites
 
         public void AddToConsumableBlacklist(string name) => _consumableBlacklist.Add(name);
         public bool ConsumableBlacklistContains(string name) => _consumableBlacklist.Contains(name);
+
+        public virtual void ClampPosition((float Min, float Max) bounds)
+        {
+            _position.X = MathHelper.Clamp(_position.X, bounds.Min, bounds.Max - Rectangle.Width);
+        }
 
         #endregion
     }

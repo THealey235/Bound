@@ -181,6 +181,14 @@ namespace Bound.Models.Items
             _collisionRectangle = rectangle;
         }
 
+        public void UpdateCollisionRectanglePosition(object sender, Vector2 position)
+        {
+            if (sender != Owner)
+                return;
+            _collisionRectangle.X = (int)position.X;
+            _collisionRectangle.Y = (int)position.Y;
+        }
+
         public void CheckCollision(object sender, List<Sprite> sprites)
         {
             if (sender == Owner)

@@ -32,15 +32,6 @@ namespace Bound.Managers
             { "Strength", 5 },
         };
 
-
-        public static List<int> InventoryCode
-        {
-            get
-            {
-                return new List<int>() { 15, 6, 2, 10 };
-            }
-        }
-
         public Save ActiveSave
         {
             get

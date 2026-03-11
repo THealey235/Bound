@@ -62,7 +62,6 @@ namespace Bound.Models
                 return false;
             key = Keys[key];
             //If it is a mouse button
-            //TODO: Refactor this rats' nest, i don't even know if it works
             if (key.Substring(0, 1) == "M" && key.Length == 2)
             {
                 bool pButtonState;
@@ -96,22 +95,13 @@ namespace Bound.Models
                         break;
                 }
 
-                if (IsHoldable && cButtonState)
-                    return true;
-                else if (pButtonState && cButtonState)
-                    return true;
-                else return false;
+                return cButtonState && (IsHoldable || pButtonState);
             }
 
             else
             {
                 var inputMode = GetKey(key);
-
-                if (CurrentKeyboardState.IsKeyDown(inputMode))
-                    if (IsHoldable || !PreviousKeyboardState.IsKeyDown(inputMode)) return true;
-
-                return false;
-                
+                return CurrentKeyboardState.IsKeyDown(inputMode) && (IsHoldable || !PreviousKeyboardState.IsKeyDown(inputMode));
             }
         }
 

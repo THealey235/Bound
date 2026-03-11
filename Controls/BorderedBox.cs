@@ -37,9 +37,12 @@ namespace Bound.Controls
             }
             set
             {
-                _width = value;
-                _border.Dispose();
-                SetRectangleTexture();
+                if (value > 0)
+                {
+                    _width = value;
+                    _border.Dispose();
+                    SetRectangleTexture();
+                }
             }
         }
 

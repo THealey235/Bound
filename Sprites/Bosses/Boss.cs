@@ -99,7 +99,7 @@ namespace Bound.Sprites
             {
                 if (_currentAction != _atRest &&
                     _animationManager.CurrentAnimation.CurrentFrame >= _currentAction.HitBoxActiveFrames.Start && _animationManager.CurrentAnimation.CurrentFrame <= _currentAction.HitBoxActiveFrames.End &&
-                    _debugRectangle != null)
+                    _weaponDebugRectangle != null)
                 {
                     _weaponDebugRectangle.Draw(gameTime, spriteBatch);
                 }
@@ -115,6 +115,9 @@ namespace Bound.Sprites
                 _animationManager.CurrentAnimation.CurrentFrame >= _currentAction.HitBoxActiveFrames.Start && _animationManager.CurrentAnimation.CurrentFrame <= _currentAction.HitBoxActiveFrames.End &&
                 _weapon != null)
             {
+                var pos = GetWeaponHitboxPostion();
+                _weaponDebugRectangle.Position = pos * Game1.ResScale;
+                _weapon.UpdateCollisionRectanglePosition(this, pos);
                 _weapon.CheckCollision(this, dealsKnockback);
             }
 
@@ -160,6 +163,9 @@ namespace Bound.Sprites
         {
             base.ResetScaling();
 
+            ResetFullTextureDebugRectangle();
+            _debugRectangle.Scale = Game1.ResScale;
+            _animationManager.Scale = Scale * Game1.ResScale;
             SetHealthBar(_game, Name);
         }
 
@@ -171,12 +177,17 @@ namespace Bound.Sprites
             _canAttack = false;
             _lockEffects = true;
 
-            var rectangle = new Rectangle(CollisionRectXPos(_currentAction.HitBox.X, _currentAction.HitBox.Width), (int)(VirtualPosition.Y + (_currentAction.HitBox.Y * Scale)), (int)(_currentAction.HitBox.Width * Scale), (int)(_currentAction.HitBox.Height * Scale));
+            var pos = GetWeaponHitboxPostion();
+            var rectangle = new Rectangle((int)pos.X, (int)pos.Y, (int)(_currentAction.HitBox.Width * Scale), (int)(_currentAction.HitBox.Height * Scale));
+            UpdateWeaponHitbox(rectangle);
+            ResetFullTextureDebugRectangle();
+        }
 
+        private void UpdateWeaponHitbox(Rectangle rectangle)
+        {
             _weaponDebugRectangle = new Models.DebugRectangle(rectangle, _game.GraphicsDevice, _game.Player.Layer + 0.01f, Game1.ResScale);
             _weaponDebugRectangle.Position = new Vector2(rectangle.X, rectangle.Y) * Game1.ResScale;
             _weapon.UpdateCollisionRectangle(this, rectangle);
-            ResetFullTextureDebugRectangle();
         }
 
         protected void ResetFullTextureDebugRectangle()
@@ -189,6 +200,16 @@ namespace Bound.Sprites
             if (Effects == SpriteEffects.FlipHorizontally)
                 return (int)((VirtualPosition.X + _animationManager.CurrentAnimation.FrameWidth * Scale) - (offset + width) * Scale);
             else return (int)(VirtualPosition.X + offset * Scale);
+        }
+
+        public Vector2 GetWeaponHitboxPostion()
+        {
+            return new Vector2(CollisionRectXPos(_currentAction.HitBox.X, _currentAction.HitBox.Width), (int)(VirtualPosition.Y + (_currentAction.HitBox.Y * Scale)));
+        }
+
+        public override void ClampPosition((float Min, float Max) bounds)
+        {
+            _position.X = MathHelper.Clamp(_position.X, bounds.Min + _currentAction.PositionOffset.X, bounds.Max - _animationManager.CurrentAnimation.FrameWidth * Scale + _currentAction.PositionOffset.X);
         }
     }
 }

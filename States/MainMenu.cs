@@ -89,7 +89,12 @@ namespace Bound.States
                     TextureScale = textureScale,
                 });
 
-                switch (_game.SavesManager.Saves[_game.RecentSave].Level)
+                string lastLevel;
+                if (_game.SavesManager.Saves[_game.RecentSave] != null)
+                    lastLevel = _game.SavesManager.Saves[_game.RecentSave].Level;
+                else lastLevel = String.Empty;
+
+                switch (lastLevel)
                 {
                     case "levelzero":
                         _background = Level0.GetBackground(_game, Game1.UnscaledViewport.Height); break;

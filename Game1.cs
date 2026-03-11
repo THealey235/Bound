@@ -292,10 +292,10 @@ namespace Bound
             if (_currentState.Name.Contains("level"))
             {
                 var cameraBounds = ((Level)_currentState).CameraBounds;
-                if (Player.ScaledPosition.X <= cameraBounds.Min.X)
+                if (Player.ScaledPosition.X <= cameraBounds.Min)
                     V2Transform = new Vector2(0, V2Transform.Y);
-                else if (Player.ScaledPosition.X >= cameraBounds.Max.X)
-                    V2Transform = new Vector2(cameraBounds.Max.X - 0.5f * ScreenWidth, V2Transform.Y);
+                else if (Player.ScaledPosition.X >= cameraBounds.Max)
+                    V2Transform = new Vector2(cameraBounds.Max - 0.5f * ScreenWidth, V2Transform.Y);
             }
             if (_statesWithoutPlayer.Contains(_currentState.Name))
                 V2Transform = Vector2.Zero;
@@ -406,23 +406,12 @@ namespace Bound
         {
             ResScale = (float)ScreenHeight / (float)_defaultHeight;
 
-
-            _currentState.LoadContent();
-
             if (_currentState.Name != Names.MainMenu && _currentState.Popups.Count > 0)
                 CenterCamera();
 
             _currentState.LoadContent();
-
             foreach (var state in _currentState.Popups)
                 state.LoadContent();
-
-            if (_currentState.Name != Names.MainMenu && _currentState.Popups.Count > 0)
-            {
-                CenterCamera(); //This may seem redundant but when changing up resolution, without this, the settings menu becomes off center (to the right)
-                foreach (var state in _currentState.Popups)
-                    state.LoadContent();
-            }
 
             Player.Reset();
         }

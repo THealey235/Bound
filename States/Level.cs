@@ -32,7 +32,7 @@ namespace Bound.States
         protected List<UnspawnedMob> _unspawnedMobs = new List<UnspawnedMob>();
         protected HeadsUpDisplay _HUD;
         protected (float Min, float Max) _mapBounds;
-        protected (Vector2 Min, Vector2 Max) _cameraBounds;
+        protected (float Min, float Max) _cameraBounds;
         protected Background _background;
         private bool hasBeenLoaded = false;
 
@@ -48,7 +48,7 @@ namespace Bound.States
             get { return _mapBounds; }
         }
 
-        public (Vector2 Min, Vector2 Max) CameraBounds
+        public (float Min, float Max) CameraBounds
         {
             get { return  _cameraBounds; }
         }
@@ -84,12 +84,10 @@ namespace Bound.States
             }
             _blockRects = UpdateBlockRects();
 
-            _mapBounds = (0, (_levelMap.Select(x => x.Count).Aggregate(0, (a, x) => (x > a) ? x : a) - 1) * _game.Textures.BlockWidth * _scale);
+            _mapBounds = (0, (_levelMap.Select(x => x.Count).Aggregate(0, (a, x) => (x > a) ? x : a) * _game.Textures.BlockWidth * _scale));
             _cameraBounds = (
-                new Vector2(0.5f * Game1.ScreenWidth, 0.5f * Game1.ScreenHeight),
-                new Vector2(
-                    _mapBounds.Max * Game1.ResScale - 0.5f * Game1.ScreenWidth + _player.Rectangle.Width * Game1.ResScale,
-                    _mapBounds.Max * Game1.ResScale - 0.5f * Game1.ScreenHeight + _player.Rectangle.Height * Game1.ResScale)
+                0.5f * Game1.ScreenWidth,
+                (_mapBounds.Max - (_game.Textures.BlockWidth * _scale)) * Game1.ResScale - 0.5f * Game1.ScreenWidth + _player.Rectangle.Width * Game1.ResScale
             );
 
             if (hasBeenLoaded)
@@ -249,14 +247,14 @@ namespace Bound.States
             if (item != null)
                 item.Update(gameTime, _mobs);
 
-            _player.Position = new Vector2(Math.Clamp(_player.Position.X, _mapBounds.Min, _mapBounds.Max), _player.Position.Y);
-            foreach (var sprite in _mobs)
-                sprite.Position = new Vector2(Math.Clamp(sprite.Position.X, _mapBounds.Min, _mapBounds.Max), sprite.Position.Y);
 
             foreach (var sprite in _damagesMobs)
                 sprite.Update(gameTime, _blockRects, _sprites, _mobs);
             foreach (var sprite in _mobs)
                 sprite.Update(gameTime, _blockRects, _sprites, _damagesMobs);
+
+            foreach (var sprite in _sprites)
+                sprite.ClampPosition(_mapBounds);
         }
 
         protected List<Rectangle> UpdateBlockRects()
